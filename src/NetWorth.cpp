@@ -33,9 +33,12 @@ void NetWorth::initAttrArr() {
 }
 
 void NetWorth::printTabulatedData() const {
+    std::cout << "age\t\tyear\t\tincome\t\tyearly investment\t\t"
+              << "deposits/withdrawals\t\tgross return\t\t"
+              << "gross networth\t\tnet return\t\tnet networth\n";
     for (const auto& d : m_data) {
         for (const auto& a : d) {
-            std::cout << a << " ";
+            std::cout << a << "\t\t";
         }
         std::cout << std::endl;
     }
