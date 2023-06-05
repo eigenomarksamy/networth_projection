@@ -45,8 +45,6 @@ private:
     std::vector<std::array<float, ATTR_LEN>> m_data;
     std::array<float, ATTR_LEN> m_attr_arr;
 
-    void initAttrArr();
-
 };
 
 #endif /* NET_WORTH_HPP_ */
