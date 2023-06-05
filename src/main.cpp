@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
-#include "NetWorth.hpp"
+#include "net_worth.hpp"
+#include "file_manager.hpp"
 
 struct Input {
     int init_nw;
@@ -103,5 +104,13 @@ int main() {
                                              user_input.perc_inv}));
     networth.computeData();
     networth.printTabulatedData();
+    auto networth_data = networth.getData();
+    FileHandler file_h("gen\\out.csv");
+    std::vector<std::string> headers = {"omar", "khaled", "samy", "hassan"};
+    std::vector<std::vector<std::string>> lines;
+    for (int i = 0; i < 10; i++) {
+        lines.push_back(headers);
+    }
+    file_h.generateCsv(headers, lines);
     return 0;
 }

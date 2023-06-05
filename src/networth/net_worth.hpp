@@ -34,6 +34,8 @@ public:
 
     void computeData();
 
+    std::vector<std::array<float, ATTR_LEN>> getData() const { return m_data; }
+
 private:
     int m_init_nw;
     int m_yearly_income;

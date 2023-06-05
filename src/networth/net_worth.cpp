@@ -1,6 +1,6 @@
 #include <iostream>
 #include "utils.hpp"
-#include "NetWorth.hpp"
+#include "net_worth.hpp"
 
 NetWorth::NetWorth (int nw, int yearly_income, int age_retirement,
               int cur_age, Percentages percentages)
