@@ -30,10 +30,14 @@ void generateInputTxt(Input input, std::string fileName) {
     file_h.generateTxt(lines);
 }
 
+void generateFiles(NetWorth& net_worth, Input& user_input) {
+    generateDataCsv(net_worth, "gen\\data_out.csv");
+    generateInputTxt(user_input, "gen\\input.txt");
+}
+
 int main() {
     auto user_input = getUserInput();
     auto net_worth = computeNetworthData(user_input);
-    generateDataCsv(net_worth, "gen\\data_out.csv");
-    generateInputTxt(user_input, "gen\\input.txt");
+    generateFiles(net_worth, user_input);
     return 0;
 }

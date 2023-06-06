@@ -51,11 +51,13 @@ Input getUserInput() {
     if (input == "y" || input == "Y"
         || input == "yes" || input == "YES"
         || input == "Yes") {
+        std::cin.ignore( 1000000, '\n' );
         user_input = useUserInput();
     }
     else if (input == "n" || input == "N"
             || input == "no" || input == "NO"
             || input == "No") {
+        std::cin.ignore( 1000000, '\n' );
         user_input = fillPredefinedInput();
     }
     else {
