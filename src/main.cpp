@@ -35,9 +35,13 @@ void generateFiles(NetWorth& net_worth, Input& user_input) {
     generateInputTxt(user_input, "gen\\input.txt");
 }
 
-int main() {
+void networthFactory() {
     auto user_input = getUserInput();
     auto net_worth = computeNetworthData(user_input);
     generateFiles(net_worth, user_input);
+}
+
+int main() {
+    networthFactory();
     return 0;
 }
