@@ -31,8 +31,8 @@ void generateInputTxt(Input input, std::string fileName) {
 }
 
 void generateFiles(NetWorth& net_worth, Input& user_input) {
-    generateDataCsv(net_worth, "gen\\data_out.csv");
-    generateInputTxt(user_input, "gen\\input.txt");
+    generateDataCsv(net_worth, "gen\\nw_data_out.csv");
+    generateInputTxt(user_input, "gen\\nw_params_input.txt");
 }
 
 int main() {
