@@ -11,7 +11,7 @@ NetWorth computeNetworthData(Input userInput) {
                       NetWorth::Percentages({userInput.year_increase,
                                              userInput.port_yearly_ret,
                                              userInput.port_fees,
-                                             userInput.perc_inv}));
+                                             userInput.inv_yearly}));
     networth.computeData();
     networth.printTabulatedData();
     return networth;

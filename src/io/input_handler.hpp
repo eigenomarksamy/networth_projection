@@ -10,7 +10,7 @@ struct Input {
     float year_increase;
     float port_yearly_ret;
     float port_fees;
-    float perc_inv;
+    float inv_yearly;
 };
 
 Input useUserInput();
