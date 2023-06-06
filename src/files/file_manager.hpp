@@ -7,11 +7,14 @@
 
 class FileHandler {
 
+    bool checkFileExtension(std::string expExt);
+
+    std::string m_fileName;
     std::ofstream m_file;
 
 public:
 
-    FileHandler(std::string filename) {
+    FileHandler(std::string& filename) : m_fileName(filename) {
         m_file.open(filename);
     }
 
@@ -23,6 +26,8 @@ public:
 
     void generateCsv(std::vector<std::string>& headers,
                      std::vector<std::vector<std::string>>& lines);
+
+    void generateTxt(std::vector<std::string>& lines);
 
 };
 
