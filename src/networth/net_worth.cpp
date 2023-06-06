@@ -47,3 +47,17 @@ void NetWorth::printTabulatedData() const {
         std::cout << std::endl;
     }
 }
+
+std::vector<std::string> NetWorth::getDataNames() const {
+    std::vector<std::string> retVecStr(ATTR_LEN);
+    retVecStr[CUR_AGE] = "Age";
+    retVecStr[CUR_YEAR] = "Year";
+    retVecStr[INCOME] = "Income";
+    retVecStr[YEARLY_INV] = "Yearly Investment";
+    retVecStr[DEP_OR_WD] = "Deposits/Withdrawals";
+    retVecStr[GROSS_INV_RET] = "Investment return this year";
+    retVecStr[GROSS_NW] = "Net worth";
+    retVecStr[NET_INV_RET] = "Investment return this year (after fees)";
+    retVecStr[NET_NW] = "Net worth (after fees)";
+    return retVecStr;
+}

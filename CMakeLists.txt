@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCE_FILES
     src/networth/net_worth.cpp
+    src/networth/data_adapter.cpp
     src/files/file_manager.cpp
     src/main.cpp
 )

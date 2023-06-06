@@ -2,6 +2,7 @@
 #include <string>
 #include "net_worth.hpp"
 #include "file_manager.hpp"
+#include "data_adapter.hpp"
 
 struct Input {
     int init_nw;
@@ -93,24 +94,28 @@ Input getUserInput() {
     return user_input;
 }
 
+NetWorth computeNetworthData(Input userInput) {
+    NetWorth networth(userInput.init_nw, userInput.year_income,
+                      userInput.age_retirement, userInput.current_age,
+                      NetWorth::Percentages({userInput.year_increase,
+                                             userInput.port_yearly_ret,
+                                             userInput.port_fees,
+                                             userInput.perc_inv}));
+    networth.computeData();
+    networth.printTabulatedData();
+    return networth;
+}
+
+void generateFileWithData(NetWorth netWorth, std::string fileName) {
+    auto headers = DataAdapter::generateDataNames(netWorth);
+    auto lines = DataAdapter::generateDataLines(netWorth);
+    FileHandler file_h(fileName);
+    file_h.generateCsv(headers, lines);
+}
 
 int main() {
     auto user_input = getUserInput();
-    NetWorth networth(user_input.init_nw, user_input.year_income,
-                      user_input.age_retirement, user_input.current_age,
-                      NetWorth::Percentages({user_input.year_increase,
-                                             user_input.port_yearly_ret,
-                                             user_input.port_fees,
-                                             user_input.perc_inv}));
-    networth.computeData();
-    networth.printTabulatedData();
-    auto networth_data = networth.getData();
-    FileHandler file_h("gen\\out.csv");
-    std::vector<std::string> headers = {"omar", "khaled", "samy", "hassan"};
-    std::vector<std::vector<std::string>> lines;
-    for (int i = 0; i < 10; i++) {
-        lines.push_back(headers);
-    }
-    file_h.generateCsv(headers, lines);
+    auto net_worth = computeNetworthData(user_input);
+    generateFileWithData(net_worth, "gen\\out.csv");
     return 0;
 }
