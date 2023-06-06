@@ -6,4 +6,5 @@ float getPercent(T percent) {
     return static_cast<float>(percent) / 100.0;
 }
 
+
 #endif /* UTIL_HPP_ */

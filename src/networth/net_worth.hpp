@@ -2,6 +2,7 @@
 #define NET_WORTH_HPP_
 
 #include <array>
+#include <string>
 #include <vector>
 
 class NetWorth {
@@ -33,6 +34,10 @@ public:
     void printTabulatedData() const;
 
     void computeData();
+
+    std::vector<std::array<float, ATTR_LEN>> getData() const { return m_data; }
+
+    std::vector<std::string> getDataNames() const;
 
 private:
     int m_init_nw;
