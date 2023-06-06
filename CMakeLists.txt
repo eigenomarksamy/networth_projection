@@ -4,8 +4,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCE_FILES
     src/networth/net_worth.cpp
-    src/networth/data_adapter.cpp
     src/files/file_manager.cpp
+    src/io/input_handler.cpp
+    src/io/data_adapter.cpp
     src/main.cpp
 )
 
@@ -16,4 +17,5 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     src/utils/
     src/networth/
     src/files/
+    src/io/
 )
