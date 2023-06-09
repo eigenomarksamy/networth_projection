@@ -18,7 +18,7 @@ std::vector<std::vector<std::string>> DataAdapter::generateDataLines(NetWorth& n
     return retDataLines;
 }
 
-std::vector<std::string> DataAdapter::generateInputLines(Input& inputObj) {
+std::vector<std::string> DataAdapter::generateInputLines(InputNwProjection& inputObj) {
     std::vector<std::string> lines;
     lines.push_back("Current Age: " + std::to_string(inputObj.current_age));
     lines.push_back("Initial Net worth: " + std::to_string(inputObj.init_nw));

@@ -16,9 +16,9 @@ static void getInputParam(T& input, T defVal, std::string dispTxt) {
     }
 }
 
-Input useUserInput() {
-    Input user_input;
-    Input defaults = fillPredefinedInput();
+InputNwProjection useUserInput() {
+    InputNwProjection user_input;
+    InputNwProjection defaults = fillPredefinedInput();
     getInputParam(user_input.init_nw, defaults.init_nw, std::string("initial networth"));
     getInputParam(user_input.year_income, defaults.year_income, std::string("yearly income"));
     getInputParam(user_input.age_retirement, defaults.age_retirement, std::string("age of retirement"));
@@ -30,8 +30,8 @@ Input useUserInput() {
     return user_input;
 }
 
-Input fillPredefinedInput() {
-    Input user_input;
+InputNwProjection fillPredefinedInput() {
+    InputNwProjection user_input;
     user_input.init_nw = 10000;
     user_input.year_income = 49000;
     user_input.age_retirement = 62;
@@ -43,8 +43,8 @@ Input fillPredefinedInput() {
     return user_input;
 }
 
-Input getUserInput() {
-    Input user_input;
+InputNwProjection getUserInput() {
+    InputNwProjection user_input;
     std::string input;
     std::cout << "Do you want to fill your own data? (y/n)";
     std::cin >> input;

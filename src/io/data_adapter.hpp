@@ -19,7 +19,7 @@ public:
 
     static std::vector<std::vector<std::string>> generateDataLines(NetWorth& netWorthObj);
 
-    static std::vector<std::string> generateInputLines(Input& inputObj);
+    static std::vector<std::string> generateInputLines(InputNwProjection& inputObj);
 };
 
 #endif /* DATA_ADAPTER_HPP_ */

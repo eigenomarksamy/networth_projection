@@ -5,7 +5,7 @@
 #include "data_adapter.hpp"
 #include "input_handler.hpp"
 
-NetWorth computeNetworthData(Input userInput) {
+NetWorth computeNetworthData(InputNwProjection userInput) {
     NetWorth networth(userInput.init_nw, userInput.year_income,
                       userInput.age_retirement, userInput.current_age,
                       NetWorth::Percentages({userInput.year_increase,
@@ -24,15 +24,15 @@ void generateDataCsv(NetWorth netWorth, std::string fileName) {
     file_h.generateCsv(headers, lines);
 }
 
-void generateInputTxt(Input input, std::string fileName) {
+void generateInputTxt(InputNwProjection input, std::string fileName) {
     auto lines = DataAdapter::generateInputLines(input);
     FileHandler file_h(fileName);
     file_h.generateTxt(lines);
 }
 
-void generateFiles(NetWorth& net_worth, Input& user_input) {
-    generateDataCsv(net_worth, "gen\\data_out.csv");
-    generateInputTxt(user_input, "gen\\input.txt");
+void generateFiles(NetWorth& net_worth, InputNwProjection& user_input) {
+    generateDataCsv(net_worth, "gen\\nw_data_out.csv");
+    generateInputTxt(user_input, "gen\\nw_input.txt");
 }
 
 int main() {
