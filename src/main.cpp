@@ -5,7 +5,7 @@
 #include "data_adapter.hpp"
 #include "input_handler.hpp"
 
-NetWorth computeNetworthData(InputNwProjection userInput) {
+NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
     NetWorth networth(userInput.init_nw, userInput.year_income,
                       userInput.age_retirement, userInput.current_age,
                       NetWorth::Percentages({userInput.year_increase,
@@ -17,27 +17,29 @@ NetWorth computeNetworthData(InputNwProjection userInput) {
     return networth;
 }
 
-void generateDataCsv(NetWorth netWorth, std::string fileName) {
+void generateDataCsv(const NetWorth netWorth, std::string fileName) {
     auto headers = DataAdapter::generateDataNames(netWorth);
     auto lines = DataAdapter::generateDataLines(netWorth);
     FileHandler file_h(fileName);
     file_h.generateCsv(headers, lines);
 }
 
-void generateInputTxt(InputNwProjection input, std::string fileName) {
+void generateInputTxt(const InputDataContainer& input, std::string fileName) {
     auto lines = DataAdapter::generateInputLines(input);
     FileHandler file_h(fileName);
     file_h.generateTxt(lines);
 }
 
-void generateFiles(NetWorth& net_worth, InputNwProjection& user_input) {
+void generateFiles(const NetWorth& net_worth, const InputDataContainer& user_input) {
     generateDataCsv(net_worth, "gen\\nw_data_out.csv");
     generateInputTxt(user_input, "gen\\nw_input.txt");
 }
 
 int main() {
-    auto user_input = getUserInput();
-    auto net_worth = computeNetworthData(user_input);
+    InputDataContainer user_input;
+    std::cout << "App: Launched!\n";
+    getUserSelection(user_input);
+    auto net_worth = computeNetworthData(user_input.networth_projector);
     generateFiles(net_worth, user_input);
     return 0;
 }

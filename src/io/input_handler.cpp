@@ -3,7 +3,7 @@
 #include "input_handler.hpp"
 
 template <typename T>
-static void getInputParam(T& input, T defVal, std::string dispTxt) {
+static void getGenericInputParam(T& input, const T defVal, std::string dispTxt) {
     const char newline = '\n' ;
     std::cout << "Enter " << dispTxt << " (or just enter to use default): " ;
     if( std::cin.peek() != newline && std::cin >> input ) {
@@ -16,52 +16,143 @@ static void getInputParam(T& input, T defVal, std::string dispTxt) {
     }
 }
 
-InputNwProjection useUserInput() {
-    InputNwProjection user_input;
-    InputNwProjection defaults = fillPredefinedInput();
-    getInputParam(user_input.init_nw, defaults.init_nw, std::string("initial networth"));
-    getInputParam(user_input.year_income, defaults.year_income, std::string("yearly income"));
-    getInputParam(user_input.age_retirement, defaults.age_retirement, std::string("age of retirement"));
-    getInputParam(user_input.current_age, defaults.current_age, std::string("current age"));
-    getInputParam(user_input.year_increase, defaults.year_increase, std::string("yearly increase %"));
-    getInputParam(user_input.inv_yearly, defaults.inv_yearly, std::string("yearly investing %"));
-    getInputParam(user_input.port_yearly_ret, defaults.port_yearly_ret, std::string("portfolio return %"));
-    getInputParam(user_input.port_fees, defaults.port_fees, std::string("portfolio fees %"));
-    return user_input;
+void ConcreteNetworthProjector::fillDefaults() {
+    m_init_nw = 10000;
+    m_year_income = 49000;
+    m_age_retirement = 62;
+    m_current_age = 22;
+    m_year_increase = 2;
+    m_port_yearly_ret = 10;
+    m_port_fees = 2;
+    m_inv_yearly = 15;
 }
 
-InputNwProjection fillPredefinedInput() {
-    InputNwProjection user_input;
-    user_input.init_nw = 10000;
-    user_input.year_income = 49000;
-    user_input.age_retirement = 62;
-    user_input.current_age = 22;
-    user_input.year_increase = 2;
-    user_input.port_yearly_ret = 10;
-    user_input.port_fees = 2;
-    user_input.inv_yearly = 15;
-    return user_input;
+void ConcreteNetworthProjector::getInputFromDefaults(InputDataContainer& input_data) {
+    input_data.networth_projector.init_nw = m_init_nw;
+    input_data.networth_projector.year_income = m_year_income;
+    input_data.networth_projector.age_retirement = m_age_retirement;
+    input_data.networth_projector.current_age = m_current_age;
+    input_data.networth_projector.year_increase = m_year_increase;
+    input_data.networth_projector.port_yearly_ret = m_port_yearly_ret;
+    input_data.networth_projector.port_fees = m_port_fees;
+    input_data.networth_projector.inv_yearly = m_inv_yearly;
+    input_data.specifier = InputDataContainer::Specifier::NETWORTH_INPUT;
 }
 
-InputNwProjection getUserInput() {
-    InputNwProjection user_input;
-    std::string input;
-    std::cout << "Do you want to fill your own data? (y/n)";
-    std::cin >> input;
-    if (input == "y" || input == "Y"
-        || input == "yes" || input == "YES"
-        || input == "Yes") {
+void ConcreteNetworthProjector::getInputFromUser(InputDataContainer& input_data) {
+    getGenericInputParam(input_data.networth_projector.init_nw,
+                         m_init_nw,
+                         std::string("initial networth"));
+    getGenericInputParam(input_data.networth_projector.year_income,
+                         m_year_income,
+                         std::string("yearly income"));
+    getGenericInputParam(input_data.networth_projector.age_retirement,
+                         m_age_retirement,
+                         std::string("age of retirement"));
+    getGenericInputParam(input_data.networth_projector.current_age,
+                         m_current_age,
+                         std::string("current age"));
+    getGenericInputParam(input_data.networth_projector.year_increase,
+                         m_year_increase,
+                         std::string("yearly increase %"));
+    getGenericInputParam(input_data.networth_projector.inv_yearly,
+                         m_inv_yearly,
+                         std::string("yearly investing %"));
+    getGenericInputParam(input_data.networth_projector.port_yearly_ret,
+                         m_port_yearly_ret,
+                         std::string("portfolio return %"));
+    getGenericInputParam(input_data.networth_projector.port_fees,
+                         m_port_fees,
+                         std::string("portfolio fees %"));
+    input_data.specifier = InputDataContainer::Specifier::NETWORTH_INPUT;
+}
+
+void ConcreteNetworthProjector::getInputFromCfg(InputDataContainer& input_data) {
+    std::cout << "Feature not yet implemented!" << std::flush;
+    input_data.specifier = InputDataContainer::Specifier::NETWORTH_INPUT;
+}
+
+void ConcreteMortgageCalculator::fillDefaults() {
+    m_price = 425000;
+    m_num_months = 360;
+    m_interest_rate = 4.f;
+}
+
+void ConcreteMortgageCalculator::getInputFromDefaults(InputDataContainer& input_data) {
+    input_data.mortgage_calculator.price = m_price;
+    input_data.mortgage_calculator.num_months = m_num_months;
+    input_data.mortgage_calculator.interest_rate = m_interest_rate;
+    input_data.specifier = InputDataContainer::Specifier::MORTGAGE_INPUT;
+}
+
+void ConcreteMortgageCalculator::getInputFromUser(InputDataContainer& input_data) {
+    getGenericInputParam(input_data.mortgage_calculator.price,
+                         m_price,
+                         std::string("unit's original price"));
+    getGenericInputParam(input_data.mortgage_calculator.num_months,
+                         m_num_months,
+                         std::string("number of months"));
+    getGenericInputParam(input_data.mortgage_calculator.interest_rate,
+                         m_interest_rate,
+                         std::string("interest rate"));
+    input_data.specifier = InputDataContainer::Specifier::MORTGAGE_INPUT;
+}
+
+void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data) {
+    std::cout << "Feature not yet implemented!" << std::flush;
+    input_data.specifier = InputDataContainer::Specifier::MORTGAGE_INPUT;
+}
+
+void CreatorInput::getDataFromUser(InputDataContainer& input_data) const {
+    Input* input = this->FactoryMethod();
+    input->fillDefaults();
+    std::string user_selection;
+    std::cout << "Welcome to data source selection.\n";
+    std::cout << "Select one of the following:\n";
+    std::cout << "1. Manually entering your data.\n";
+    std::cout << "2. Fill your data in configurations file.\n";
+    std::cout << "3. Use predefined data.\n";
+    std::cout << "Selection: ";
+    std::cin >> user_selection;
+    if (user_selection == "1") {
         std::cin.ignore( 1000000, '\n' );
-        user_input = useUserInput();
+        input->getInputFromUser(input_data);
     }
-    else if (input == "n" || input == "N"
-            || input == "no" || input == "NO"
-            || input == "No") {
+    else if (user_selection == "2") {
         std::cin.ignore( 1000000, '\n' );
-        user_input = fillPredefinedInput();
+        input->getInputFromCfg(input_data);
+    }
+    else if (user_selection == "3") {
+        std::cin.ignore( 1000000, '\n' );
+        input->getInputFromDefaults(input_data);
     }
     else {
-        std::cout << "Input must be yes or no!\n";
+        std::cin.ignore(1000000, '\n');
+        std::cout << "Unknown selection!\n";
     }
-    return user_input;
+    delete input;
+}
+
+static void getUserInputData(const CreatorInput& input,
+                             InputDataContainer& input_data) {
+    input.getDataFromUser(input_data);
+}
+
+void getUserSelection(InputDataContainer& input_data) {
+    std::string input_ss;
+    std::cout << "For Networth Projection press 'n' and for Mortgage calculator press 'm': ";
+    std::cin >> input_ss;
+    if (input_ss == "n" || input_ss == "N") {
+        std::cin.ignore( 1000000, '\n' );
+        CreatorInput* creator_input = new ConcreteCreatorNetworthProjector();
+        getUserInputData(*creator_input, input_data);
+    }
+    else if (input_ss == "m" || input_ss == "M") {
+        std::cin.ignore( 1000000, '\n' );
+        CreatorInput* creator_input = new ConcreteCreatorMortgageCalculator();
+        getUserInputData(*creator_input, input_data);
+    }
+    else {
+        std::cout << "Unknown selection!\n";
+    }
 }
