@@ -4,6 +4,10 @@ std::vector<std::string> DataAdapter::generateDataNames(const NetWorth& netWorth
     return netWorthObj.getDataNames();
 }
 
+std::vector<std::string> DataAdapter::generateDataNames(const Mortgage& mortgageObj) {
+    return mortgageObj.getDataNames();
+}
+
 std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const NetWorth& netWorthObj) {
     auto nw_data = netWorthObj.getData();
     std::vector<std::vector<std::string>> retDataLines;
