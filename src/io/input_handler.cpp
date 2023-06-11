@@ -76,12 +76,20 @@ void ConcreteMortgageCalculator::fillDefaults() {
     m_price = 425000;
     m_num_months = 360;
     m_interest_rate = 4.f;
+    m_market_increase = 3.f;
+    m_rent_to_compare = 1800.f;
+    m_makelaar_fees = 8000;
+    m_rent_annu_increase = 8.f;
 }
 
 void ConcreteMortgageCalculator::getInputFromDefaults(InputDataContainer& input_data) {
     input_data.mortgage_calculator.price = m_price;
     input_data.mortgage_calculator.num_months = m_num_months;
     input_data.mortgage_calculator.interest_rate = m_interest_rate;
+    input_data.mortgage_calculator.market_increase = m_market_increase;
+    input_data.mortgage_calculator.rent_to_compare = m_rent_to_compare;
+    input_data.mortgage_calculator.makelaar_fees = m_makelaar_fees;
+    input_data.mortgage_calculator.rent_annu_increase = m_rent_annu_increase;
     input_data.specifier = InputDataContainer::Specifier::MORTGAGE_INPUT;
 }
 
@@ -95,6 +103,18 @@ void ConcreteMortgageCalculator::getInputFromUser(InputDataContainer& input_data
     getGenericInputParam(input_data.mortgage_calculator.interest_rate,
                          m_interest_rate,
                          std::string("interest rate"));
+    getGenericInputParam(input_data.mortgage_calculator.market_increase,
+                         m_market_increase,
+                         std::string("housing market inflation"));
+    getGenericInputParam(input_data.mortgage_calculator.rent_to_compare,
+                         m_rent_to_compare,
+                         std::string("rent to compare (per month)"));
+    getGenericInputParam(input_data.mortgage_calculator.makelaar_fees,
+                         m_makelaar_fees,
+                         std::string("initial expenses"));
+    getGenericInputParam(input_data.mortgage_calculator.rent_annu_increase,
+                         m_rent_annu_increase,
+                         std::string("rent annual increase"));
     input_data.specifier = InputDataContainer::Specifier::MORTGAGE_INPUT;
 }
 
