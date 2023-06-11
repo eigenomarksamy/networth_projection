@@ -55,7 +55,7 @@ float_t Mortgage::computeSellingGain() const {
 }
 
 float_t Mortgage::computeCurrentRent() const {
-    return m_rent_to_compare * (floorf((m_attr_arr[PERIODE] - 1) / 12) * getPercent(m_rent_annu_increase) + 1.f);
+    return m_rent_to_compare * powf(1.f + getPercent(m_rent_annu_increase), floorf((m_attr_arr[PERIODE] - 1) / 12));
 }
 
 void Mortgage::printTabulatedData() const {
