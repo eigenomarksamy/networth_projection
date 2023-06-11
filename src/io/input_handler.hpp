@@ -21,6 +21,8 @@ struct InputDataMortgageCalculator {
     float_t interest_rate;
     float_t market_increase;
     float_t rent_to_compare;
+    uint16_t makelaar_fees;
+    float_t rent_annu_increase;
 };
 
 struct InputDataContainer {
@@ -68,6 +70,8 @@ class ConcreteMortgageCalculator : public Input {
     float_t m_interest_rate;
     float_t m_market_increase;
     float_t m_rent_to_compare;
+    uint16_t m_makelaar_fees;
+    float_t m_rent_annu_increase;
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;

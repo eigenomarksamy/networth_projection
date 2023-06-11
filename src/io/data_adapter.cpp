@@ -50,9 +50,11 @@ void DataAdapter::generateNetworthProjectorInputLines(const InputDataNetworthPro
 void DataAdapter::generateMortgageCalculatorInputLines(const InputDataMortgageCalculator& inputObj, std::vector<std::string>& lines) {
     lines.push_back("Price: " + std::to_string(inputObj.price));
     lines.push_back("Number of months: " + std::to_string(inputObj.num_months));
-    lines.push_back("Interest rate: " + std::to_string(inputObj.interest_rate));
+    lines.push_back("Interest rate (%): " + std::to_string(inputObj.interest_rate));
     lines.push_back("Housing market inflation (%): " + std::to_string(inputObj.market_increase));
     lines.push_back("Rent per month to compare: " + std::to_string(inputObj.rent_to_compare));
+    lines.push_back("Extra initial expenses (makelaar, overbidding, etc.): " + std::to_string(inputObj.makelaar_fees));
+    lines.push_back("Rent annual increase (%): " + std::to_string(inputObj.rent_annu_increase));
 }
 
 std::vector<std::string> DataAdapter::generateInputLines(const InputDataContainer& inputObj) {
