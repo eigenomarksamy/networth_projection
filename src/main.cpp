@@ -19,7 +19,9 @@ NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
 }
 
 Mortgage computeMortgageData(const InputDataMortgageCalculator& userInput) {
-    Mortgage mortgage(userInput.price, userInput.num_months, userInput.interest_rate);
+    Mortgage mortgage(userInput.price, userInput.num_months,
+                      userInput.interest_rate, userInput.market_increase,
+                      userInput.rent_to_compare);
     mortgage.computeData();
     mortgage.printTabulatedData();
     return mortgage;

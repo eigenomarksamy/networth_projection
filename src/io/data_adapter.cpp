@@ -51,6 +51,8 @@ void DataAdapter::generateMortgageCalculatorInputLines(const InputDataMortgageCa
     lines.push_back("Price: " + std::to_string(inputObj.price));
     lines.push_back("Number of months: " + std::to_string(inputObj.num_months));
     lines.push_back("Interest rate: " + std::to_string(inputObj.interest_rate));
+    lines.push_back("Housing market inflation (%): " + std::to_string(inputObj.market_increase));
+    lines.push_back("Rent per month to compare: " + std::to_string(inputObj.rent_to_compare));
 }
 
 std::vector<std::string> DataAdapter::generateInputLines(const InputDataContainer& inputObj) {
