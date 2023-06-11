@@ -19,6 +19,7 @@ class Mortgage {
         TOTAAL_BETAALDE_RENTE,
         HUUR_NETTO_WINST,
         LANDGOED_WAARDE,
+        WINST_VERKOPEN,
         ATTR_DESC_LEN
     };
 
@@ -26,6 +27,8 @@ class Mortgage {
     float_t computeRepayment() const;
     float_t computeResidualDebt() const;
     float_t computeTotalGainForRent() const;
+    float_t computeEstateMarketValue() const;
+    float_t computeSellingGain() const;
     float_t computeCurrentRent() const;
 
     uint32_t m_price;
