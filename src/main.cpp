@@ -20,6 +20,8 @@ NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
 
 Mortgage computeMortgageData(const InputDataMortgageCalculator& userInput) {
     Mortgage mortgage(userInput.price, userInput.num_months, userInput.interest_rate);
+    mortgage.computeData();
+    mortgage.printTabulatedData();
     return mortgage;
 }
 
@@ -30,15 +32,27 @@ void generateDataCsv(const NetWorth netWorth, std::string fileName) {
     file_h.generateCsv(headers, lines);
 }
 
+void generateDataCsv(const Mortgage mortgage, std::string fileName) {
+    auto headers = DataAdapter::generateDataNames(mortgage);
+    auto lines = DataAdapter::generateDataLines(mortgage);
+    FileHandler file_h(fileName);
+    file_h.generateCsv(headers, lines);
+}
+
 void generateInputTxt(const InputDataContainer& input, std::string fileName) {
     auto lines = DataAdapter::generateInputLines(input);
     FileHandler file_h(fileName);
     file_h.generateTxt(lines);
 }
 
-void generateNetworthFiles(const NetWorth& net_worth, const InputDataContainer& user_input) {
+void generateFiles(const NetWorth& net_worth, const InputDataContainer& user_input) {
     generateDataCsv(net_worth, "gen\\nw_data_out.csv");
     generateInputTxt(user_input, "gen\\nw_input.txt");
+}
+
+void generateFiles(const Mortgage& mortgage, const InputDataContainer& user_input) {
+    generateDataCsv(mortgage, "gen\\mortgage_data_out.csv");
+    generateInputTxt(user_input, "gen\\mortgage_input.txt");
 }
 
 int main() {
@@ -46,9 +60,11 @@ int main() {
     getUserSelection(user_input);
     if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT) {
         auto net_worth = computeNetworthData(user_input.networth_projector);
-        generateNetworthFiles(net_worth, user_input);
+        generateFiles(net_worth, user_input);
     }
     else if (user_input.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
+        auto mortgage = computeMortgageData(user_input.mortgage_calculator);
+        generateFiles(mortgage, user_input);
     }
     return 0;
 }

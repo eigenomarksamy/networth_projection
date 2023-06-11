@@ -22,6 +22,20 @@ std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const NetWo
     return retDataLines;
 }
 
+std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const Mortgage& mortgaeObj) {
+    auto mort_data = mortgaeObj.getData();
+    std::vector<std::vector<std::string>> retDataLines;
+    std::vector<std::string> tmp_row;
+    for (const auto& d : mort_data) {
+        for (const auto& a : d) {
+            tmp_row.push_back(std::to_string(a));
+        }
+        retDataLines.push_back(tmp_row);
+        tmp_row.clear();
+    }
+    return retDataLines;
+}
+
 void DataAdapter::generateNetworthProjectorInputLines(const InputDataNetworthProjector& inputObj, std::vector<std::string>& lines) {
     lines.push_back("Current Age: " + std::to_string(inputObj.current_age));
     lines.push_back("Initial Net worth: " + std::to_string(inputObj.init_nw));

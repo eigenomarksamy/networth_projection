@@ -27,6 +27,8 @@ public:
 
     static std::vector<std::vector<std::string>> generateDataLines(const NetWorth& netWorthObj);
 
+    static std::vector<std::vector<std::string>> generateDataLines(const Mortgage& mortgageObj);
+
     static std::vector<std::string> generateInputLines(const InputDataContainer& inputObj);
 };
 
