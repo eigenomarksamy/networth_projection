@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "net_worth.hpp"
+#include "networth.hpp"
 #include "mortgage.hpp"
 #include "file_manager.hpp"
 #include "data_adapter.hpp"

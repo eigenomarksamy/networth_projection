@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "net_worth.hpp"
+#include "networth.hpp"
 #include "mortgage.hpp"
 #include "input_handler.hpp"
 
