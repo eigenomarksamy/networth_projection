@@ -20,6 +20,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     src/networth/
     src/mortgage/
     src/portfolio/
+    src/investment/
     src/files/
     src/io/
 )
