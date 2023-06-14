@@ -3,8 +3,9 @@ project(investor)
 set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCE_FILES
-    src/networth/net_worth.cpp
+    src/networth/networth.cpp
     src/mortgage/mortgage.cpp
+    src/portfolio/portfolio.cpp
     src/files/file_manager.cpp
     src/io/input_handler.cpp
     src/io/data_adapter.cpp
@@ -18,6 +19,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     src/utils/
     src/networth/
     src/mortgage/
+    src/portfolio/
+    src/investment/
     src/files/
     src/io/
 )

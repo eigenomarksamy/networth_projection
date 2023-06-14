@@ -1,10 +1,11 @@
 #include <iostream>
 #include <string>
-#include "net_worth.hpp"
+#include "networth.hpp"
 #include "mortgage.hpp"
 #include "file_manager.hpp"
 #include "data_adapter.hpp"
 #include "input_handler.hpp"
+#include "portfolio.hpp"
 
 NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
     NetWorth networth(userInput.init_nw, userInput.year_income,

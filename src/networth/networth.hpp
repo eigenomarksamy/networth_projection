@@ -1,5 +1,5 @@
-#ifndef NET_WORTH_HPP_
-#define NET_WORTH_HPP_
+#ifndef NETWORTH_HPP_
+#define NETWORTH_HPP_
 
 #include <array>
 #include <string>
@@ -52,4 +52,4 @@ private:
 
 };
 
-#endif /* NET_WORTH_HPP_ */
+#endif /* NETWORTH_HPP_ */
