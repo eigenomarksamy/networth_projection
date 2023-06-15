@@ -59,6 +59,10 @@ void generateFiles(const Mortgage& mortgage, const InputDataContainer& user_inpu
     generateInputTxt(user_input, "gen\\mortgage_input.txt");
 }
 
+Portfolio createPortfolio(const std::string& name) {
+    return Portfolio(name);
+}
+
 int main() {
     InputDataContainer user_input;
     getUserSelection(user_input);

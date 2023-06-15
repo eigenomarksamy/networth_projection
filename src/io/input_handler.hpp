@@ -25,6 +25,10 @@ struct InputDataMortgageCalculator {
     float_t rent_annu_increase;
 };
 
+struct InputPortfolioManager {
+    
+};
+
 struct InputDataContainer {
     enum Specifier {
         NONE = 0,

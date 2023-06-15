@@ -160,7 +160,11 @@ static void getUserInputData(const CreatorInput& input,
 
 void getUserSelection(InputDataContainer& input_data) {
     std::string input_ss;
-    std::cout << "For Networth Projection press 'n' and for Mortgage calculator press 'm': ";
+    std::cout << "Choose mode of operation, from the following list:\n";
+    std::cout << "n: networth projection\n";
+    std::cout << "m: mortgage calculation\n";
+    std::cout << "p: portfolio management\n";
+    std::cout << "Selection: ";
     std::cin >> input_ss;
     if (input_ss == "n" || input_ss == "N") {
         std::cin.ignore( 1000000, '\n' );
@@ -171,6 +175,10 @@ void getUserSelection(InputDataContainer& input_data) {
         std::cin.ignore( 1000000, '\n' );
         CreatorInput* creator_input = new ConcreteCreatorMortgageCalculator();
         getUserInputData(*creator_input, input_data);
+    }
+    else if (input_ss == "p" || input_ss == "P") {
+        std::cin.ignore( 1000000, '\n' );
+        std::cout << "Feature not yet implemented!" << std::flush;
     }
     else {
         std::cout << "Unknown selection!\n";
