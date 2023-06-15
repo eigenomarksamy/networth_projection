@@ -1,11 +1,13 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include "networth.hpp"
 #include "mortgage.hpp"
 #include "file_manager.hpp"
 #include "data_adapter.hpp"
 #include "input_handler.hpp"
 #include "portfolio.hpp"
+#include "utils.hpp"
 
 NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
     NetWorth networth(userInput.init_nw, userInput.year_income,
@@ -14,6 +16,10 @@ NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
                                              userInput.port_yearly_ret,
                                              userInput.port_fees,
                                              userInput.inv_yearly}));
+    std::unordered_map<uint32_t, float_t> extra_money_map;
+    convert2DVectorToUnorderedMap(userInput.year_to_amount,
+                                  extra_money_map);
+    networth.setDepWithdrawalPlan(extra_money_map);
     networth.computeData();
     networth.printTabulatedData();
     return networth;

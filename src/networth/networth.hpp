@@ -1,18 +1,20 @@
 #ifndef NETWORTH_HPP_
 #define NETWORTH_HPP_
 
+#include <math.h>
 #include <array>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 class NetWorth {
 
 public:
     struct Percentages{
-        float yearly_income_increase;
-        float portfolio_yearly_return;
-        float portfolio_fees;
-        float investing;
+        float_t yearly_income_increase;
+        float_t portfolio_yearly_return;
+        float_t portfolio_fees;
+        float_t investing;
     };
 
     enum ATTR_DESC {
@@ -28,27 +30,32 @@ public:
         ATTR_LEN
     };
 
-    NetWorth (int nw, int yearly_income, int age_retirement,
-              int cur_age, Percentages percentages);
+    NetWorth (uint32_t nw, uint32_t yearly_income, uint8_t age_retirement,
+              uint8_t cur_age, Percentages percentages);
 
     void printTabulatedData() const;
 
     void computeData();
 
-    std::vector<std::array<float, ATTR_LEN>> getData() const { return m_data; }
+    void setDepWithdrawalPlan(const std::unordered_map<uint32_t, float_t>& plan) {
+        this->m_dep_wd_plan = plan;
+    }
+
+    std::vector<std::array<float_t, ATTR_LEN>> getData() const { return m_data; }
 
     std::vector<std::string> getDataNames() const;
 
 private:
-    int m_init_nw;
-    int m_yearly_income;
-    int m_age_retirement;
-    int m_cur_year;
-    int m_cur_age;
-    int m_init_age;
+    uint32_t m_init_nw;
+    uint32_t m_yearly_income;
+    uint8_t m_age_retirement;
+    uint8_t m_cur_year;
+    uint8_t m_cur_age;
+    uint8_t m_init_age;
     Percentages m_percentages;
-    std::vector<std::array<float, ATTR_LEN>> m_data;
-    std::array<float, ATTR_LEN> m_attr_arr;
+    std::vector<std::array<float_t, ATTR_LEN>> m_data;
+    std::array<float_t, ATTR_LEN> m_attr_arr;
+    std::unordered_map<uint32_t, float_t> m_dep_wd_plan;
 
 };
 

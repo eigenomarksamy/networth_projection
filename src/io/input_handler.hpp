@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdint.h>
+#include <vector>
 
 struct InputDataNetworthProjector {
     uint32_t init_nw;
@@ -13,6 +14,7 @@ struct InputDataNetworthProjector {
     float_t port_yearly_ret;
     float_t port_fees;
     float_t inv_yearly;
+    std::vector<std::vector<float_t>> year_to_amount;
 };
 
 struct InputDataMortgageCalculator {
@@ -55,6 +57,7 @@ class ConcreteNetworthProjector : public Input {
     float_t m_port_yearly_ret;
     float_t m_port_fees;
     float_t m_inv_yearly;
+    std::vector<std::vector<float_t>> m_year_to_amount;
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;

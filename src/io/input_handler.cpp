@@ -1,19 +1,81 @@
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <cstring>
 #include "input_handler.hpp"
+
+enum class GenericInputMode { SingleValueSingleData,
+                              MultipleValuesSingleData,
+                              MultipleValuesMultipleData };
+
+std::ostream& operator<<(std::ostream& out, const GenericInputMode& inputMode) {
+    switch (inputMode) {
+        case GenericInputMode::SingleValueSingleData: out << "Single Value Single Data"; break;
+        case GenericInputMode::MultipleValuesSingleData: out << "Multiple Values Single Data"; break;
+        case GenericInputMode::MultipleValuesMultipleData: out << "Multiple Values Multiple Data"; break;
+    }
+    return out;
+}
 
 template <typename T>
 static void getGenericInputParam(T& input, const T defVal, std::string dispTxt) {
-    const char newline = '\n' ;
-    std::cout << "Enter " << dispTxt << " (or just enter to use default): " ;
+    constexpr int8_t newline = '\n' ;
+    constexpr uint32_t ignoreVal = 1000000;
+    std::cout << "Enter parameter '" << dispTxt << "', input mode: '"
+              << GenericInputMode::SingleValueSingleData
+              << "' (you can leave blank to use default): " ;
     if( std::cin.peek() != newline && std::cin >> input ) {
-        std::cin.ignore( 1000000, '\n' );
+        std::cin.ignore( ignoreVal, newline );
         return;
     }
     else {
-        std::cin.ignore( 1000000, '\n' );
+        std::cin.ignore( ignoreVal, newline );
         input = defVal;
     }
+}
+
+template <typename T>
+static void getGenericInputParam(std::vector<T>& input,
+                                 const std::string& dispTxt) {
+    constexpr int8_t newline = '\n' ;
+    constexpr uint32_t ignoreVal = 1000000;
+    T inputElm;
+    std::cout << "Enter parameter '" << dispTxt << "', input mode: '"
+              << GenericInputMode::MultipleValuesSingleData
+              << "' (you can leave blank to use default): " ;
+    while ( std::cin.peek() != newline && std::cin >> inputElm ) {
+        input.push_back(inputElm);
+    }
+    std::cin.ignore( ignoreVal, newline );
+}
+
+template <typename T>
+static void getGenericInputParam(std::vector<std::vector<T>>& input,
+                                 const std::string& dispTxt) {
+    constexpr int8_t newline = '\n' ;
+    constexpr uint32_t ignoreVal = 1000000;
+    T inputElm;
+    std::vector<decltype(inputElm)> inputVec;
+    std::string inputString;
+    std::vector<std::string> vectInput;
+    std::cout << "Enter parameter '" << dispTxt << "', input mode: '"
+              << GenericInputMode::MultipleValuesMultipleData
+              << "' (you can leave blank to use default): " ;
+    while (std::cin.peek() != newline) {
+        std::cin >> inputString;
+        vectInput.push_back(inputString);
+    }
+    for (auto& str : vectInput) {
+        inputVec.clear();
+        std::stringstream ss(str);
+        for (; ss >> inputElm;) {
+            inputVec.push_back(inputElm);
+            if (ss.peek() == ',')
+                ss.ignore();
+        }
+        input.push_back(inputVec);
+    }
+    std::cin.ignore( ignoreVal, newline );
 }
 
 void ConcreteNetworthProjector::fillDefaults() {
@@ -64,6 +126,8 @@ void ConcreteNetworthProjector::getInputFromUser(InputDataContainer& input_data)
     getGenericInputParam(input_data.networth_projector.port_fees,
                          m_port_fees,
                          std::string("portfolio fees %"));
+    getGenericInputParam(input_data.networth_projector.year_to_amount,
+                         "year and deposit/withdrawal");
     input_data.specifier = InputDataContainer::Specifier::NETWORTH_INPUT;
 }
 
@@ -136,6 +200,18 @@ void CreatorInput::getDataFromUser(InputDataContainer& input_data) const {
     std::cin >> user_selection;
     if (user_selection == "1") {
         std::cin.ignore( 1000000, '\n' );
+        std::cout << "Usage modes for manual input:\n";
+        std::cout << GenericInputMode::SingleValueSingleData;
+        std::cout << ": Enter a single value, then new line to move on.\n";
+        std::cout << GenericInputMode::MultipleValuesSingleData;
+        std::cout << ": Enter multiple single values (comma seperated), "
+                  << "and new line to finish and move on.\n";
+        std::cout << GenericInputMode::MultipleValuesMultipleData;
+        std::cout << ": Enter multiple multiple values, "
+                  << "comma separed for one set and "
+                  << "space seperated for different sets, "
+                  << "and new line to finish and move on.\n";
+        std::cout << std::endl;
         input->getInputFromUser(input_data);
     }
     else if (user_selection == "2") {
