@@ -43,19 +43,19 @@ void Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newVa
 }
 
 void PortfolioManager::executeManagement() {
-    int choice = 0;
-    while (choice != 6) {
-        std::cout << "---------------------------" << std::endl;
-        std::cout << "         MENU              " << std::endl;
-        std::cout << "---------------------------" << std::endl;
-        std::cout << "1. Add Investment" << std::endl;
-        std::cout << "2. Remove Investment" << std::endl;
-        std::cout << "3. Display Portfolio" << std::endl;
-        std::cout << "4. Calculate Total Value" << std::endl;
-        std::cout << "5. Update Investment Value" << std::endl;
-        std::cout << "6. Exit" << std::endl;
-        std::cout << "Enter your choice (1-6): ";
-        std::cin >> choice;
+    int32_t choice = 0;
+    while (choice != 6 &&
+        std::cout << "---------------------------" << std::endl &&
+        std::cout << "         MENU              " << std::endl &&
+        std::cout << "---------------------------" << std::endl &&
+        std::cout << "1. Add Investment" << std::endl &&
+        std::cout << "2. Remove Investment" << std::endl &&
+        std::cout << "3. Display Portfolio" << std::endl &&
+        std::cout << "4. Calculate Total Value" << std::endl &&
+        std::cout << "5. Update Investment Value" << std::endl &&
+        std::cout << "6. Exit" << std::endl &&
+        std::cout << "Enter your choice (1-6): " &&
+        (std::cin >> choice)) {
         switch (choice) {
             case 1: {
                 std::string name, ticker;

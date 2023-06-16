@@ -26,6 +26,9 @@ class PortfolioManager {
 public:
     PortfolioManager(const std::string& portfolio_name) :
         m_portfolio(std::make_unique<Portfolio>(portfolio_name)) {}
+    ~PortfolioManager() {
+        m_portfolio.reset(nullptr);
+    }
     void executeManagement();
 };
 
