@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <unordered_map>
+#include <iostream>
 #include <stdexcept>
 
 template<typename T>
@@ -40,5 +41,9 @@ std::ostream& operator<<(std::ostream& out, const std::unordered_map<K, V>& m) {
     printMap(out, m);
     return out;
 }
+
+std::string getLocalDateTime(const char format[]);
+
+std::string getLocalDateTime();
 
 #endif /* UTIL_HPP_ */

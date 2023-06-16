@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "utils.hpp"
 #include "networth.hpp"
 #include "mortgage.hpp"
 #include "file_manager.hpp"
@@ -65,6 +66,10 @@ void generateFiles(const Mortgage& mortgage, const InputDataContainer& user_inpu
     generateInputTxt(user_input, "gen\\mortgage_input.txt");
 }
 
+Portfolio createPortfolio(const std::string& name) {
+    return Portfolio(name);
+}
+
 int main() {
     InputDataContainer user_input;
     getUserSelection(user_input);
@@ -75,6 +80,10 @@ int main() {
     else if (user_input.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
         auto mortgage = computeMortgageData(user_input.mortgage_calculator);
         generateFiles(mortgage, user_input);
+    }
+    else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
+        PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
+        portfolio_manager.executeManagement();
     }
     return 0;
 }

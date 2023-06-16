@@ -9,6 +9,7 @@ set(SOURCE_FILES
     src/files/file_manager.cpp
     src/io/input_handler.cpp
     src/io/data_adapter.cpp
+    src/utils/utils.cpp
     src/main.cpp
 )
 

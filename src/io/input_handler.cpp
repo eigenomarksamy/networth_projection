@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include "utils.hpp"
 #include <sstream>
 #include <cstring>
 #include "input_handler.hpp"
@@ -187,6 +188,32 @@ void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data)
     input_data.specifier = InputDataContainer::Specifier::MORTGAGE_INPUT;
 }
 
+void ConcretePortfolioManager::fillDefaults() {
+    m_is_new = true;
+    m_name = "My Investment Portfolio " + getLocalDateTime();
+}
+
+void ConcretePortfolioManager::getInputFromDefaults(InputDataContainer& input_data) {
+    input_data.portfolio_manager.is_new = m_is_new;
+    input_data.portfolio_manager.name = m_name;
+    input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
+}
+
+void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) {
+    getGenericInputParam(input_data.portfolio_manager.is_new,
+                         m_is_new,
+                         std::string("create new profile"));
+    getGenericInputParam(input_data.portfolio_manager.name,
+                         m_name,
+                         std::string("name of profile"));
+    input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
+}
+
+void ConcretePortfolioManager::getInputFromCfg(InputDataContainer& input_data) {
+    std::cout << "Feature not yet implemented!" << std::flush;
+    input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
+}
+
 void CreatorInput::getDataFromUser(InputDataContainer& input_data) const {
     Input* input = this->FactoryMethod();
     input->fillDefaults();
@@ -236,7 +263,11 @@ static void getUserInputData(const CreatorInput& input,
 
 void getUserSelection(InputDataContainer& input_data) {
     std::string input_ss;
-    std::cout << "For Networth Projection press 'n' and for Mortgage calculator press 'm': ";
+    std::cout << "Choose mode of operation, from the following list:\n";
+    std::cout << "n: networth projection\n";
+    std::cout << "m: mortgage calculation\n";
+    std::cout << "p: portfolio management\n";
+    std::cout << "Selection: ";
     std::cin >> input_ss;
     if (input_ss == "n" || input_ss == "N") {
         std::cin.ignore( 1000000, '\n' );
@@ -246,6 +277,11 @@ void getUserSelection(InputDataContainer& input_data) {
     else if (input_ss == "m" || input_ss == "M") {
         std::cin.ignore( 1000000, '\n' );
         CreatorInput* creator_input = new ConcreteCreatorMortgageCalculator();
+        getUserInputData(*creator_input, input_data);
+    }
+    else if (input_ss == "p" || input_ss == "P") {
+        std::cin.ignore( 1000000, '\n' );
+        CreatorInput* creator_input = new ConcreteCreatorPortfolioManager();
         getUserInputData(*creator_input, input_data);
     }
     else {

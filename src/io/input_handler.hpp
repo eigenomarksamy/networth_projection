@@ -27,14 +27,21 @@ struct InputDataMortgageCalculator {
     float_t rent_annu_increase;
 };
 
+struct InputPortfolioManager {
+    bool is_new;
+    std::string name;
+};
+
 struct InputDataContainer {
     enum Specifier {
         NONE = 0,
         NETWORTH_INPUT,
-        MORTGAGE_INPUT
+        MORTGAGE_INPUT,
+        PORTFOLIO_INPUT
     };
     InputDataNetworthProjector networth_projector;
     InputDataMortgageCalculator mortgage_calculator;
+    InputPortfolioManager portfolio_manager;
     Specifier specifier;
 };
 
@@ -83,6 +90,17 @@ public:
     void fillDefaults() override;
 };
 
+class ConcretePortfolioManager : public Input {
+    bool m_is_new;
+    std::string m_name;
+
+public:
+    void getInputFromUser(InputDataContainer& input_data) override;
+    void getInputFromCfg(InputDataContainer& input_data) override;
+    void getInputFromDefaults(InputDataContainer& input_data) override;
+    void fillDefaults() override;
+};
+
 class CreatorInput {
 
 public:
@@ -105,6 +123,13 @@ class ConcreteCreatorMortgageCalculator : public CreatorInput {
 public:
     Input* FactoryMethod() const override {
         return new ConcreteMortgageCalculator();
+    }
+};
+
+class ConcreteCreatorPortfolioManager : public CreatorInput {
+public:
+    Input* FactoryMethod() const override {
+        return new ConcretePortfolioManager();
     }
 };
 

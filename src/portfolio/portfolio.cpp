@@ -41,3 +41,77 @@ void Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newVa
         }
     }
 }
+
+void PortfolioManager::executeManagement() {
+    int choice = 0;
+    while (choice != 6) {
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "         MENU              " << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "1. Add Investment" << std::endl;
+        std::cout << "2. Remove Investment" << std::endl;
+        std::cout << "3. Display Portfolio" << std::endl;
+        std::cout << "4. Calculate Total Value" << std::endl;
+        std::cout << "5. Update Investment Value" << std::endl;
+        std::cout << "6. Exit" << std::endl;
+        std::cout << "Enter your choice (1-6): ";
+        std::cin >> choice;
+        switch (choice) {
+            case 1: {
+                std::string name, ticker;
+                double_t purchasePrice;
+                uint32_t quantity;
+                std::cout << "Enter investment details:\n";
+                std::cout << "Name: ";
+                std::cin >> name;
+                std::cout << "Ticker: ";
+                std::cin >> ticker;
+                std::cout << "Purchase price: ";
+                std::cin >> purchasePrice;
+                std::cout << "Quantity: ";
+                std::cin >> quantity;
+                Investment newInvestment(name, ticker, purchasePrice, quantity);
+                m_portfolio->addInvestment(newInvestment);
+                std::cout << "Investment of '" << newInvestment.getTicker()
+                          << "' was added successfully.\n";
+                break;
+            }
+            case 2: {
+                std::string ticker;
+                std::cout << "Enter the ticker of the investment to be removed: ";
+                std::cin >> ticker;
+                m_portfolio->removeInvestment(ticker);
+                std::cout << "Investment removed from portfolio.\n";
+                break;
+            }
+            case 3: {
+                m_portfolio->displayPortfolio();
+                break;
+            }
+            case 4: {
+                auto totalValue = m_portfolio->calculateTotalValue();
+                std::cout << "Portfolio's total value: " << totalValue << std::endl;
+                break;
+            }
+            case 5: {
+                std::string ticker;
+                double_t newValue;
+                std::cout << "Enter the ticker of the investment to be updated: ";
+                std::cin >> ticker;
+                std::cout << "Enter the new value: ";
+                std::cin >> newValue;
+                m_portfolio->updatedInvestmentValue(ticker, newValue);
+                std::cout << "Investment value was updated.\n";
+                break;
+            }
+            case 6: {
+                std::cout << "Exiting..\n";
+                break;
+            }
+            default: {
+                std::cout << "Invalid choice. Please try again.\n";
+                break;
+            }
+        }
+    }
+}
