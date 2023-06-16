@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "investment.hpp"
 
 class Portfolio {
@@ -18,6 +19,14 @@ public:
     void displayPortfolio() const;
     double_t calculateTotalValue() const;
     void updatedInvestmentValue(const std::string& ticker, double_t newValue);
+};
+
+class PortfolioManager {
+    std::unique_ptr<Portfolio> m_portfolio;
+public:
+    PortfolioManager(const std::string& portfolio_name) :
+        m_portfolio(std::make_unique<Portfolio>(portfolio_name)) {}
+    void executeManagement();
 };
 
 

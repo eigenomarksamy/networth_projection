@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include "utils.hpp"
 #include "input_handler.hpp"
 
 template <typename T>
@@ -123,6 +124,32 @@ void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data)
     input_data.specifier = InputDataContainer::Specifier::MORTGAGE_INPUT;
 }
 
+void ConcretePortfolioManager::fillDefaults() {
+    m_is_new = true;
+    m_name = "My Investment Portfolio " + getLocalDateTime();
+}
+
+void ConcretePortfolioManager::getInputFromDefaults(InputDataContainer& input_data) {
+    input_data.portfolio_manager.is_new = m_is_new;
+    input_data.portfolio_manager.name = m_name;
+    input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
+}
+
+void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) {
+    getGenericInputParam(input_data.portfolio_manager.is_new,
+                         m_is_new,
+                         std::string("create new profile"));
+    getGenericInputParam(input_data.portfolio_manager.name,
+                         m_name,
+                         std::string("name of profile"));
+    input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
+}
+
+void ConcretePortfolioManager::getInputFromCfg(InputDataContainer& input_data) {
+    std::cout << "Feature not yet implemented!" << std::flush;
+    input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
+}
+
 void CreatorInput::getDataFromUser(InputDataContainer& input_data) const {
     Input* input = this->FactoryMethod();
     input->fillDefaults();
@@ -178,7 +205,8 @@ void getUserSelection(InputDataContainer& input_data) {
     }
     else if (input_ss == "p" || input_ss == "P") {
         std::cin.ignore( 1000000, '\n' );
-        std::cout << "Feature not yet implemented!" << std::flush;
+        CreatorInput* creator_input = new ConcreteCreatorPortfolioManager();
+        getUserInputData(*creator_input, input_data);
     }
     else {
         std::cout << "Unknown selection!\n";

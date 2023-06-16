@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "utils.hpp"
 #include "networth.hpp"
 #include "mortgage.hpp"
 #include "file_manager.hpp"
@@ -73,6 +74,10 @@ int main() {
     else if (user_input.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
         auto mortgage = computeMortgageData(user_input.mortgage_calculator);
         generateFiles(mortgage, user_input);
+    }
+    else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
+        PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
+        portfolio_manager.executeManagement();
     }
     return 0;
 }

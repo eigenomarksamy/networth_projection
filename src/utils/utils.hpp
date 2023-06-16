@@ -13,4 +13,8 @@ float computePMT(T pv, R r, U n) {
     return static_cast<float>(-((pv * (r / 12)) / (1. - pow(1. + (r / 12), -n))));
 }
 
+std::string getLocalDateTime(const char format[]);
+
+std::string getLocalDateTime();
+
 #endif /* UTIL_HPP_ */
