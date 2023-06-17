@@ -42,6 +42,18 @@ std::ostream& operator<<(std::ostream& out, const std::unordered_map<K, V>& m) {
     return out;
 }
 
+template<typename T>
+bool validateInputType(T& input) {
+    bool retVal = true;
+    if (!(std::cin >> input)) {
+        std::cout << "Invalid input. Please correct type." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        retVal = false;
+    }
+    return retVal;
+}
+
 std::string getLocalDateTime(const char format[]);
 
 std::string getLocalDateTime();
