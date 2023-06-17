@@ -67,8 +67,60 @@ void generateFiles(const Mortgage& mortgage, const InputDataContainer& user_inpu
     generateInputTxt(user_input, "gen\\mortgage_input.txt");
 }
 
-Portfolio createPortfolio(const std::string& name) {
-    return Portfolio(name);
+void generatePortfolioFile(const Portfolio& portfolio, const std::string& filename) {
+    auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolio);
+    FileGenerator file(filename);
+    file.generateTxt(portfolioTxt);
+}
+
+void generatePortfolioFile(const PortfolioManager& portfolioMgr, const std::string& filename) {
+    auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolioMgr);
+    FileGenerator file(filename);
+    file.generateTxt(portfolioTxt);
+}
+
+void savePortfolio(const Portfolio& portfolio, const std::string& filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << portfolio.getName() << std::endl;
+        const std::vector<Investment>& investments = portfolio.getInvestments();
+        for (const Investment& investment : investments) {
+            file << investment.getName() << "," << investment.getTicker() << ","
+                 << investment.getPurchasePrice() << "," << investment.getQuantity() << std::endl;
+        }
+        std::cout << "Portfolio saved to " << filename << std::endl;
+    }
+    else {
+        std::cout << "Unable to open file for saving portfolio." << std::endl;
+    }
+    file.close();
+}
+
+void loadPortfolio(Portfolio& portfolio, const std::string& filename) {
+    std::ifstream file(filename);
+    portfolio.clearInvestments();
+    if (file.is_open()) {
+        std::string name, ticker, line;
+        double_t purchasePrice;
+        uint32_t quantity;
+        std::getline(file, name);
+        portfolio.setName(name);
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::getline(iss, name, ',');
+            std::getline(iss, ticker, ',');
+            iss >> purchasePrice;
+            iss.ignore();
+            iss >> quantity;
+            Investment investment(name, ticker, purchasePrice, quantity);
+            portfolio.addInvestment(investment);
+        }
+        std::cout << "Portfolio loaded from " << filename << std::endl;
+    }
+    else {
+        std::cout << "Unable to open file for load portfolio.\n";
+    }
+    file.close();
 }
 
 int main() {
@@ -83,13 +135,19 @@ int main() {
         generateFiles(mortgage, user_input);
     }
     else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
-        if (user_input.portfolio_manager.is_new) {
-            PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
-            executeMultiPortfolioManagement(portfolio_manager);
+        if (user_input.portfolio_manager.is_multi_prtfolio) {
+            if (user_input.portfolio_manager.is_new) {
+                PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
+                executeMultiPortfolioManagement(portfolio_manager);
+            }
+            else {
+                PortfolioManager portfolio_manager;
+                executeMultiPortfolioManagement(portfolio_manager);
+            }
         }
         else {
-            PortfolioManager portfolio_manager;
-            executeMultiPortfolioManagement(portfolio_manager);
+            Portfolio portfolio = Portfolio(user_input.portfolio_manager.name);
+            executePortfolioManagement(portfolio);
         }
     }
     return 0;

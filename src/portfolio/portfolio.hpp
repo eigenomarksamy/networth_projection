@@ -20,7 +20,10 @@ public:
     bool updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant);
     double_t calculateTotalValue() const;
     void displayPortfolio() const;
+    void clearInvestments();
+    void setName(const std::string& name) { m_name = name; }
     std::string getName() const { return m_name; }
+    std::vector<Investment> getInvestments() const { return m_investments; }
 };
 
 class PortfolioManager {

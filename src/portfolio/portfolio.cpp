@@ -45,6 +45,16 @@ void Portfolio::displayPortfolio() const {
     }
 }
 
+void Portfolio::clearInvestments() {
+    std::vector<std::string> tickers;
+    for (const auto& investment : m_investments) {
+        tickers.push_back(investment.getTicker());
+    }
+    for (const auto& ticker : tickers) {
+        (void) removeInvestment(ticker);
+    }
+}
+
 double_t Portfolio::calculateTotalValue() const {
     double_t totalValue = 0.0;
     for (const auto& investment : m_investments) {

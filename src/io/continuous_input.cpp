@@ -21,7 +21,7 @@ static int16_t selectPortfolio(const PortfolioManager& portfolio_manager) {
     return choice - 1;
 }
 
-static void executePortfolioManagement(Portfolio& portfolio) {
+void executePortfolioManagement(Portfolio& portfolio) {
     int32_t choice = 0;
     while (choice != 7) {
         std::cout << "---------------------------" << std::endl;

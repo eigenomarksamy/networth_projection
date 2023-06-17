@@ -190,11 +190,13 @@ void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data)
 
 void ConcretePortfolioManager::fillDefaults() {
     m_is_new = true;
+    m_is_multi_prtfolio = true;
     m_name = "My Investment Portfolio " + getLocalDateTime();
 }
 
 void ConcretePortfolioManager::getInputFromDefaults(InputDataContainer& input_data) {
     input_data.portfolio_manager.is_new = m_is_new;
+    input_data.portfolio_manager.is_multi_prtfolio = m_is_multi_prtfolio;
     input_data.portfolio_manager.name = m_name;
     input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
 }
@@ -203,6 +205,9 @@ void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) 
     getGenericInputParam(input_data.portfolio_manager.is_new,
                          m_is_new,
                          std::string("create new profile"));
+    getGenericInputParam(input_data.portfolio_manager.is_multi_prtfolio,
+                         m_is_multi_prtfolio,
+                         std::string("multi portfolio mode"));
     getGenericInputParam(input_data.portfolio_manager.name,
                          m_name,
                          std::string("name of profile"));

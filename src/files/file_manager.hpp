@@ -14,7 +14,7 @@ class FileGenerator {
 
 public:
 
-    FileGenerator(std::string& filename) : m_fileName(filename) {
+    FileGenerator(const std::string& filename) : m_fileName(filename) {
         m_file.open(filename);
     }
 

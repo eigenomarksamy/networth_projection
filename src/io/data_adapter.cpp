@@ -67,3 +67,31 @@ std::vector<std::string> DataAdapter::generateInputLines(const InputDataContaine
     }
     return lines;
 }
+
+std::vector<std::string> DataAdapter::generatePortfolioLines(const Portfolio& portfolioObj) {
+    std::vector<std::string> outLines;
+    const std::vector<Investment>& investments = portfolioObj.getInvestments();
+    for (const Investment& investment : investments) {
+        outLines.push_back("Name: " + investment.getName()
+                           + ", "
+                           + "Ticker: " + investment.getTicker()
+                           + ", "
+                           + "Purchase Price: "+ std::to_string(investment.getPurchasePrice())
+                           + ", "
+                           + "Quantity: " + std::to_string(investment.getQuantity())
+                           + '\n');
+    }
+    return outLines;
+}
+
+std::vector<std::string> DataAdapter::generatePortfolioLines(const PortfolioManager& portfolioMgrObj) {
+    std::vector<std::string> retGenLines;
+    for (auto i = 0; i < portfolioMgrObj.getNumPortfolios(); ++i) {
+        Portfolio& portfolio = portfolioMgrObj.getPortfolio(i);
+        auto tmpPortfolioLines = generatePortfolioLines(portfolio);
+        retGenLines.insert(retGenLines.end(),
+                           std::make_move_iterator(tmpPortfolioLines.begin()),
+                           std::make_move_iterator(tmpPortfolioLines.end()));
+    }
+    return retGenLines;
+}

@@ -60,6 +60,7 @@ struct InputDataMortgageCalculator {
 
 struct InputPortfolioManager {
     bool is_new;
+    bool is_multi_prtfolio;
     std::string name;
 };
 
@@ -123,6 +124,7 @@ public:
 
 class ConcretePortfolioManager : public Input {
     bool m_is_new;
+    bool m_is_multi_prtfolio;
     std::string m_name;
 
 public:
