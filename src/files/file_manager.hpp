@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 
-class FileHandler {
+class FileGenerator {
 
     bool checkFileExtension(std::string expExt);
 
@@ -14,11 +14,11 @@ class FileHandler {
 
 public:
 
-    FileHandler(std::string& filename) : m_fileName(filename) {
+    FileGenerator(std::string& filename) : m_fileName(filename) {
         m_file.open(filename);
     }
 
-    ~FileHandler() {
+    ~FileGenerator() {
         if (m_file.is_open()) {
             m_file.close();
         }

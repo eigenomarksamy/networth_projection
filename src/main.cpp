@@ -39,20 +39,20 @@ Mortgage computeMortgageData(const InputDataMortgageCalculator& userInput) {
 void generateDataCsv(const NetWorth netWorth, std::string fileName) {
     auto headers = DataAdapter::generateDataNames(netWorth);
     auto lines = DataAdapter::generateDataLines(netWorth);
-    FileHandler file_h(fileName);
+    FileGenerator file_h(fileName);
     file_h.generateCsv(headers, lines);
 }
 
 void generateDataCsv(const Mortgage mortgage, std::string fileName) {
     auto headers = DataAdapter::generateDataNames(mortgage);
     auto lines = DataAdapter::generateDataLines(mortgage);
-    FileHandler file_h(fileName);
+    FileGenerator file_h(fileName);
     file_h.generateCsv(headers, lines);
 }
 
 void generateInputTxt(const InputDataContainer& input, std::string fileName) {
     auto lines = DataAdapter::generateInputLines(input);
-    FileHandler file_h(fileName);
+    FileGenerator file_h(fileName);
     file_h.generateTxt(lines);
 }
 

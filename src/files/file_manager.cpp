@@ -3,7 +3,7 @@
 #include "file_manager.hpp"
 
 
-bool FileHandler::checkFileExtension(std::string expExt) {
+bool FileGenerator::checkFileExtension(std::string expExt) {
     if (m_fileName.size() < 3) {
         return false;
     }
@@ -12,7 +12,7 @@ bool FileHandler::checkFileExtension(std::string expExt) {
     return (act_ext == expExt);
 }
 
-void FileHandler::generateCsv(std::vector<std::string>& headers,
+void FileGenerator::generateCsv(std::vector<std::string>& headers,
                               std::vector<std::vector<std::string>>& lines) {
     if (m_file.is_open() && checkFileExtension(std::string("csv"))) {
         for (const auto& header : headers) {
@@ -28,7 +28,7 @@ void FileHandler::generateCsv(std::vector<std::string>& headers,
     }
 }
 
-void FileHandler::generateTxt(std::vector<std::string>& lines) {
+void FileGenerator::generateTxt(std::vector<std::string>& lines) {
     if (m_file.is_open() && checkFileExtension(std::string("txt"))) {
         for (const auto& line : lines) {
             m_file << line + "\n";
