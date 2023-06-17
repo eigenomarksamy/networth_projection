@@ -44,18 +44,23 @@ void Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newVa
 
 void PortfolioManager::executeManagement() {
     int32_t choice = 0;
-    while (choice != 6 &&
-        std::cout << "---------------------------" << std::endl &&
-        std::cout << "         MENU              " << std::endl &&
-        std::cout << "---------------------------" << std::endl &&
-        std::cout << "1. Add Investment" << std::endl &&
-        std::cout << "2. Remove Investment" << std::endl &&
-        std::cout << "3. Display Portfolio" << std::endl &&
-        std::cout << "4. Calculate Total Value" << std::endl &&
-        std::cout << "5. Update Investment Value" << std::endl &&
-        std::cout << "6. Exit" << std::endl &&
-        std::cout << "Enter your choice (1-6): " &&
-        (std::cin >> choice)) {
+    while (choice != 6) {
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "         MENU              " << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "1. Add Investment" << std::endl;
+        std::cout << "2. Remove Investment" << std::endl;
+        std::cout << "3. Display Portfolio" << std::endl;
+        std::cout << "4. Calculate Total Value" << std::endl;
+        std::cout << "5. Update Investment Value" << std::endl;
+        std::cout << "6. Exit" << std::endl;
+        std::cout << "Enter your choice (1-6): ";
+        if (!(std::cin >> choice)) {
+            std::cout << "Invalid input. Please enter a number." << std::endl;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
         switch (choice) {
             case 1: {
                 std::string name, ticker;
@@ -67,9 +72,19 @@ void PortfolioManager::executeManagement() {
                 std::cout << "Ticker: ";
                 std::cin >> ticker;
                 std::cout << "Purchase price: ";
-                std::cin >> purchasePrice;
+                if (!(std::cin >> purchasePrice)) {
+                    std::cout << "Invalid input. Please enter a number." << std::endl;
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    continue;
+                }
                 std::cout << "Quantity: ";
-                std::cin >> quantity;
+                if (!(std::cin >> quantity)) {
+                    std::cout << "Invalid input. Please enter an integer." << std::endl;
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    continue;
+                }
                 Investment newInvestment(name, ticker, purchasePrice, quantity);
                 m_portfolio->addInvestment(newInvestment);
                 std::cout << "Investment of '" << newInvestment.getTicker()
@@ -99,7 +114,12 @@ void PortfolioManager::executeManagement() {
                 std::cout << "Enter the ticker of the investment to be updated: ";
                 std::cin >> ticker;
                 std::cout << "Enter the new value: ";
-                std::cin >> newValue;
+                if (!(std::cin >> newValue)) {
+                    std::cout << "Invalid input. Please enter a number." << std::endl;
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    continue;
+                }
                 m_portfolio->updatedInvestmentValue(ticker, newValue);
                 std::cout << "Investment value was updated.\n";
                 break;
