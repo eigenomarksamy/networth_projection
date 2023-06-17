@@ -1,11 +1,12 @@
 #include <iostream>
+#include <string>
 #include "continuous_input.hpp"
 #include "input_handler.hpp"
 
-int16_t selectPortfolio(PortfolioManager& portfolio_manager) {
+static int16_t selectPortfolio(const PortfolioManager& portfolio_manager) {
     uint16_t choice = 0;
     std::cout << "There are " << portfolio_manager.getNumPortfolios() << " portfolios" << std::endl;
-    std::cout << "Please select from this list:\n";
+    std::cout << "Please select portfolio from this list:\n";
     for (auto i = 0; i < portfolio_manager.getNumPortfolios(); ++i) {
         std::cout << "Portfolio ID: " << i + 1
                   << ", Name: " << portfolio_manager.getPortfolio(i).getName()
@@ -20,7 +21,7 @@ int16_t selectPortfolio(PortfolioManager& portfolio_manager) {
     return choice - 1;
 }
 
-void executePortfolioManagement(Portfolio& portfolio) {
+static void executePortfolioManagement(Portfolio& portfolio) {
     int32_t choice = 0;
     while (choice != 7) {
         std::cout << "---------------------------" << std::endl;
@@ -32,7 +33,7 @@ void executePortfolioManagement(Portfolio& portfolio) {
         std::cout << "4. Calculate Total Value" << std::endl;
         std::cout << "5. Update Investment Value" << std::endl;
         std::cout << "6. Update Investment Quantity" << std::endl;
-        std::cout << "7. Exit" << std::endl;
+        std::cout << "7. Return to portfolio menu" << std::endl;
         std::cout << "Enter your choice (1-7): ";
         if (!validateInputType(choice)) {
             continue;
@@ -127,6 +128,63 @@ void executePortfolioManagement(Portfolio& portfolio) {
                 break;
             }
             case 7: {
+                std::cout << "Returning..\n";
+                break;
+            }
+            default: {
+                std::cout << "Invalid choice. Please try again.\n";
+                break;
+            }
+        }
+    }
+}
+
+void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr) {
+    int32_t choice = 0;
+    while (choice != 4) {
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "         MENU              " << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "1. Create Portfolio" << std::endl;
+        std::cout << "2. Delete Portfolio" << std::endl;
+        std::cout << "3. Select Portfolio" << std::endl;
+        std::cout << "4. Exit" << std::endl;
+        std::cout << "Enter your choice (1-4): ";
+        if (!validateInputType(choice)) {
+            continue;
+        }
+        switch (choice) {
+            case 1: {
+                std::string name;
+                std::cout << "Enter new portfolio name: ";
+                std::cin >> name;
+                if (portfolio_mngr.addPortfolio(name)) {
+                    std::cout << "Portfolio created successfully.\n";
+                }
+                else {
+                    std::cout << "Portfolio found with the same name.\n";
+                }
+                break;
+            }
+            case 2: {
+                std::string name;
+                std::cout << "Enter portfolio name: ";
+                std::cin >> name;
+                if (portfolio_mngr.removePortfolio(name)) {
+                    std::cout << "Portfolio deleted successfully.\n";
+                }
+                else {
+                    std::cout << "Portfolio couldn't be found with the name.\n";
+                }
+                break;
+            }
+            case 3: {
+                auto portfolio_idx = selectPortfolio(portfolio_mngr);
+                Portfolio& portfolio = portfolio_mngr.getPortfolio(portfolio_idx);
+                executePortfolioManagement(portfolio);
+                break;
+            }
+            case 4: {
                 std::cout << "Exiting..\n";
                 break;
             }

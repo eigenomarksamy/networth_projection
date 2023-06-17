@@ -83,10 +83,14 @@ int main() {
         generateFiles(mortgage, user_input);
     }
     else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
-        PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
-        auto portfolio_idx = selectPortfolio(portfolio_manager);
-        Portfolio portfolio = portfolio_manager.getPortfolio(portfolio_idx);
-        executePortfolioManagement(portfolio);
+        if (user_input.portfolio_manager.is_new) {
+            PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
+            executeMultiPortfolioManagement(portfolio_manager);
+        }
+        else {
+            PortfolioManager portfolio_manager;
+            executeMultiPortfolioManagement(portfolio_manager);
+        }
     }
     return 0;
 }

@@ -3,8 +3,6 @@
 
 #include "portfolio.hpp"
 
-int16_t selectPortfolio(PortfolioManager& portfolio_manager);
-
-void executePortfolioManagement(Portfolio& portfolio);
+void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr);
 
 #endif /* CONTINUOUS_INPUT_HPP_ */

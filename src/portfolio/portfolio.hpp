@@ -29,6 +29,8 @@ class PortfolioManager {
 
 public:
 
+    PortfolioManager() { }
+
     PortfolioManager(const std::string& portfolio_name) {
         m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
     }
@@ -44,6 +46,10 @@ public:
             portfolio_ptr.reset(nullptr);
         }
     }
+
+    bool addPortfolio(const std::string& portfolio_name);
+
+    bool removePortfolio(const std::string& portfolio_name);
 
     uint16_t getNumPortfolios() const {
         return static_cast<uint16_t>(m_portfolios.size());

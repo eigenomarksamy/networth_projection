@@ -76,3 +76,25 @@ bool Portfolio::updateInvestmentQuantity(const std::string& ticker, uint32_t new
     }
     return retVal;
 }
+
+bool PortfolioManager::addPortfolio(const std::string& portfolio_name) {
+    for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
+        if (it->get()->getName() == portfolio_name) {
+            return false;
+        }
+    }
+    m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
+    return true;
+}
+
+bool PortfolioManager::removePortfolio(const std::string& portfolio_name) {
+    bool retVal = false;
+    for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
+        if (it->get()->getName() == portfolio_name) {
+            m_portfolios.erase(it);
+            retVal = true;
+            break;
+        }
+    }
+    return retVal;
+}
