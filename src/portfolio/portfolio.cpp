@@ -1,5 +1,6 @@
 #include <iostream>
 #include "portfolio.hpp"
+#include "utils.hpp"
 
 void Portfolio::addInvestment(const Investment& investment) {
     m_investments.push_back(investment);
@@ -55,10 +56,7 @@ void PortfolioManager::executeManagement() {
         std::cout << "5. Update Investment Value" << std::endl;
         std::cout << "6. Exit" << std::endl;
         std::cout << "Enter your choice (1-6): ";
-        if (!(std::cin >> choice)) {
-            std::cout << "Invalid input. Please enter a number." << std::endl;
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (!validateInputType(choice)) {
             continue;
         }
         switch (choice) {
@@ -72,17 +70,11 @@ void PortfolioManager::executeManagement() {
                 std::cout << "Ticker: ";
                 std::cin >> ticker;
                 std::cout << "Purchase price: ";
-                if (!(std::cin >> purchasePrice)) {
-                    std::cout << "Invalid input. Please enter a number." << std::endl;
-                    std::cin.clear();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                if (!validateInputType(purchasePrice)) {
                     continue;
                 }
                 std::cout << "Quantity: ";
-                if (!(std::cin >> quantity)) {
-                    std::cout << "Invalid input. Please enter an integer." << std::endl;
-                    std::cin.clear();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                if (!validateInputType(quantity)) {
                     continue;
                 }
                 Investment newInvestment(name, ticker, purchasePrice, quantity);
@@ -114,10 +106,7 @@ void PortfolioManager::executeManagement() {
                 std::cout << "Enter the ticker of the investment to be updated: ";
                 std::cin >> ticker;
                 std::cout << "Enter the new value: ";
-                if (!(std::cin >> newValue)) {
-                    std::cout << "Invalid input. Please enter a number." << std::endl;
-                    std::cin.clear();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                if (!validateInputType(newValue)) {
                     continue;
                 }
                 m_portfolio->updatedInvestmentValue(ticker, newValue);
