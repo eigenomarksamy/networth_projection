@@ -4,6 +4,19 @@
 #include <math.h>
 #include <stdint.h>
 #include <vector>
+#include <iostream>
+
+template<typename T>
+bool validateInputType(T& input) {
+    bool retVal = true;
+    if (!(std::cin >> input)) {
+        std::cout << "Invalid input. Please correct type." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        retVal = false;
+    }
+    return retVal;
+}
 
 struct InputDataNetworthProjector {
     uint32_t init_nw;
