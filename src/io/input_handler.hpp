@@ -18,6 +18,24 @@ bool validateInputType(T& input) {
     return retVal;
 }
 
+template<typename T>
+bool validateInputRange(T& input, const T& start, const T& end) {
+    bool retVal = true;
+    if (!(std::cin >> input)) {
+        std::cout << "Invalid input. Please correct type." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        retVal = false;
+    }
+    else if ((input < start) || (input > end)) {
+        std::cout << "Invalid input. Please correct range." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        retVal = false;
+    }
+    return retVal;
+}
+
 struct InputDataNetworthProjector {
     uint32_t init_nw;
     uint32_t year_income;

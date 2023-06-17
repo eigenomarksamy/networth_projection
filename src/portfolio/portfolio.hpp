@@ -20,18 +20,39 @@ public:
     bool updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant);
     double_t calculateTotalValue() const;
     void displayPortfolio() const;
+    std::string getName() const { return m_name; }
 };
 
 class PortfolioManager {
-    std::unique_ptr<Portfolio> m_portfolio;
-public:
-    PortfolioManager(const std::string& portfolio_name) :
-        m_portfolio(std::make_unique<Portfolio>(portfolio_name)) {}
-    ~PortfolioManager() {
-        m_portfolio.reset(nullptr);
-    }
-    void executeManagement();
-};
 
+    std::vector<std::unique_ptr<Portfolio>> m_portfolios;
+
+public:
+
+    PortfolioManager(const std::string& portfolio_name) {
+        m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
+    }
+
+    PortfolioManager(const std::vector<std::string>& portfolios_names) {
+        for (const auto& portfolio_name : portfolios_names) {
+            m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
+        }
+    }
+
+    ~PortfolioManager() {
+        for (auto& portfolio_ptr : m_portfolios) {
+            portfolio_ptr.reset(nullptr);
+        }
+    }
+
+    uint16_t getNumPortfolios() const {
+        return static_cast<uint16_t>(m_portfolios.size());
+    }
+
+    Portfolio& getPortfolio(uint16_t portfolio_idx) const {
+        return *(m_portfolios[portfolio_idx]);
+    }
+
+};
 
 #endif /* PORTFOLIO_HPP_ */

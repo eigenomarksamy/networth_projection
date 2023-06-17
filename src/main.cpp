@@ -9,6 +9,7 @@
 #include "input_handler.hpp"
 #include "portfolio.hpp"
 #include "utils.hpp"
+#include "continuous_input.hpp"
 
 NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
     NetWorth networth(userInput.init_nw, userInput.year_income,
@@ -83,7 +84,9 @@ int main() {
     }
     else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
         PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
-        portfolio_manager.executeManagement();
+        auto portfolio_idx = selectPortfolio(portfolio_manager);
+        Portfolio portfolio = portfolio_manager.getPortfolio(portfolio_idx);
+        executePortfolioManagement(portfolio);
     }
     return 0;
 }

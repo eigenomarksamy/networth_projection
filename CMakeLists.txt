@@ -8,6 +8,7 @@ set(SOURCE_FILES
     src/portfolio/portfolio.cpp
     src/files/file_manager.cpp
     src/io/input_handler.cpp
+    src/io/continuous_input.cpp
     src/io/data_adapter.cpp
     src/utils/utils.cpp
     src/main.cpp
