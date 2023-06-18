@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <iterator>
+#include <filesystem>
+#include <iostream>
 #include "file_manager.hpp"
 
 
@@ -34,4 +36,14 @@ void FileGenerator::generateTxt(std::vector<std::string>& lines) {
             m_file << line + "\n";
         }
     }
+}
+
+std::vector<std::string> getFileNames(const std::string& directoryPath) {
+    std::vector<std::string> fileNames;
+    for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
+        if (entry.is_regular_file()) {
+            fileNames.push_back(entry.path().filename().string());
+        }
+    }
+    return fileNames;
 }

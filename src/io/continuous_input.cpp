@@ -6,18 +6,20 @@
 static int16_t selectPortfolio(const PortfolioManager& portfolio_manager) {
     uint16_t choice = 0;
     std::cout << "There are " << portfolio_manager.getNumPortfolios() << " portfolios" << std::endl;
-    std::cout << "Please select portfolio from this list:\n";
-    for (auto i = 0; i < portfolio_manager.getNumPortfolios(); ++i) {
-        std::cout << "Portfolio ID: " << i + 1
-                  << ", Name: " << portfolio_manager.getPortfolio(i).getName()
-                  << std::endl;
+    if (portfolio_manager.getNumPortfolios() > 0) {
+        std::cout << "Please select portfolio from this list:\n";
+        for (auto i = 0; i < portfolio_manager.getNumPortfolios(); ++i) {
+            std::cout << "Portfolio ID: " << i + 1
+                    << ", Name: " << portfolio_manager.getPortfolio(i).getName()
+                    << std::endl;
+        }
+        do {
+            std::cout << "Enter your choice (1-"
+                    << portfolio_manager.getNumPortfolios()
+                    << "): ";
+        }
+        while (!validateInputRange(choice, (uint16_t)0, portfolio_manager.getNumPortfolios()));
     }
-    do {
-        std::cout << "Enter your choice (1-"
-                << portfolio_manager.getNumPortfolios()
-                << "): ";
-    }
-    while (!validateInputRange(choice, (uint16_t)0, portfolio_manager.getNumPortfolios()));
     return choice - 1;
 }
 
@@ -180,8 +182,13 @@ void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr) {
             }
             case 3: {
                 auto portfolio_idx = selectPortfolio(portfolio_mngr);
-                Portfolio& portfolio = portfolio_mngr.getPortfolio(portfolio_idx);
-                executePortfolioManagement(portfolio);
+                if (portfolio_idx >= 0) {
+                    Portfolio& portfolio = portfolio_mngr.getPortfolio(portfolio_idx);
+                    executePortfolioManagement(portfolio);
+                }
+                else {
+                    std::cout << "No portfolios to select from.\n";
+                }
                 break;
             }
             case 4: {
