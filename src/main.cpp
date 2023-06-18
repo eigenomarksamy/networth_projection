@@ -58,24 +58,24 @@ void generateInputTxt(const InputDataContainer& input, std::string fileName) {
 }
 
 void generateFiles(const NetWorth& net_worth, const InputDataContainer& user_input) {
-    generateDataCsv(net_worth, "gen\\nw_data_out.csv");
-    generateInputTxt(user_input, "gen\\nw_input.txt");
+    generateDataCsv(net_worth, "gen/nw_data_out.csv");
+    generateInputTxt(user_input, "gen/nw_input.txt");
 }
 
 void generateFiles(const Mortgage& mortgage, const InputDataContainer& user_input) {
-    generateDataCsv(mortgage, "gen\\mortgage_data_out.csv");
-    generateInputTxt(user_input, "gen\\mortgage_input.txt");
+    generateDataCsv(mortgage, "gen/mortgage_data_out.csv");
+    generateInputTxt(user_input, "gen/mortgage_input.txt");
 }
 
 void generatePortfolioFiles(const PortfolioManager& portfolioMgr) {
     for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
         auto portfolio = portfolioMgr.getPortfolio(i);
-        savePortfolio(portfolio, "gen\\portfolios\\" + portfolio.getName());
+        savePortfolio(portfolio, "gen/portfolios/" + portfolio.getName());
     }
 }
 
 void generatePortfolioFiles(const Portfolio& portfolio) {
-    savePortfolio(portfolio, "gen\\portfolios\\" + portfolio.getName());
+    savePortfolio(portfolio, "gen/portfolios/" + portfolio.getName());
 }
 
 void generatePortfolioOverview(const Portfolio& portfolio, const std::string& filename) {
@@ -93,7 +93,7 @@ void generatePortfolioOverview(const PortfolioManager& portfolioMgr, const std::
 }
 
 bool getPortfolioFromFiles(Portfolio& portfolio, const std::string& name) {
-    return loadPortfolio(portfolio, "gen\\portfolios\\" + name);
+    return loadPortfolio(portfolio, "gen/portfolios/" + name);
 }
 
 bool getPortfolioFromFiles(PortfolioManager& portfolioMgr, const std::vector<std::string>& names) {
