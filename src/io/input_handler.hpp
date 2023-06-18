@@ -62,6 +62,7 @@ struct InputPortfolioManager {
     bool is_new;
     bool is_multi_prtfolio;
     std::string name;
+    std::vector<std::string> portfolio_list;
 };
 
 struct InputDataContainer {
@@ -96,7 +97,6 @@ class ConcreteNetworthProjector : public Input {
     float_t m_port_yearly_ret;
     float_t m_port_fees;
     float_t m_inv_yearly;
-    std::vector<std::vector<float_t>> m_year_to_amount;
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;

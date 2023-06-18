@@ -71,15 +71,11 @@ std::vector<std::string> DataAdapter::generateInputLines(const InputDataContaine
 std::vector<std::string> DataAdapter::generatePortfolioLines(const Portfolio& portfolioObj) {
     std::vector<std::string> outLines;
     const std::vector<Investment>& investments = portfolioObj.getInvestments();
+    outLines.push_back(portfolioObj.getName());
     for (const Investment& investment : investments) {
-        outLines.push_back("Name: " + investment.getName()
-                           + ", "
-                           + "Ticker: " + investment.getTicker()
-                           + ", "
-                           + "Purchase Price: "+ std::to_string(investment.getPurchasePrice())
-                           + ", "
-                           + "Quantity: " + std::to_string(investment.getQuantity())
-                           + '\n');
+        outLines.push_back(investment.getName() + "," + investment.getTicker()
+                           + "," + std::to_string(investment.getPurchasePrice())
+                           + ","+ std::to_string(investment.getQuantity()));
     }
     return outLines;
 }

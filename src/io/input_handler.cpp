@@ -208,9 +208,16 @@ void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) 
     getGenericInputParam(input_data.portfolio_manager.is_multi_prtfolio,
                          m_is_multi_prtfolio,
                          std::string("multi portfolio mode"));
-    getGenericInputParam(input_data.portfolio_manager.name,
-                         m_name,
-                         std::string("name of profile"));
+    if (!input_data.portfolio_manager.is_multi_prtfolio) {
+        getGenericInputParam(input_data.portfolio_manager.name,
+                            m_name,
+                            std::string("name of portfolio"));
+    }
+    if (!input_data.portfolio_manager.is_new
+        && input_data.portfolio_manager.is_multi_prtfolio) {
+        getGenericInputParam(input_data.portfolio_manager.portfolio_list,
+                            std::string("portfolios names"));
+    }
     input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
 }
 

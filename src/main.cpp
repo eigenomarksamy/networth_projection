@@ -67,60 +67,48 @@ void generateFiles(const Mortgage& mortgage, const InputDataContainer& user_inpu
     generateInputTxt(user_input, "gen\\mortgage_input.txt");
 }
 
-void generatePortfolioFile(const Portfolio& portfolio, const std::string& filename) {
+void generatePortfolioFiles(const PortfolioManager& portfolioMgr) {
+    for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
+        auto portfolio = portfolioMgr.getPortfolio(i);
+        savePortfolio(portfolio, "gen\\portfolios\\" + portfolio.getName());
+    }
+}
+
+void generatePortfolioFiles(const Portfolio& portfolio) {
+    savePortfolio(portfolio, "gen\\portfolios\\" + portfolio.getName());
+}
+
+void generatePortfolioOverview(const Portfolio& portfolio, const std::string& filename) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolio);
     FileGenerator file(filename);
     file.generateTxt(portfolioTxt);
+    generatePortfolioFiles(portfolio);
 }
 
-void generatePortfolioFile(const PortfolioManager& portfolioMgr, const std::string& filename) {
+void generatePortfolioOverview(const PortfolioManager& portfolioMgr, const std::string& filename) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolioMgr);
     FileGenerator file(filename);
     file.generateTxt(portfolioTxt);
+    generatePortfolioFiles(portfolioMgr);
 }
 
-void savePortfolio(const Portfolio& portfolio, const std::string& filename) {
-    std::ofstream file(filename);
-    if (file.is_open()) {
-        file << portfolio.getName() << std::endl;
-        const std::vector<Investment>& investments = portfolio.getInvestments();
-        for (const Investment& investment : investments) {
-            file << investment.getName() << "," << investment.getTicker() << ","
-                 << investment.getPurchasePrice() << "," << investment.getQuantity() << std::endl;
-        }
-        std::cout << "Portfolio saved to " << filename << std::endl;
-    }
-    else {
-        std::cout << "Unable to open file for saving portfolio." << std::endl;
-    }
-    file.close();
+bool getPortfolioFromFiles(Portfolio& portfolio, const std::string& name) {
+    return loadPortfolio(portfolio, "gen\\portfolios\\" + name);
 }
 
-void loadPortfolio(Portfolio& portfolio, const std::string& filename) {
-    std::ifstream file(filename);
-    portfolio.clearInvestments();
-    if (file.is_open()) {
-        std::string name, ticker, line;
-        double_t purchasePrice;
-        uint32_t quantity;
-        std::getline(file, name);
-        portfolio.setName(name);
-        while (std::getline(file, line)) {
-            std::istringstream iss(line);
-            std::getline(iss, name, ',');
-            std::getline(iss, ticker, ',');
-            iss >> purchasePrice;
-            iss.ignore();
-            iss >> quantity;
-            Investment investment(name, ticker, purchasePrice, quantity);
-            portfolio.addInvestment(investment);
+bool getPortfolioFromFiles(PortfolioManager& portfolioMgr, const std::vector<std::string>& names) {
+    bool status = true;
+    for (const auto& name : names) {
+        Portfolio portfolio;
+        if (getPortfolioFromFiles(portfolio, name)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
         }
-        std::cout << "Portfolio loaded from " << filename << std::endl;
+        else {
+            status = false;
+        }
     }
-    else {
-        std::cout << "Unable to open file for load portfolio.\n";
-    }
-    file.close();
+    return status;
 }
 
 int main() {
@@ -139,15 +127,31 @@ int main() {
             if (user_input.portfolio_manager.is_new) {
                 PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
                 executeMultiPortfolioManagement(portfolio_manager);
+                generatePortfolioOverview(portfolio_manager, "gen\\portfolios_overview.txt");
             }
             else {
+                // <TODO>: bug #26
                 PortfolioManager portfolio_manager;
-                executeMultiPortfolioManagement(portfolio_manager);
+                if (getPortfolioFromFiles(portfolio_manager, user_input.portfolio_manager.portfolio_list)) {
+                    executeMultiPortfolioManagement(portfolio_manager);
+                    generatePortfolioOverview(portfolio_manager, "gen\\portfolios_overview.txt");
+                }
             }
         }
         else {
-            Portfolio portfolio = Portfolio(user_input.portfolio_manager.name);
-            executePortfolioManagement(portfolio);
+            if (user_input.portfolio_manager.is_new) {
+                Portfolio portfolio = Portfolio(user_input.portfolio_manager.name);
+                executePortfolioManagement(portfolio);
+                generatePortfolioOverview(portfolio, "gen\\portfolios_overview.txt");
+            }
+            else {
+                // <TODO>: bug #26
+                Portfolio portfolio;
+                if (getPortfolioFromFiles(portfolio, user_input.portfolio_manager.name)) {
+                    executePortfolioManagement(portfolio);
+                    generatePortfolioOverview(portfolio, "gen\\portfolios_overview.txt");
+                }
+            }
         }
     }
     return 0;

@@ -12,7 +12,12 @@ private:
     std::vector<Investment> m_investments;
 
 public:
+    Portfolio() {}
     Portfolio(const std::string& name) : m_name(name) {}
+    Portfolio(const Portfolio& other) {
+        m_name = other.m_name;
+        m_investments = other.m_investments;
+    }
 
     bool addInvestment(const Investment& investment);
     bool removeInvestment(const std::string& ticker);
@@ -50,6 +55,8 @@ public:
         }
     }
 
+    void addPortfolio(Portfolio& portfolio);
+
     bool addPortfolio(const std::string& portfolio_name);
 
     bool removePortfolio(const std::string& portfolio_name);
@@ -63,5 +70,9 @@ public:
     }
 
 };
+
+void savePortfolio(const Portfolio& portfolio, const std::string& filename);
+
+bool loadPortfolio(Portfolio& portfolio, const std::string& filename);
 
 #endif /* PORTFOLIO_HPP_ */

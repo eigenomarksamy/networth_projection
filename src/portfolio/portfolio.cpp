@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "portfolio.hpp"
 #include "input_handler.hpp"
 
@@ -87,6 +89,10 @@ bool Portfolio::updateInvestmentQuantity(const std::string& ticker, uint32_t new
     return retVal;
 }
 
+void PortfolioManager::addPortfolio(Portfolio& portfolio) {
+    m_portfolios.push_back(std::make_unique<Portfolio>(portfolio));
+}
+
 bool PortfolioManager::addPortfolio(const std::string& portfolio_name) {
     for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
         if (it->get()->getName() == portfolio_name) {
@@ -107,4 +113,51 @@ bool PortfolioManager::removePortfolio(const std::string& portfolio_name) {
         }
     }
     return retVal;
+}
+
+void savePortfolio(const Portfolio& portfolio, const std::string& filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << portfolio.getName() << std::endl;
+        const std::vector<Investment>& investments = portfolio.getInvestments();
+        for (const Investment& investment : investments) {
+            file << investment.getName() << "," << investment.getTicker() << ","
+                 << investment.getPurchasePrice() << "," << investment.getQuantity() << std::endl;
+        }
+        std::cout << "Portfolio saved to " << filename << std::endl;
+    }
+    else {
+        std::cout << "Unable to open file for saving portfolio." << std::endl;
+    }
+    file.close();
+}
+
+bool loadPortfolio(Portfolio& portfolio, const std::string& filename) {
+    bool status = true;
+    std::ifstream file(filename);
+    portfolio.clearInvestments();
+    if (file.is_open()) {
+        std::string name, ticker, line;
+        double_t purchasePrice;
+        uint32_t quantity;
+        std::getline(file, name);
+        portfolio.setName(name);
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::getline(iss, name, ',');
+            std::getline(iss, ticker, ',');
+            iss >> purchasePrice;
+            iss.ignore();
+            iss >> quantity;
+            Investment investment(name, ticker, purchasePrice, quantity);
+            portfolio.addInvestment(investment);
+        }
+        std::cout << "Portfolio loaded from " << filename << std::endl;
+    }
+    else {
+        status = false;
+        std::cout << "Unable to open file for load portfolio.\n";
+    }
+    file.close();
+    return status;
 }
