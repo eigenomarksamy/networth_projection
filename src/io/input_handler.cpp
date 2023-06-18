@@ -191,7 +191,8 @@ void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data)
 void ConcretePortfolioManager::fillDefaults() {
     m_is_new = true;
     m_is_multi_prtfolio = true;
-    m_name = "My Investment Portfolio " + getLocalDateTime();
+    m_load_all_portfolios = true;
+    m_name = "MyInvestmentPortfolio_" + getLocalDateTime();
 }
 
 void ConcretePortfolioManager::getInputFromDefaults(InputDataContainer& input_data) {
@@ -215,8 +216,13 @@ void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) 
     }
     if (!input_data.portfolio_manager.is_new
         && input_data.portfolio_manager.is_multi_prtfolio) {
-        getGenericInputParam(input_data.portfolio_manager.portfolio_list,
-                            std::string("portfolios names"));
+        getGenericInputParam(input_data.portfolio_manager.load_all_portfolios,
+                            m_load_all_portfolios,
+                            std::string("load all portfolios"));
+        if (!input_data.portfolio_manager.load_all_portfolios) {
+            getGenericInputParam(input_data.portfolio_manager.portfolio_list,
+                                std::string("portfolios names"));
+        }
     }
     input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
 }
@@ -243,7 +249,7 @@ void CreatorInput::getDataFromUser(InputDataContainer& input_data) const {
         std::cout << GenericInputMode::SingleValueSingleData;
         std::cout << ": Enter a single value, then new line to move on.\n";
         std::cout << GenericInputMode::MultipleValuesSingleData;
-        std::cout << ": Enter multiple single values (comma seperated), "
+        std::cout << ": Enter multiple single values (space seperated), "
                   << "and new line to finish and move on.\n";
         std::cout << GenericInputMode::MultipleValuesMultipleData;
         std::cout << ": Enter multiple multiple values, "

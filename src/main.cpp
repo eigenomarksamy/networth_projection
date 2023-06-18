@@ -78,16 +78,16 @@ void generatePortfolioFiles(const Portfolio& portfolio) {
     savePortfolio(portfolio, "gen/portfolios/" + portfolio.getName());
 }
 
-void generatePortfolioOverview(const Portfolio& portfolio, const std::string& filename) {
+void generatePortfolioOverview(const Portfolio& portfolio) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolio);
-    FileGenerator file(filename);
+    FileGenerator file("gen\\portfolios_overview.txt");
     file.generateTxt(portfolioTxt);
     generatePortfolioFiles(portfolio);
 }
 
-void generatePortfolioOverview(const PortfolioManager& portfolioMgr, const std::string& filename) {
+void generatePortfolioOverview(const PortfolioManager& portfolioMgr) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolioMgr);
-    FileGenerator file(filename);
+    FileGenerator file("gen\\portfolios_overview.txt");
     file.generateTxt(portfolioTxt);
     generatePortfolioFiles(portfolioMgr);
 }
@@ -96,8 +96,16 @@ bool getPortfolioFromFiles(Portfolio& portfolio, const std::string& name) {
     return loadPortfolio(portfolio, "gen/portfolios/" + name);
 }
 
-bool getPortfolioFromFiles(PortfolioManager& portfolioMgr, const std::vector<std::string>& names) {
+bool getPortfolioFromFiles(PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios) {
     bool status = true;
+    std::string directoryPath = "gen/portfolios";
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
     for (const auto& name : names) {
         Portfolio portfolio;
         if (getPortfolioFromFiles(portfolio, name)) {
@@ -125,16 +133,17 @@ int main() {
     else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
         if (user_input.portfolio_manager.is_multi_prtfolio) {
             if (user_input.portfolio_manager.is_new) {
-                PortfolioManager portfolio_manager(user_input.portfolio_manager.name);
+                PortfolioManager portfolio_manager;
                 executeMultiPortfolioManagement(portfolio_manager);
-                generatePortfolioOverview(portfolio_manager, "gen\\portfolios_overview.txt");
+                generatePortfolioOverview(portfolio_manager);
             }
             else {
-                // <TODO>: bug #26
                 PortfolioManager portfolio_manager;
-                if (getPortfolioFromFiles(portfolio_manager, user_input.portfolio_manager.portfolio_list)) {
+                if (getPortfolioFromFiles(portfolio_manager,
+                                          user_input.portfolio_manager.load_all_portfolios,
+                                          user_input.portfolio_manager.portfolio_list)) {
                     executeMultiPortfolioManagement(portfolio_manager);
-                    generatePortfolioOverview(portfolio_manager, "gen\\portfolios_overview.txt");
+                    generatePortfolioOverview(portfolio_manager);
                 }
             }
         }
@@ -142,14 +151,14 @@ int main() {
             if (user_input.portfolio_manager.is_new) {
                 Portfolio portfolio = Portfolio(user_input.portfolio_manager.name);
                 executePortfolioManagement(portfolio);
-                generatePortfolioOverview(portfolio, "gen\\portfolios_overview.txt");
+                generatePortfolioOverview(portfolio);
             }
             else {
                 // <TODO>: bug #26
                 Portfolio portfolio;
                 if (getPortfolioFromFiles(portfolio, user_input.portfolio_manager.name)) {
                     executePortfolioManagement(portfolio);
-                    generatePortfolioOverview(portfolio, "gen\\portfolios_overview.txt");
+                    generatePortfolioOverview(portfolio);
                 }
             }
         }

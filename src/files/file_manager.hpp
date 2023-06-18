@@ -31,4 +31,6 @@ public:
 
 };
 
+std::vector<std::string> getFileNames(const std::string& directoryPath);
+
 #endif /* FILE_MANAGER_HPP_ */
