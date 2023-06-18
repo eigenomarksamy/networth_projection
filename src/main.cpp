@@ -96,13 +96,18 @@ bool getPortfolioFromFiles(Portfolio& portfolio, const std::string& name) {
     return loadPortfolio(portfolio, "gen/portfolios/" + name);
 }
 
-bool getPortfolioFromFiles(PortfolioManager& portfolioMgr) {
+bool getPortfolioFromFiles(PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios) {
     bool status = true;
     std::string directoryPath = "gen/portfolios";
-    std::vector<std::string> names = getFileNames(directoryPath);
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
     for (const auto& name : names) {
         Portfolio portfolio;
-        std::cout << "Full path from here: " << directoryPath + "/" + name << std::endl;
         if (getPortfolioFromFiles(portfolio, name)) {
             portfolioMgr.addPortfolio(portfolio);
             status &= true;
@@ -134,7 +139,9 @@ int main() {
             }
             else {
                 PortfolioManager portfolio_manager;
-                if (getPortfolioFromFiles(portfolio_manager)) {
+                if (getPortfolioFromFiles(portfolio_manager,
+                                          user_input.portfolio_manager.load_all_portfolios,
+                                          user_input.portfolio_manager.portfolio_list)) {
                     executeMultiPortfolioManagement(portfolio_manager);
                     generatePortfolioOverview(portfolio_manager);
                 }

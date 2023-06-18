@@ -14,5 +14,5 @@ std::string getLocalDateTime(const char format[]) {
 }
 
 std::string getLocalDateTime() {
-    return getLocalDateTime("%d-%m-%Y %H-%M-%S");
+    return getLocalDateTime("%d-%m-%Y_%H-%M-%S");
 }
