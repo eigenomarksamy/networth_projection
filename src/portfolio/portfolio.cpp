@@ -1,6 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "portfolio.hpp"
-#include "utils.hpp"
+#include "input_handler.hpp"
 
 bool Portfolio::addInvestment(const Investment& investment) {
     bool retVal = false;
@@ -45,6 +47,16 @@ void Portfolio::displayPortfolio() const {
     }
 }
 
+void Portfolio::clearInvestments() {
+    std::vector<std::string> tickers;
+    for (const auto& investment : m_investments) {
+        tickers.push_back(investment.getTicker());
+    }
+    for (const auto& ticker : tickers) {
+        (void) removeInvestment(ticker);
+    }
+}
+
 double_t Portfolio::calculateTotalValue() const {
     double_t totalValue = 0.0;
     for (const auto& investment : m_investments) {
@@ -77,120 +89,75 @@ bool Portfolio::updateInvestmentQuantity(const std::string& ticker, uint32_t new
     return retVal;
 }
 
-void PortfolioManager::executeManagement() {
-    int32_t choice = 0;
-    while (choice != 7) {
-        std::cout << "---------------------------" << std::endl;
-        std::cout << "         MENU              " << std::endl;
-        std::cout << "---------------------------" << std::endl;
-        std::cout << "1. Add Investment" << std::endl;
-        std::cout << "2. Remove Investment" << std::endl;
-        std::cout << "3. Display Portfolio" << std::endl;
-        std::cout << "4. Calculate Total Value" << std::endl;
-        std::cout << "5. Update Investment Value" << std::endl;
-        std::cout << "6. Update Investment Quantity" << std::endl;
-        std::cout << "7. Exit" << std::endl;
-        std::cout << "Enter your choice (1-7): ";
-        if (!validateInputType(choice)) {
-            continue;
-        }
-        switch (choice) {
-            case 1: {
-                std::string name, ticker;
-                double_t purchasePrice;
-                uint32_t quantity;
-                std::cout << "Enter investment details:\n";
-                std::cout << "Name: ";
-                std::cin >> name;
-                std::cout << "Ticker: ";
-                std::cin >> ticker;
-                std::cout << "Purchase price: ";
-                if (!validateInputType(purchasePrice)) {
-                    continue;
-                }
-                std::cout << "Quantity: ";
-                if (!validateInputType(quantity)) {
-                    continue;
-                }
-                Investment newInvestment(name, ticker, purchasePrice, quantity);
-                if (m_portfolio->addInvestment(newInvestment)) {
-                    std::cout << "Investment of '" << newInvestment.getTicker()
-                              << "' was added successfully.\n";
-                }
-                else {
-                    std::cout << "Investment of '" << newInvestment.getTicker()
-                              << "' already exists, failed to update; "
-                              << "it's stored with a different name.\n"
-                              << "hint: remove investment and add it again.\n";
-                    continue;
-                }
-                break;
-            }
-            case 2: {
-                std::string ticker;
-                std::cout << "Enter the ticker of the investment to be removed: ";
-                std::cin >> ticker;
-                if (m_portfolio->removeInvestment(ticker)) {
-                    std::cout << "Investment removed from portfolio.\n";
-                }
-                else {
-                    std::cout << "Investment not found, "
-                              << "can't remove what's not there.\n";
-                    continue;
-                }
-                break;
-            }
-            case 3: {
-                m_portfolio->displayPortfolio();
-                break;
-            }
-            case 4: {
-                auto totalValue = m_portfolio->calculateTotalValue();
-                std::cout << "Portfolio's total value: " << totalValue << std::endl;
-                break;
-            }
-            case 5: {
-                std::string ticker;
-                double_t newValue;
-                std::cout << "Enter the ticker of the investment to be updated: ";
-                std::cin >> ticker;
-                std::cout << "Enter the new value: ";
-                if (!validateInputType(newValue)) {
-                    continue;
-                }
-                if(m_portfolio->updatedInvestmentValue(ticker, newValue)) {
-                    std::cout << "Investment value was updated.\n";
-                }
-                else {
-                    std::cout << "Investment not found!\n";
-                }
-                break;
-            }
-            case 6: {
-                std::string ticker;
-                uint32_t newQantity;
-                std::cout << "Enter the ticker of the investment to be updated: ";
-                std::cin >> ticker;
-                std::cout << "Enter the new quantity: ";
-                if (!validateInputType(newQantity)) {
-                    continue;
-                }
-                if(m_portfolio->updateInvestmentQuantity(ticker, newQantity)) {
-                    std::cout << "Investment value was updated.\n";
-                }
-                else {
-                    std::cout << "Investment not found!\n";
-                }
-                break;
-            }
-            case 7: {
-                std::cout << "Exiting..\n";
-                break;
-            }
-            default: {
-                std::cout << "Invalid choice. Please try again.\n";
-                break;
-            }
+void PortfolioManager::addPortfolio(Portfolio& portfolio) {
+    m_portfolios.push_back(std::make_unique<Portfolio>(portfolio));
+}
+
+bool PortfolioManager::addPortfolio(const std::string& portfolio_name) {
+    for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
+        if (it->get()->getName() == portfolio_name) {
+            return false;
         }
     }
+    m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
+    return true;
+}
+
+bool PortfolioManager::removePortfolio(const std::string& portfolio_name) {
+    bool retVal = false;
+    for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
+        if (it->get()->getName() == portfolio_name) {
+            m_portfolios.erase(it);
+            retVal = true;
+            break;
+        }
+    }
+    return retVal;
+}
+
+void savePortfolio(const Portfolio& portfolio, const std::string& filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << portfolio.getName() << std::endl;
+        const std::vector<Investment>& investments = portfolio.getInvestments();
+        for (const Investment& investment : investments) {
+            file << investment.getName() << "," << investment.getTicker() << ","
+                 << investment.getPurchasePrice() << "," << investment.getQuantity() << std::endl;
+        }
+        std::cout << "Portfolio saved to " << filename << std::endl;
+    }
+    else {
+        std::cout << "Unable to open file for saving portfolio." << std::endl;
+    }
+    file.close();
+}
+
+bool loadPortfolio(Portfolio& portfolio, const std::string& filename) {
+    bool status = true;
+    std::ifstream file(filename);
+    portfolio.clearInvestments();
+    if (file.is_open()) {
+        std::string name, ticker, line;
+        double_t purchasePrice;
+        uint32_t quantity;
+        std::getline(file, name);
+        portfolio.setName(name);
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::getline(iss, name, ',');
+            std::getline(iss, ticker, ',');
+            iss >> purchasePrice;
+            iss.ignore();
+            iss >> quantity;
+            Investment investment(name, ticker, purchasePrice, quantity);
+            portfolio.addInvestment(investment);
+        }
+        std::cout << "Portfolio loaded from " << filename << std::endl;
+    }
+    else {
+        status = false;
+        std::cout << "Unable to open file for load portfolio.\n";
+    }
+    file.close();
+    return status;
 }

@@ -4,6 +4,37 @@
 #include <math.h>
 #include <stdint.h>
 #include <vector>
+#include <iostream>
+
+template<typename T>
+bool validateInputType(T& input) {
+    bool retVal = true;
+    if (!(std::cin >> input)) {
+        std::cout << "Invalid input. Please correct type." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        retVal = false;
+    }
+    return retVal;
+}
+
+template<typename T>
+bool validateInputRange(T& input, const T& start, const T& end) {
+    bool retVal = true;
+    if (!(std::cin >> input)) {
+        std::cout << "Invalid input. Please correct type." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        retVal = false;
+    }
+    else if ((input < start) || (input > end)) {
+        std::cout << "Invalid input. Please correct range." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        retVal = false;
+    }
+    return retVal;
+}
 
 struct InputDataNetworthProjector {
     uint32_t init_nw;
@@ -29,7 +60,9 @@ struct InputDataMortgageCalculator {
 
 struct InputPortfolioManager {
     bool is_new;
+    bool is_multi_prtfolio;
     std::string name;
+    std::vector<std::string> portfolio_list;
 };
 
 struct InputDataContainer {
@@ -64,7 +97,6 @@ class ConcreteNetworthProjector : public Input {
     float_t m_port_yearly_ret;
     float_t m_port_fees;
     float_t m_inv_yearly;
-    std::vector<std::vector<float_t>> m_year_to_amount;
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;
@@ -92,6 +124,7 @@ public:
 
 class ConcretePortfolioManager : public Input {
     bool m_is_new;
+    bool m_is_multi_prtfolio;
     std::string m_name;
 
 public:
