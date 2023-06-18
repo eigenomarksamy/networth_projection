@@ -26,3 +26,11 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     src/files/
     src/io/
 )
+
+set(DEPL_DEST
+    "${CMAKE_BINARY_DIR}/../bin"
+)
+
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${DEPL_DEST}
+)
