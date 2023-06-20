@@ -11,6 +11,7 @@
 #include "utils.hpp"
 #include "continuous_input.hpp"
 
+
 NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
     NetWorth networth(userInput.init_nw, userInput.year_income,
                       userInput.age_retirement, userInput.current_age,
@@ -80,14 +81,14 @@ void generatePortfolioFiles(const Portfolio& portfolio) {
 
 void generatePortfolioOverview(const Portfolio& portfolio) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolio);
-    FileGenerator file("gen\\portfolios_overview.txt");
+    FileGenerator file("gen/portfolios_overview.txt");
     file.generateTxt(portfolioTxt);
     generatePortfolioFiles(portfolio);
 }
 
 void generatePortfolioOverview(const PortfolioManager& portfolioMgr) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolioMgr);
-    FileGenerator file("gen\\portfolios_overview.txt");
+    FileGenerator file("gen/portfolios_overview.txt");
     file.generateTxt(portfolioTxt);
     generatePortfolioFiles(portfolioMgr);
 }
@@ -154,7 +155,6 @@ int main() {
                 generatePortfolioOverview(portfolio);
             }
             else {
-                // <TODO>: bug #26
                 Portfolio portfolio;
                 if (getPortfolioFromFiles(portfolio, user_input.portfolio_manager.name)) {
                     executePortfolioManagement(portfolio);
