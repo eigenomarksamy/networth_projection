@@ -11,6 +11,7 @@ set(SOURCE_FILES
     src/io/continuous_input.cpp
     src/io/data_adapter.cpp
     src/utils/utils.cpp
+    src/comm/kafka_producer.cpp
     src/main.cpp
 )
 
@@ -25,6 +26,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     src/investment/
     src/files/
     src/io/
+    src/comm/
 )
 
 set(DEPL_DEST

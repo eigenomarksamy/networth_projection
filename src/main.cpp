@@ -10,6 +10,7 @@
 #include "portfolio.hpp"
 #include "utils.hpp"
 #include "continuous_input.hpp"
+#include "kafka_producer.hpp"
 
 
 NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
@@ -118,6 +119,16 @@ bool getPortfolioFromFiles(PortfolioManager& portfolioMgr,
         }
     }
     return status;
+}
+
+void testKafka() {
+    KafkaProducer producer("localhost:9092");
+    if (producer.initialize()) {
+        producer.produce("TopicA", "Message 1 for Topic A");
+        producer.produce("TopicA", "Message 2 for Topic A");
+        producer.produce("TopicB", "Message 1 for Topic B");
+        producer.produce("TopicB", "Message 2 for Topic B");
+    }
 }
 
 int main() {
