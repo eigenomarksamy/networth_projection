@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.22)
 project(investor)
 set(CMAKE_CXX_STANDARD 20)
 
+find_package(CppKafka REQUIRED)
+
 set(SOURCE_FILES
     src/networth/networth.cpp
     src/mortgage/mortgage.cpp
@@ -11,7 +13,6 @@ set(SOURCE_FILES
     src/io/continuous_input.cpp
     src/io/data_adapter.cpp
     src/utils/utils.cpp
-    src/comm/kafka_producer.cpp
     src/main.cpp
 )
 
@@ -28,6 +29,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     src/io/
     src/comm/
 )
+
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE cppkafka)
 
 set(DEPL_DEST
     "${CMAKE_BINARY_DIR}/../bin"
