@@ -1,5 +1,5 @@
-#ifndef KAFKA_PRODUCER_HPP_
-#define KAFKA_PRODUCER_HPP_
+#ifndef KAFKA_WRAPPER_HPP_
+#define KAFKA_WRAPPER_HPP_
 
 #include <string>
 #include <unordered_map>
@@ -26,4 +26,4 @@ private:
 };
 
 
-#endif /* KAFKA_PRODUCER_HPP_ */
+#endif /* KAFKA_WRAPPER_HPP_ */
