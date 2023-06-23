@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <cppkafka/cppkafka.h>
 
+namespace kafka {
+
 class KafkaWrapper {
 public:
     KafkaWrapper(const std::string& brokerList)
@@ -25,5 +27,6 @@ private:
     std::unique_ptr<cppkafka::Producer> m_producer;
 };
 
+} // namespace kafka
 
 #endif /* KAFKA_WRAPPER_HPP_ */

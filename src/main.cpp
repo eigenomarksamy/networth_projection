@@ -133,7 +133,7 @@ void testKafka() {
     std::string topic = "your_topic";
     std::string message = "Hello, Kafka!";
 
-    KafkaWrapper kafkaWrapper(brokerList);
+    kafka::KafkaWrapper kafkaWrapper(brokerList);
     kafkaWrapper.produce(topic, message);
 }
 
