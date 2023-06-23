@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 find_package(CppKafka REQUIRED)
 
 set(SOURCE_FILES
+    src/comm/kafka_manager.cpp
     src/networth/networth.cpp
     src/mortgage/mortgage.cpp
     src/portfolio/portfolio.cpp
