@@ -11,6 +11,8 @@
 #include "utils.hpp"
 #include "continuous_input.hpp"
 #include "kafka_wrapper.hpp"
+#include "kafka_manager.hpp"
+#include "kafka.hpp"
 
 
 NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
@@ -122,13 +124,6 @@ bool getPortfolioFromFiles(PortfolioManager& portfolioMgr,
 }
 
 void testKafka() {
-    // KafkaProducer producer("localhost:9092");
-    // if (producer.initialize()) {
-    //     producer.produce("TopicA", "Message 1 for Topic A");
-    //     producer.produce("TopicA", "Message 2 for Topic A");
-    //     producer.produce("TopicB", "Message 1 for Topic B");
-    //     producer.produce("TopicB", "Message 2 for Topic B");
-    // }
     std::string brokerList = "localhost:9092";
     std::string topic = "your_topic";
     std::string message = "Hello, Kafka!";
@@ -138,6 +133,7 @@ void testKafka() {
 }
 
 int main() {
+    printHW();
     InputDataContainer user_input;
     getUserSelection(user_input);
     if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT) {

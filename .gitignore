@@ -1,4 +1,5 @@
-.vscode/
-build/
-gen/
-bin/
+.vscode/*
+build/*
+gen/*
+bin/*
+node/node_modules/*
