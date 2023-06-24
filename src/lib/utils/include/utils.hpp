@@ -46,4 +46,11 @@ std::string getLocalDateTime(const char format[]);
 
 std::string getLocalDateTime();
 
+inline std::size_t generateHashForString(const std::string& str) {
+    std::hash<std::string> hasher;
+    return hasher(str);
+}
+
+uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target);
+
 #endif /* UTIL_HPP_ */

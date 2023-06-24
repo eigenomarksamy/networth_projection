@@ -10,21 +10,26 @@ set(SOURCE_FILES
     src/io/input_handler.cpp
     src/io/continuous_input.cpp
     src/io/data_adapter.cpp
-    src/utils/utils.cpp
     src/main.cpp
 )
 
+include_directories(lib/include)
+
+add_subdirectory(src/lib)
+
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
+
+target_link_libraries(${CMAKE_PROJECT_NAME} utils kafka)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     src/
-    src/utils/
     src/networth/
     src/mortgage/
     src/portfolio/
     src/investment/
     src/files/
     src/io/
+    src/comm/
 )
 
 set(DEPL_DEST

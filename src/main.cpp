@@ -10,6 +10,7 @@
 #include "portfolio.hpp"
 #include "utils.hpp"
 #include "continuous_input.hpp"
+#include "kafka.hpp"
 
 
 NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
@@ -120,7 +121,7 @@ bool getPortfolioFromFiles(PortfolioManager& portfolioMgr,
     return status;
 }
 
-int main() {
+static void executeCmdPromptUi() {
     InputDataContainer user_input;
     getUserSelection(user_input);
     if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT) {
@@ -163,5 +164,26 @@ int main() {
             }
         }
     }
+}
+
+void testKafka() {
+    std::string brokerList = "localhost:9092";
+    std::string topic = "your_topic";
+    std::string message = "Hello, Kafka!";
+
+    kafka::KafkaWrapper kafkaWrapper(brokerList);
+    kafkaWrapper.produce(topic, message);
+}
+
+void testKafkaCons() {
+    std::string brokerList = "localhost:9092";
+    std::string topic = "your_topic";
+    std::string group_id = "your_group_id";
+    kafka::KafkaMessageConsumer consumer(brokerList, topic, group_id);
+    consumer.start();
+    consumer.stop();
+}
+
+int main() {
     return 0;
 }
