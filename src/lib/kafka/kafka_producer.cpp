@@ -1,4 +1,4 @@
-#include "kafka_manager.hpp"
+#include "kafka_producer.hpp"
 
 kafka::ErrorCode kafka::KafkaTopic::incrementCount() {
     if (m_max_count != 0) {

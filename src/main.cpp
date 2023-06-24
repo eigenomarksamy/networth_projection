@@ -131,7 +131,6 @@ void testKafka() {
 }
 
 int main() {
-    printHW();
     InputDataContainer user_input;
     getUserSelection(user_input);
     if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT) {

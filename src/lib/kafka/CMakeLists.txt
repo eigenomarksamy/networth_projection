@@ -1,8 +1,8 @@
 find_package(CppKafka REQUIRED)
 
 set(SOURCES
-    kafka.cpp
-    kafka_manager.cpp
+    kafka_consumer.cpp
+    kafka_producer.cpp
 )
 
 add_library(kafka STATIC ${SOURCES})

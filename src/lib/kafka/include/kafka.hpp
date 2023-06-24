@@ -3,8 +3,6 @@
 
 #include "kafka_consumer.hpp"
 #include "kafka_wrapper.hpp"
-#include "kafka_manager.hpp"
-
-void printHW();
+#include "kafka_producer.hpp"
 
 #endif /* KAFKA_HPP_ */
