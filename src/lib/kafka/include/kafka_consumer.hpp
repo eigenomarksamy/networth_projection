@@ -3,7 +3,8 @@
 
 #include <memory>
 #include <string>
-#include <iostream>
+#include <atomic>
+#include <thread>
 #include <cppkafka/consumer.h>
 
 namespace kafka {
@@ -12,19 +13,16 @@ class KafkaMessageConsumer {
 public:
     KafkaMessageConsumer(const std::string& brokers,
                          const std::string& topic,
-                         const std::string& group_id)
-        : m_brokers(brokers), m_topic(topic), m_group_id(group_id) {
-        cppkafka::Configuration config = {
-            { "metadata.broker.list", brokers },
-            { "group.id", group_id },
-            { "enable.auto.commit", false}
-        };
-        m_consumer = std::make_unique<cppkafka::Consumer>(config);
-    }
+                         const std::string& group_id);
 
     void start();
 
+    void stop();
+
 private:
+
+    void consumeMessage();
+
     void processMessage(const cppkafka::Message& message);
 
 private:
@@ -32,25 +30,9 @@ private:
     std::string m_topic;
     std::string m_group_id;
     std::unique_ptr<cppkafka::Consumer> m_consumer;
+    std::thread m_thread;
+    std::atomic<bool> m_running;
 };
-
-enum class ModeExecutionConsumer {
-    SYNC,
-    ASYNC
-};
-
-void execConsumer(const std::string& brokers,
-                  const std::string& topic,
-                  const std::string& group_id,
-                  const ModeExecutionConsumer mode);
-
-void execSyncConsumer(const std::string& brokers,
-                      const std::string& topic,
-                      const std::string& group_id);
-
-void execAsyncConsumer(const std::string& brokers,
-                       const std::string& topic,
-                       const std::string& group_id);
 
 }; // namespace kafka
 
