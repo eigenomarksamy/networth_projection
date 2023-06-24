@@ -24,7 +24,19 @@ void kafka::KafkaMessageConsumer::processMessage(const cppkafka::Message& messag
 
 void kafka::execConsumer(const std::string& brokers,
                          const std::string& topic,
-                         const std::string& group_id) {
+                         const std::string& group_id,
+                         const ModeExecutionConsumer mode) {
+    if (mode == ModeExecutionConsumer::ASYNC) {
+        execAsyncConsumer(brokers, topic, group_id);
+    }
+    else {
+        execSyncConsumer(brokers, topic, group_id);
+    }
+}
+
+void kafka::execSyncConsumer(const std::string& brokers,
+                             const std::string& topic,
+                             const std::string& group_id) {
     KafkaMessageConsumer consumer(brokers, topic, group_id);
     consumer.start();
 }

@@ -34,9 +34,19 @@ private:
     std::unique_ptr<cppkafka::Consumer> m_consumer;
 };
 
+enum class ModeExecutionConsumer {
+    SYNC,
+    ASYNC
+};
+
 void execConsumer(const std::string& brokers,
                   const std::string& topic,
-                  const std::string& group_id);
+                  const std::string& group_id,
+                  const ModeExecutionConsumer mode);
+
+void execSyncConsumer(const std::string& brokers,
+                      const std::string& topic,
+                      const std::string& group_id);
 
 void execAsyncConsumer(const std::string& brokers,
                        const std::string& topic,
