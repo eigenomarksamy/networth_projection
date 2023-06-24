@@ -10,8 +10,6 @@
 #include "portfolio.hpp"
 #include "utils.hpp"
 #include "continuous_input.hpp"
-#include "kafka_wrapper.hpp"
-#include "kafka_manager.hpp"
 #include "kafka.hpp"
 
 
