@@ -185,5 +185,6 @@ void testKafkaCons() {
 }
 
 int main() {
+    executeCmdPromptUi();
     return 0;
 }
