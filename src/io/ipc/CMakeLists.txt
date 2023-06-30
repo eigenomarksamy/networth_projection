@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
-project(libio)
+project(libipc)
 
-add_subdirectory(file)
-add_subdirectory(ipc)
+add_subdirectory(kafka)
 
 include_directories(include)

@@ -1,5 +1,5 @@
-#ifndef KAFKA_MANAGER_HPP_
-#define KAFKA_MANAGER_HPP_
+#ifndef KAFKA_PRODUCER_HPP_
+#define KAFKA_PRODUCER_HPP_
 
 #include <memory>
 #include <string>
@@ -144,4 +144,4 @@ private:
 
 } // namespace kafka
 
-#endif /* KAFKA_MANAGER_HPP_ */
+#endif /* KAFKA_PRODUCER_HPP_ */
