@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include "portfolio.hpp"
-#include "input_handler.hpp"
 
 bool Portfolio::addInvestment(const Investment& investment) {
     bool retVal = false;

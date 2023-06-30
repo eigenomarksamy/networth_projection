@@ -3,7 +3,6 @@ project(investor)
 set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCE_FILES
-    src/portfolio/portfolio.cpp
     src/files/file_manager.cpp
     src/io/input_handler.cpp
     src/io/continuous_input.cpp
@@ -16,23 +15,21 @@ include_directories(lib/include)
 add_subdirectory(src/lib)
 add_subdirectory(src/networth)
 add_subdirectory(src/mortgage)
+add_subdirectory(src/portfolio)
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    utils 
+    utils
     networthprojector
     mortgagecalculator
+    portfoliomanager
     kafka
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    src/
-    src/portfolio/
-    src/investment/
     src/files/
     src/io/
-    src/comm/
 )
 
 set(DEPL_DEST
