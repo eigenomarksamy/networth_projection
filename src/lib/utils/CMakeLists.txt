@@ -1,5 +1,6 @@
 set(SOURCES
     utils.cpp
+    file_manager.cpp
 )
 
 add_library(utils STATIC ${SOURCES})
@@ -13,5 +14,3 @@ install(TARGETS utils
 )
 
 install(DIRECTORY include/ DESTINATION include)
-
-target_link_libraries(utils PRIVATE cppkafka)
