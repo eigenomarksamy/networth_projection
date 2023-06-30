@@ -15,11 +15,13 @@ add_subdirectory(src/lib)
 add_subdirectory(src/networth)
 add_subdirectory(src/mortgage)
 add_subdirectory(src/portfolio)
+add_subdirectory(src/io)
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     utils
+    filemanager
     networthprojector
     mortgagecalculator
     portfoliomanager

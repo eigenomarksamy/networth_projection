@@ -12,9 +12,9 @@ target_include_directories(kafka PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(kafka PRIVATE cppkafka utils)
 
 install(TARGETS kafka
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
+        ARCHIVE DESTINATION libkafka
+        LIBRARY DESTINATION libkafka
+        RUNTIME DESTINATION binkafka
 )
 
 install(DIRECTORY include/ DESTINATION include)
