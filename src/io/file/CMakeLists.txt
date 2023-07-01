@@ -3,14 +3,14 @@ set(SOURCES
     logger.cpp
 )
 
-add_library(filemanager STATIC ${SOURCES})
+add_library(fileio STATIC ${SOURCES})
 
-target_include_directories(filemanager PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(fileio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-install(TARGETS filemanager
-        ARCHIVE DESTINATION libfilemanager
-        LIBRARY DESTINATION libfilemanager
-        RUNTIME DESTINATION binfilemanager
+install(TARGETS fileio
+        ARCHIVE DESTINATION libfileio
+        LIBRARY DESTINATION libfileio
+        RUNTIME DESTINATION binfileio
 )
 
 install(DIRECTORY include/ DESTINATION include)

@@ -7,7 +7,7 @@
 #include "networth.hpp"
 #include "mortgage.hpp"
 #include "portfolio.hpp"
-#include "input_handler.hpp"
+#include "input_types_cfg.hpp"
 
 class DataAdapter {
 
@@ -22,11 +22,11 @@ public:
 
     ~DataAdapter() { }
 
-    static std::vector<std::string> generateDataNames(const NetWorth& netWorthObj);
+    static std::vector<std::string> generateDataNames(const networth::NetWorth& netWorthObj);
 
     static std::vector<std::string> generateDataNames(const Mortgage& mortgageObj);
 
-    static std::vector<std::vector<std::string>> generateDataLines(const NetWorth& netWorthObj);
+    static std::vector<std::vector<std::string>> generateDataLines(const networth::NetWorth& netWorthObj);
 
     static std::vector<std::vector<std::string>> generateDataLines(const Mortgage& mortgageObj);
 

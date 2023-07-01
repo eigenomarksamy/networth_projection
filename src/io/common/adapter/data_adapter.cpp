@@ -1,6 +1,6 @@
 #include "data_adapter.hpp"
 
-std::vector<std::string> DataAdapter::generateDataNames(const NetWorth& netWorthObj) {
+std::vector<std::string> DataAdapter::generateDataNames(const networth::NetWorth& netWorthObj) {
     return netWorthObj.getDataNames();
 }
 
@@ -8,7 +8,7 @@ std::vector<std::string> DataAdapter::generateDataNames(const Mortgage& mortgage
     return mortgageObj.getDataNames();
 }
 
-std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const NetWorth& netWorthObj) {
+std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const networth::NetWorth& netWorthObj) {
     auto nw_data = netWorthObj.getData();
     std::vector<std::vector<std::string>> retDataLines;
     std::vector<std::string> tmp_row;

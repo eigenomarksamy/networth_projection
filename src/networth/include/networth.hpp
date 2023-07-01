@@ -7,6 +7,8 @@
 #include <vector>
 #include <unordered_map>
 
+namespace networth {
+
 class NetWorth {
 
 public:
@@ -58,5 +60,7 @@ private:
     std::unordered_map<uint32_t, float_t> m_dep_wd_plan;
 
 };
+
+} // namespace networth
 
 #endif /* NETWORTH_HPP_ */

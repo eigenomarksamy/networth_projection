@@ -2,7 +2,7 @@
 #include "utils.hpp"
 #include "networth.hpp"
 
-NetWorth::NetWorth (uint32_t nw, uint32_t yearly_income, uint8_t age_retirement,
+networth::NetWorth::NetWorth (uint32_t nw, uint32_t yearly_income, uint8_t age_retirement,
                     uint8_t cur_age, Percentages percentages)
                     : m_init_nw(nw), m_yearly_income(yearly_income),
                         m_age_retirement(age_retirement), m_cur_age(cur_age),
@@ -22,7 +22,7 @@ NetWorth::NetWorth (uint32_t nw, uint32_t yearly_income, uint8_t age_retirement,
     m_cur_age++;
 }
 
-void NetWorth::computeData() {
+void networth::NetWorth::computeData() {
     for (; m_cur_age <= m_age_retirement; m_cur_age++) {
         m_attr_arr[CUR_AGE] = m_cur_age;
         m_attr_arr[CUR_YEAR] = m_cur_age - m_init_age + 1;
@@ -37,7 +37,7 @@ void NetWorth::computeData() {
     }
 }
 
-void NetWorth::printTabulatedData() const {
+void networth::NetWorth::printTabulatedData() const {
     std::cout << "age\t\tyear\t\tincome\t\tyearly investment\t\t"
               << "deposits/withdrawals\t\tgross return\t\t"
               << "gross networth\t\tnet return\t\tnet networth\n";
@@ -49,7 +49,7 @@ void NetWorth::printTabulatedData() const {
     }
 }
 
-std::vector<std::string> NetWorth::getDataNames() const {
+std::vector<std::string> networth::NetWorth::getDataNames() const {
     std::vector<std::string> retVecStr(ATTR_LEN);
     retVecStr[CUR_AGE] = "Age";
     retVecStr[CUR_YEAR] = "Year";

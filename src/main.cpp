@@ -6,17 +6,17 @@
 #include "mortgage.hpp"
 #include "file_manager.hpp"
 #include "data_adapter.hpp"
-#include "input_handler.hpp"
 #include "portfolio.hpp"
 #include "utils.hpp"
-#include "continuous_input.hpp"
 #include "kafka.hpp"
+#include "input_factory.hpp"
 
 
-NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
-    NetWorth networth(userInput.init_nw, userInput.year_income,
-                      userInput.age_retirement, userInput.current_age,
-                      NetWorth::Percentages({userInput.year_increase,
+networth::NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
+    networth::NetWorth networth(userInput.init_nw, userInput.year_income,
+                                userInput.age_retirement, userInput.current_age,
+                                networth::NetWorth::Percentages({
+                                             userInput.year_increase,
                                              userInput.port_yearly_ret,
                                              userInput.port_fees,
                                              userInput.inv_yearly}));
@@ -39,7 +39,7 @@ Mortgage computeMortgageData(const InputDataMortgageCalculator& userInput) {
     return mortgage;
 }
 
-void generateDataCsv(const NetWorth netWorth, std::string fileName) {
+void generateDataCsv(const networth::NetWorth netWorth, std::string fileName) {
     auto headers = DataAdapter::generateDataNames(netWorth);
     auto lines = DataAdapter::generateDataLines(netWorth);
     FileGenerator file_h(fileName);
@@ -59,7 +59,8 @@ void generateInputTxt(const InputDataContainer& input, std::string fileName) {
     file_h.generateTxt(lines);
 }
 
-void generateFiles(const NetWorth& net_worth, const InputDataContainer& user_input) {
+void generateFiles(const networth::NetWorth& net_worth,
+                   const InputDataContainer& user_input) {
     generateDataCsv(net_worth, "gen/nw_data_out.csv");
     generateInputTxt(user_input, "gen/nw_input.txt");
 }
@@ -123,7 +124,7 @@ bool getPortfolioFromFiles(PortfolioManager& portfolioMgr,
 
 static void executeCmdPromptUi() {
     InputDataContainer user_input;
-    getUserSelection(user_input);
+    getProgramSelector(user_input);
     if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT) {
         auto net_worth = computeNetworthData(user_input.networth_projector);
         generateFiles(net_worth, user_input);

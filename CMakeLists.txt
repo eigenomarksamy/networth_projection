@@ -3,9 +3,6 @@ project(investor)
 set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCE_FILES
-    src/io/input_handler.cpp
-    src/io/continuous_input.cpp
-    src/io/data_adapter.cpp
     src/main.cpp
 )
 
@@ -21,7 +18,9 @@ add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     utils
-    filemanager
+    fileio
+    cmdio
+    commonio
     networthprojector
     mortgagecalculator
     portfoliomanager

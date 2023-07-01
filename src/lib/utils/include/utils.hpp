@@ -1,5 +1,5 @@
-#ifndef UTIL_HPP_
-#define UTIL_HPP_
+#ifndef UTILS_HPP_
+#define UTILS_HPP_
 
 #include <math.h>
 #include <vector>
@@ -53,4 +53,4 @@ inline std::size_t generateHashForString(const std::string& str) {
 
 uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target);
 
-#endif /* UTIL_HPP_ */
+#endif /* UTILS_HPP_ */
