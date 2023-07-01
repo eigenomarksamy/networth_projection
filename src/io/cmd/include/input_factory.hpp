@@ -82,8 +82,8 @@ public:
 
 void getProgramSelector(InputDataContainer& input_data);
 
-void executePortfolioManagement(Portfolio& portfolio);
+void executePortfolioManagement(portfolio::Portfolio& portfolio);
 
-void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr);
+void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr);
 
 #endif /* INPUT_FACTORY_HPP_ */

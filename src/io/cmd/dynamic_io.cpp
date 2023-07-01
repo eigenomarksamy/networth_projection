@@ -5,7 +5,7 @@
 #include "input_factory.hpp"
 #include "portfolio.hpp"
 
-static int16_t selectPortfolio(const PortfolioManager& portfolio_manager) {
+static int16_t selectPortfolio(const portfolio::PortfolioManager& portfolio_manager) {
     uint16_t choice = 0;
     std::cout << "There are " << portfolio_manager.getNumPortfolios() << " portfolios" << std::endl;
     if (portfolio_manager.getNumPortfolios() > 0) {
@@ -25,7 +25,7 @@ static int16_t selectPortfolio(const PortfolioManager& portfolio_manager) {
     return choice - 1;
 }
 
-void executePortfolioManagement(Portfolio& portfolio) {
+void executePortfolioManagement(portfolio::Portfolio& portfolio) {
     int32_t choice = 0;
     while (choice != 7) {
         std::cout << "---------------------------" << std::endl;
@@ -143,7 +143,7 @@ void executePortfolioManagement(Portfolio& portfolio) {
     }
 }
 
-void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr) {
+void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr) {
     int32_t choice = 0;
     while (choice != 4) {
         std::cout << "---------------------------" << std::endl;
@@ -185,7 +185,7 @@ void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr) {
             case 3: {
                 auto portfolio_idx = selectPortfolio(portfolio_mngr);
                 if (portfolio_idx >= 0) {
-                    Portfolio& portfolio = portfolio_mngr.getPortfolio(portfolio_idx);
+                    portfolio::Portfolio& portfolio = portfolio_mngr.getPortfolio(portfolio_idx);
                     executePortfolioManagement(portfolio);
                 }
                 else {

@@ -6,6 +6,8 @@
 #include <memory>
 #include "investment.hpp"
 
+namespace portfolio {
+
 class Portfolio {
 private:
     std::string m_name;
@@ -74,5 +76,7 @@ public:
 void savePortfolio(const Portfolio& portfolio, const std::string& filename);
 
 bool loadPortfolio(Portfolio& portfolio, const std::string& filename);
+
+} // namespace portfolio
 
 #endif /* PORTFOLIO_HPP_ */

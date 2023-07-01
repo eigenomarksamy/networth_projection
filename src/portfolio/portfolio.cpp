@@ -3,7 +3,7 @@
 #include <sstream>
 #include "portfolio.hpp"
 
-bool Portfolio::addInvestment(const Investment& investment) {
+bool portfolio::Portfolio::addInvestment(const Investment& investment) {
     bool retVal = false;
     for (auto it = m_investments.begin(); it != m_investments.end(); ++it) {
         if (it->getTicker() == investment.getTicker()) {
@@ -23,7 +23,7 @@ bool Portfolio::addInvestment(const Investment& investment) {
     return retVal;
 }
 
-bool Portfolio::removeInvestment(const std::string& ticker) {
+bool portfolio::Portfolio::removeInvestment(const std::string& ticker) {
     bool retVal = false;
     for (auto it = m_investments.begin(); it != m_investments.end(); ++it) {
         if (it->getTicker() == ticker) {
@@ -35,7 +35,7 @@ bool Portfolio::removeInvestment(const std::string& ticker) {
     return retVal;
 }
 
-void Portfolio::displayPortfolio() const {
+void portfolio::Portfolio::displayPortfolio() const {
     std::cout << "Portfolio: " << m_name << std::endl;
     for (const auto& investment : m_investments) {
         std::cout << "Name: " << investment.getName() << ", Ticker: "
@@ -46,7 +46,7 @@ void Portfolio::displayPortfolio() const {
     }
 }
 
-void Portfolio::clearInvestments() {
+void portfolio::Portfolio::clearInvestments() {
     std::vector<std::string> tickers;
     for (const auto& investment : m_investments) {
         tickers.push_back(investment.getTicker());
@@ -56,7 +56,7 @@ void Portfolio::clearInvestments() {
     }
 }
 
-double_t Portfolio::calculateTotalValue() const {
+double_t portfolio::Portfolio::calculateTotalValue() const {
     double_t totalValue = 0.0;
     for (const auto& investment : m_investments) {
         totalValue += investment.getPurchasePrice() * investment.getQuantity();
@@ -64,7 +64,7 @@ double_t Portfolio::calculateTotalValue() const {
     return totalValue;
 }
 
-bool Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newValue) {
+bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newValue) {
     bool retVal = false;
     for (auto& investment : m_investments) {
         if (investment.getTicker() == ticker) {
@@ -76,7 +76,7 @@ bool Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newVa
     return retVal;
 }
 
-bool Portfolio::updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant) {
+bool portfolio::Portfolio::updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant) {
     bool retVal = false;
     for (auto& investment : m_investments) {
         if (investment.getTicker() == ticker) {
@@ -88,11 +88,11 @@ bool Portfolio::updateInvestmentQuantity(const std::string& ticker, uint32_t new
     return retVal;
 }
 
-void PortfolioManager::addPortfolio(Portfolio& portfolio) {
+void portfolio::PortfolioManager::addPortfolio(Portfolio& portfolio) {
     m_portfolios.push_back(std::make_unique<Portfolio>(portfolio));
 }
 
-bool PortfolioManager::addPortfolio(const std::string& portfolio_name) {
+bool portfolio::PortfolioManager::addPortfolio(const std::string& portfolio_name) {
     for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
         if (it->get()->getName() == portfolio_name) {
             return false;
@@ -102,7 +102,7 @@ bool PortfolioManager::addPortfolio(const std::string& portfolio_name) {
     return true;
 }
 
-bool PortfolioManager::removePortfolio(const std::string& portfolio_name) {
+bool portfolio::PortfolioManager::removePortfolio(const std::string& portfolio_name) {
     bool retVal = false;
     for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
         if (it->get()->getName() == portfolio_name) {
@@ -114,7 +114,7 @@ bool PortfolioManager::removePortfolio(const std::string& portfolio_name) {
     return retVal;
 }
 
-void savePortfolio(const Portfolio& portfolio, const std::string& filename) {
+void portfolio::savePortfolio(const Portfolio& portfolio, const std::string& filename) {
     std::ofstream file(filename);
     if (file.is_open()) {
         file << portfolio.getName() << std::endl;
@@ -131,7 +131,7 @@ void savePortfolio(const Portfolio& portfolio, const std::string& filename) {
     file.close();
 }
 
-bool loadPortfolio(Portfolio& portfolio, const std::string& filename) {
+bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename) {
     bool status = true;
     std::ifstream file(filename);
     portfolio.clearInvestments();

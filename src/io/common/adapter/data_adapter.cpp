@@ -68,7 +68,7 @@ std::vector<std::string> DataAdapter::generateInputLines(const InputDataContaine
     return lines;
 }
 
-std::vector<std::string> DataAdapter::generatePortfolioLines(const Portfolio& portfolioObj) {
+std::vector<std::string> DataAdapter::generatePortfolioLines(const portfolio::Portfolio& portfolioObj) {
     std::vector<std::string> outLines;
     const std::vector<Investment>& investments = portfolioObj.getInvestments();
     outLines.push_back(portfolioObj.getName());
@@ -80,10 +80,10 @@ std::vector<std::string> DataAdapter::generatePortfolioLines(const Portfolio& po
     return outLines;
 }
 
-std::vector<std::string> DataAdapter::generatePortfolioLines(const PortfolioManager& portfolioMgrObj) {
+std::vector<std::string> DataAdapter::generatePortfolioLines(const portfolio::PortfolioManager& portfolioMgrObj) {
     std::vector<std::string> retGenLines;
     for (auto i = 0; i < portfolioMgrObj.getNumPortfolios(); ++i) {
-        Portfolio& portfolio = portfolioMgrObj.getPortfolio(i);
+        portfolio::Portfolio& portfolio = portfolioMgrObj.getPortfolio(i);
         auto tmpPortfolioLines = generatePortfolioLines(portfolio);
         retGenLines.insert(retGenLines.end(),
                            std::make_move_iterator(tmpPortfolioLines.begin()),

@@ -32,9 +32,9 @@ public:
 
     static std::vector<std::string> generateInputLines(const InputDataContainer& inputObj);
 
-    static std::vector<std::string> generatePortfolioLines(const Portfolio& portfolioObj);
+    static std::vector<std::string> generatePortfolioLines(const portfolio::Portfolio& portfolioObj);
 
-    static std::vector<std::string> generatePortfolioLines(const PortfolioManager& portfolioMgrObj);
+    static std::vector<std::string> generatePortfolioLines(const portfolio::PortfolioManager& portfolioMgrObj);
 };
 
 #endif /* DATA_ADAPTER_HPP_ */
