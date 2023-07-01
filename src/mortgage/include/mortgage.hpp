@@ -7,6 +7,8 @@
 #include <array>
 #include <string>
 
+namespace mortgage {
+
 class Mortgage {
 
     enum Mortgage_Attr_Desc {
@@ -58,5 +60,7 @@ public:
     auto getData() const -> decltype(m_data) { return m_data; }
     std::vector<std::string> getDataNames() const;
 };
+
+} // namespace mortgage
 
 #endif /* MORTGAGE_HPP_ */

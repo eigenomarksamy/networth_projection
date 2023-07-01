@@ -24,11 +24,11 @@ public:
 
     static std::vector<std::string> generateDataNames(const networth::NetWorth& netWorthObj);
 
-    static std::vector<std::string> generateDataNames(const Mortgage& mortgageObj);
+    static std::vector<std::string> generateDataNames(const mortgage::Mortgage& mortgageObj);
 
     static std::vector<std::vector<std::string>> generateDataLines(const networth::NetWorth& netWorthObj);
 
-    static std::vector<std::vector<std::string>> generateDataLines(const Mortgage& mortgageObj);
+    static std::vector<std::vector<std::string>> generateDataLines(const mortgage::Mortgage& mortgageObj);
 
     static std::vector<std::string> generateInputLines(const InputDataContainer& inputObj);
 

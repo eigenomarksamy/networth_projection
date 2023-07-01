@@ -2,7 +2,7 @@
 #include "mortgage.hpp"
 #include "utils.hpp"
 
-void Mortgage::computeData() {
+void mortgage::Mortgage::computeData() {
     m_attr_arr[PERIODE] = 1;
     m_attr_arr[TOTALE_SCHULD] = m_price;
     m_attr_arr[TE_BETALEN_RENTE] = computeInterestToBePaid();
@@ -30,35 +30,35 @@ void Mortgage::computeData() {
     }
 }
 
-float_t Mortgage::computeInterestToBePaid() const {
+float_t mortgage::Mortgage::computeInterestToBePaid() const {
     return m_attr_arr[TOTALE_SCHULD] * (getPercent(m_interest_rate) / 12.f);
 }
 
-float_t Mortgage::computeRepayment() const {
+float_t mortgage::Mortgage::computeRepayment() const {
     return m_totale_maandbedrag - m_attr_arr[TE_BETALEN_RENTE];
 }
 
-float_t Mortgage::computeResidualDebt() const {
+float_t mortgage::Mortgage::computeResidualDebt() const {
     return m_attr_arr[TOTALE_SCHULD] - m_attr_arr[TE_BETALEN_AFLOSSING];
 }
 
-float_t Mortgage::computeTotalGainForRent() const {
+float_t mortgage::Mortgage::computeTotalGainForRent() const {
     return m_attr_arr[TOTAAL_BETAALDE_RENTE] + m_makelaar_fees - m_attr_arr[TOTAAL_BETAALDE_HUUR];
 }
 
-float_t Mortgage::computeEstateMarketValue() const {
+float_t mortgage::Mortgage::computeEstateMarketValue() const {
     return m_attr_arr[LANDGOED_WAARDE] * (1.f + getPercent(m_market_increase) / 12.f);
 }
 
-float_t Mortgage::computeSellingGain() const {
+float_t mortgage::Mortgage::computeSellingGain() const {
     return m_attr_arr[LANDGOED_WAARDE] - m_attr_arr[TOTALE_SCHULD] - m_makelaar_fees;
 }
 
-float_t Mortgage::computeCurrentRent() const {
+float_t mortgage::Mortgage::computeCurrentRent() const {
     return m_rent_to_compare * powf(1.f + getPercent(m_rent_annu_increase), floorf((m_attr_arr[PERIODE] - 1) / 12));
 }
 
-void Mortgage::printTabulatedData() const {
+void mortgage::Mortgage::printTabulatedData() const {
     std::cout << "periode\ttotale schuld\tte betalen rente\t"
               << "te betalen aflossing\trestschuld\ttotaal betaalde huur\t"
               << "totaal betaalde rente\thuur netto winst\tlandgoed waarde\t"
@@ -71,7 +71,7 @@ void Mortgage::printTabulatedData() const {
     }
 }
 
-std::vector<std::string> Mortgage::getDataNames() const {
+std::vector<std::string> mortgage::Mortgage::getDataNames() const {
     std::vector<std::string> retVecStr(ATTR_DESC_LEN);
     retVecStr[PERIODE] = "Periode";
     retVecStr[TOTALE_SCHULD] = "Totale schuld";

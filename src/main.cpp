@@ -29,8 +29,8 @@ networth::NetWorth computeNetworthData(const InputDataNetworthProjector& userInp
     return networth;
 }
 
-Mortgage computeMortgageData(const InputDataMortgageCalculator& userInput) {
-    Mortgage mortgage(userInput.price, userInput.num_months,
+mortgage::Mortgage computeMortgageData(const InputDataMortgageCalculator& userInput) {
+    mortgage::Mortgage mortgage(userInput.price, userInput.num_months,
                       userInput.interest_rate, userInput.market_increase,
                       userInput.rent_to_compare, userInput.makelaar_fees,
                       userInput.rent_annu_increase);
@@ -46,7 +46,7 @@ void generateDataCsv(const networth::NetWorth netWorth, std::string fileName) {
     file_h.generateCsv(headers, lines);
 }
 
-void generateDataCsv(const Mortgage mortgage, std::string fileName) {
+void generateDataCsv(const mortgage::Mortgage mortgage, std::string fileName) {
     auto headers = DataAdapter::generateDataNames(mortgage);
     auto lines = DataAdapter::generateDataLines(mortgage);
     FileGenerator file_h(fileName);
@@ -65,7 +65,7 @@ void generateFiles(const networth::NetWorth& net_worth,
     generateInputTxt(user_input, "gen/nw_input.txt");
 }
 
-void generateFiles(const Mortgage& mortgage, const InputDataContainer& user_input) {
+void generateFiles(const mortgage::Mortgage& mortgage, const InputDataContainer& user_input) {
     generateDataCsv(mortgage, "gen/mortgage_data_out.csv");
     generateInputTxt(user_input, "gen/mortgage_input.txt");
 }

@@ -4,7 +4,7 @@ std::vector<std::string> DataAdapter::generateDataNames(const networth::NetWorth
     return netWorthObj.getDataNames();
 }
 
-std::vector<std::string> DataAdapter::generateDataNames(const Mortgage& mortgageObj) {
+std::vector<std::string> DataAdapter::generateDataNames(const mortgage::Mortgage& mortgageObj) {
     return mortgageObj.getDataNames();
 }
 
@@ -22,7 +22,7 @@ std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const netwo
     return retDataLines;
 }
 
-std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const Mortgage& mortgaeObj) {
+std::vector<std::vector<std::string>> DataAdapter::generateDataLines(const mortgage::Mortgage& mortgaeObj) {
     auto mort_data = mortgaeObj.getData();
     std::vector<std::vector<std::string>> retDataLines;
     std::vector<std::string> tmp_row;
