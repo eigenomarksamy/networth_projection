@@ -79,6 +79,14 @@ bool YamlParser::hasNestedFields(const std::string& fieldName) const {
     return node.IsMap();
 }
 
+std::string YamlParser::findAttributeByName(const std::string& fieldName) const {
+    std::string value;
+    if (m_dataMap.find(fieldName) != m_dataMap.end()) {
+        value = m_dataMap.at(fieldName);
+    }
+    return value;
+}
+
 void execYamlParserDemo() {
     YamlParser parser("conf/data.yaml");
 
@@ -110,6 +118,8 @@ void execYamlParserDemo() {
         for (const auto& entry : attributeMap) {
             std::cout << entry.first << ": " << entry.second << std::endl;
         }
+        auto value = parser.findAttributeByName("person.name");
+        std::cout << value << std::endl;
     }
 }
 

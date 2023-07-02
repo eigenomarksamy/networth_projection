@@ -27,6 +27,8 @@ public:
 
     bool getFieldScalarValue(const std::string& fieldName, std::string& fieldValue) const;
 
+    std::string findAttributeByName(const std::string& fieldName) const;
+
 private:
     std::string m_filename;
     std::vector<std::string> m_fieldNames;
