@@ -27,7 +27,8 @@ public:
 
     bool getFieldScalarValue(const std::string& fieldName, std::string& fieldValue) const;
 
-    std::string findAttributeByName(const std::string& fieldName) const;
+    bool findAttributeByName(const std::string& fieldName,
+                             std::string& fieldValue) const;
 
 private:
     std::string m_filename;
@@ -39,6 +40,8 @@ private:
     YAML::Node findFieldNode(const YAML::Node& node, const std::string& fieldName) const;
 };
 
-void execYamlParserDemo();
+bool getValueFromYml(const std::string& fileName,
+                     const std::string& fieldName,
+                     std::string& fieldValue);
 
 #endif /* YML_PRSR */

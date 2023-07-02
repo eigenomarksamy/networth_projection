@@ -1,9 +1,0 @@
-person:
-  name: john
-  born:
-    year: 1995
-    month: 9
-    day: 1
-
-animal:
-  type: dog
