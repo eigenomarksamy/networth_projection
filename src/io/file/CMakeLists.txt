@@ -10,9 +10,10 @@ add_library(fileio STATIC ${SOURCES})
 
 target_link_libraries(fileio PRIVATE yaml-cpp)
 
-target_include_directories(fileio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(fileio PUBLIC 
+${yaml-cpp_SOURCE_DIR}/include
+${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_include_directories(fileio PRIVATE ${yaml-cpp_SOURCE_DIR}/include)
 
 install(TARGETS fileio
         ARCHIVE DESTINATION libfileio

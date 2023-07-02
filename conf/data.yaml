@@ -1,6 +1,9 @@
 person:
-  name: John Doe
-  age: 30
-  contact:
-    email: john@example.com
-    phone: "+1 (555) 123-4567"
+  name: john
+  born:
+    year: 1995
+    month: 9
+    day: 1
+
+animal:
+  type: dog

@@ -188,6 +188,6 @@ void testKafkaCons() {
 
 int main() {
     execYamlParserDemo();
-    executeCmdPromptUi();
+    // executeCmdPromptUi();
     return 0;
 }
