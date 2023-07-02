@@ -1,0 +1,6 @@
+person:
+  name: John Doe
+  age: 30
+  contact:
+    email: john@example.com
+    phone: "+1 (555) 123-4567"

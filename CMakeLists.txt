@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.22)
 project(investor)
 set(CMAKE_CXX_STANDARD 20)
 
-include(cmake/yaml-cpp.cmake)
-
 set(SRC
     src/main.cpp
 )
@@ -28,7 +26,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     mortgagecalculator
     portfoliomanager
     kafka
-    yaml-cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE

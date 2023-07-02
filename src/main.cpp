@@ -4,12 +4,13 @@
 #include "utils.hpp"
 #include "networth.hpp"
 #include "mortgage.hpp"
-#include "file_manager.hpp"
+#include "file_generator.hpp"
 #include "data_adapter.hpp"
 #include "portfolio.hpp"
 #include "utils.hpp"
 #include "kafka.hpp"
 #include "input_factory.hpp"
+#include "yml_prsr.hpp"
 
 
 networth::NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
@@ -186,6 +187,7 @@ void testKafkaCons() {
 }
 
 int main() {
+    execYamlParserDemo();
     executeCmdPromptUi();
     return 0;
 }
