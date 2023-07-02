@@ -1,5 +1,5 @@
-#ifndef FILE_MANAGER_HPP_
-#define FILE_MANAGER_HPP_
+#ifndef FILE_GENERATOR_HPP_
+#define FILE_GENERATOR_HPP_
 
 #include <vector>
 #include <string>
@@ -33,4 +33,4 @@ public:
 
 std::vector<std::string> getFileNames(const std::string& directoryPath);
 
-#endif /* FILE_MANAGER_HPP_ */
+#endif /* FILE_GENERATOR_HPP_ */

@@ -1,0 +1,11 @@
+generation:
+  networth-projector:
+    output: gen/networth_out.csv
+    input: gen/networth_in.txt
+  mortgage-calculator:
+    output: gen/mortgage_out.csv
+    input: gen/mortgage_in.txt
+  portfolio-manager:
+    output:
+      overview: gen/portfolios_overview.txt
+      portfolios: gen/portfolios/

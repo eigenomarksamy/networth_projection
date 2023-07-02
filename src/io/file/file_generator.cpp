@@ -2,7 +2,7 @@
 #include <iterator>
 #include <filesystem>
 #include <iostream>
-#include "file_manager.hpp"
+#include "file_generator.hpp"
 
 
 bool FileGenerator::checkFileExtension(std::string expExt) {
