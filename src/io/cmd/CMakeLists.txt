@@ -8,7 +8,7 @@ add_library(cmdio STATIC ${SOURCES})
 
 target_include_directories(cmdio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_link_libraries(cmdio PRIVATE utils portfoliomanager)
+target_link_libraries(cmdio PRIVATE utils commonio portfoliomanager)
 
 install(TARGETS cmdio
         ARCHIVE DESTINATION libcmdio
