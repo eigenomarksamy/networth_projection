@@ -90,10 +90,16 @@ bool YamlParser::findAttributeByName(const std::string& fieldName,
 
 bool getValueFromYml(const std::string& fileName,
                      const std::string& fieldName,
-                     std::string& fieldValue) {
+                     std::string& fieldValue,
+                     const std::string& defaultValue) {
     YamlParser parser(fileName);
     if (parser.parseYamlFile()) {
         parser.extractFieldNames();
+        auto ret = parser.findAttributeByName(fieldName, fieldValue);
+        if (!ret) {
+            fieldValue = defaultValue;
+        }
+        return true;
     }
-    return parser.findAttributeByName(fieldName, fieldValue);
+    return false;
 }

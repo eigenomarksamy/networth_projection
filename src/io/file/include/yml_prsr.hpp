@@ -42,6 +42,7 @@ private:
 
 bool getValueFromYml(const std::string& fileName,
                      const std::string& fieldName,
-                     std::string& fieldValue);
+                     std::string& fieldValue,
+                     const std::string& defaultValue="");
 
 #endif /* YML_PRSR */
