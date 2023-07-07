@@ -13,6 +13,45 @@
 #include "input_factory.hpp"
 #include "yml_prsr.hpp"
 
+networth::NetWorth computeNetworthData(const InputDataNetworthProjector& userInput);
+mortgage::Mortgage computeMortgageData(const InputDataMortgageCalculator& userInput);
+void generateDataCsv(const networth::NetWorth netWorth, std::string fileName);
+void generateDataCsv(const mortgage::Mortgage mortgage, std::string fileName);
+void generateInputTxt(const InputDataContainer& input, std::string fileName);
+void generateFiles(const networth::NetWorth& net_worth,
+                   const InputDataContainer& user_input,
+                   const std::string& outputFile,
+                   const std::string& inputFile);
+void generateFiles(const mortgage::Mortgage& mortgage,
+                   const InputDataContainer& user_input,
+                   const std::string& outputFile,
+                   const std::string& inputFile);
+void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
+                            const std::string& directory);
+void generatePortfolioFiles(const portfolio::Portfolio& portfolio,
+                            const std::string& directory);
+void generatePortfolioOverview(const portfolio::Portfolio& portfolio,
+                               const std::string& directory,
+                               const std::string& outputFile);
+void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
+                               const std::string& directory,
+                               const std::string& outputFile);
+bool getPortfolioFromFiles(portfolio::Portfolio& portfolio,
+                           const std::string& name,
+                           const std::string& directory);
+bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios,
+                           const std::string& directory);
+static void executeCmdPromptUi(const std::string& networth_out,
+                               const std::string& networth_in,
+                               const std::string& mortgage_out,
+                               const std::string& mortgage_in,
+                               const std::string& portfolio_directory,
+                               const std::string& portfolio_overview);
+void fillDirectoryConfigurationNames(DirectoryGeneratorCfg& dircfg);
+bool readDirectoryConfigurationValues(DirectoryGeneratorCfg& dir_cfg,
+                                      const std::string conf_file);
 
 networth::NetWorth computeNetworthData(const InputDataNetworthProjector& userInput) {
     networth::NetWorth networth(userInput.init_nw, userInput.year_income,
@@ -207,7 +246,7 @@ void fillDirectoryConfigurationNames(DirectoryGeneratorCfg& dircfg) {
 }
 
 bool readDirectoryConfigurationValues(DirectoryGeneratorCfg& dir_cfg,
-                                     const std::string conf_file) {
+                                      const std::string conf_file) {
     fillDirectoryConfigurationNames(dir_cfg);
     (void)getValueFromYml(conf_file, dir_cfg.networth_projector.input.name,
                           dir_cfg.networth_projector.input.value);
