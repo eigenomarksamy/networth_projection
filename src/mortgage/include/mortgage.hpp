@@ -6,10 +6,12 @@
 #include <vector>
 #include <array>
 #include <string>
+#include "str_adapter.hpp"
+#include "computation_adapter.hpp"
 
 namespace mortgage {
 
-class Mortgage {
+class Mortgage : public StaticComputation {
 
     enum Mortgage_Attr_Desc {
         PERIODE = 0,
@@ -55,10 +57,29 @@ public:
           m_rent_to_compare(rent_to_compare), m_makelaar_fees(makelaar_fees),
           m_rent_annu_increase(rent_annu_increase) { }
 
-    void computeData();
-    void printTabulatedData() const;
+    void computeData() override;
+    void printTabulatedData() const override;
+    std::vector<std::string> getDataNames() const override;
     auto getData() const -> decltype(m_data) { return m_data; }
-    std::vector<std::string> getDataNames() const;
+    uint32_t getPrice() const { return m_price; }
+    uint16_t getNumMonths() const { return m_num_months; }
+    uint16_t getInitialFees() const { return m_makelaar_fees; }
+    float_t getInterestRate() const { return m_interest_rate; }
+    float_t getMarketIncrease() const { return m_market_increase; }
+    float_t getRentToCompare() const { return m_rent_to_compare; }
+    float_t getRentAnnualIncrease() const { return m_rent_annu_increase; }
+};
+
+class MortgageAdapter : public StrStreamGenerator {
+private:
+    Mortgage m_mortgageObj;
+
+public:
+    MortgageAdapter(const Mortgage& mortgageObj) : m_mortgageObj(mortgageObj) {}
+    std::vector<std::string> generateDataNames() const override;
+    std::vector<std::vector<std::string>> generateDataLines() const override;
+    std::vector<std::string> generateInputPreview() const override;
+
 };
 
 } // namespace mortgage
