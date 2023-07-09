@@ -6,21 +6,29 @@
 #include "mortgage.hpp"
 #include "utils.hpp"
 
-void generateDataCsv(const StrStreamGenerator& generatorObj,
-                     FileGenerator& fileObj) {
+static void generateDataCsv(const StrStreamGenerator& generatorObj,
+                            FileGenerator& fileObj);
+static void generateInputTxt(const StrStreamGenerator& generatorObj,
+                             FileGenerator& fileObj);
+static void generateStaticComputationFiles(const std::string& fileOutput,
+                                           const std::string& fileInputPreview,
+                                           const StrStreamGenerator& generatorObj);
+
+static void generateDataCsv(const StrStreamGenerator& generatorObj,
+                            FileGenerator& fileObj) {
     auto genRet = generatorObj.generateNamesWithLines();
     fileObj.generateCsv(genRet.names, genRet.lines);
 }
 
-void generateInputTxt(const StrStreamGenerator& generatorObj,
-                     FileGenerator& fileObj) {
+static void generateInputTxt(const StrStreamGenerator& generatorObj,
+                             FileGenerator& fileObj) {
     auto lines = generatorObj.generateInputPreview();
     fileObj.generateTxt(lines);
 }
 
-void generateStaticComputationFiles(const std::string& fileOutput,
-                                    const std::string& fileInputPreview,
-                                    const StrStreamGenerator& generatorObj) {
+static void generateStaticComputationFiles(const std::string& fileOutput,
+                                           const std::string& fileInputPreview,
+                                           const StrStreamGenerator& generatorObj) {
     FileGenerator file_handler_output(fileOutput);
     FileGenerator file_handler(fileInputPreview);
     generateDataCsv(generatorObj, file_handler_output);

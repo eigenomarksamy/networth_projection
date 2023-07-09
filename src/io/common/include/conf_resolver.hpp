@@ -1,0 +1,6 @@
+#ifndef CONF_RESOLVER_HPP_
+#define CONF_RESOLVER_HPP_
+
+
+
+#endif /* CONF_RESOLVER_HPP_ */
