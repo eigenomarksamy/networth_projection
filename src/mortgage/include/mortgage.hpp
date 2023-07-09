@@ -11,18 +11,6 @@
 
 namespace mortgage {
 
-class MortgageAdapter : public StrStreamGenerator {
-private:
-    Mortgage m_mortgageObj;
-
-public:
-    MortgageAdapter(const Mortgage& mortgageObj) : m_mortgageObj(mortgageObj) {}
-    std::vector<std::string> generateDataNames() const override;
-    std::vector<std::vector<std::string>> generateDataLines() const override;
-    std::vector<std::string> generateInputPreview() const override;
-
-};
-
 class Mortgage : public StaticComputation {
 
     enum Mortgage_Attr_Desc {
@@ -80,6 +68,18 @@ public:
     float_t getMarketIncrease() const { return m_market_increase; }
     float_t getRentToCompare() const { return m_rent_to_compare; }
     float_t getRentAnnualIncrease() const { return m_rent_annu_increase; }
+};
+
+class MortgageAdapter : public StrStreamGenerator {
+private:
+    Mortgage m_mortgageObj;
+
+public:
+    MortgageAdapter(const Mortgage& mortgageObj) : m_mortgageObj(mortgageObj) {}
+    std::vector<std::string> generateDataNames() const override;
+    std::vector<std::vector<std::string>> generateDataLines() const override;
+    std::vector<std::string> generateInputPreview() const override;
+
 };
 
 } // namespace mortgage

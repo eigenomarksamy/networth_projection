@@ -3,10 +3,12 @@
 
 #include <vector>
 #include <string>
+#include "computation_adapter.hpp"
 
 class StrStreamGenerator {
 
 public:
+
     virtual std::vector<std::string> generateDataNames() const = 0;
     virtual std::vector<std::vector<std::string>> generateDataLines() const = 0;
     virtual std::vector<std::string> generateInputPreview() const = 0;

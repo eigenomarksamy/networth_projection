@@ -11,18 +11,6 @@
 
 namespace networth {
 
-class NetworthAdapter : public StrStreamGenerator {
-private:
-    NetWorth m_networthObj;
-
-public:
-    NetworthAdapter(const NetWorth& networthObj) : m_networthObj(networthObj) {}
-    std::vector<std::string> generateDataNames() const override;
-    std::vector<std::vector<std::string>> generateDataLines() const override;
-    std::vector<std::string> generateInputPreview() const override;
-
-};
-
 class NetWorth : public StaticComputation {
 
 public:
@@ -47,7 +35,9 @@ public:
     };
 
     NetWorth (uint32_t nw, uint32_t yearly_income, uint8_t age_retirement,
-              uint8_t cur_age, Percentages percentages);
+              uint8_t cur_age,
+              const std::unordered_map<uint32_t, float_t>& extras,
+              Percentages percentages);
 
     void setDepWithdrawalPlan(const std::unordered_map<uint32_t, float_t>& plan) {
         this->m_dep_wd_plan = plan;
@@ -81,6 +71,18 @@ private:
     std::vector<std::array<float_t, ATTR_LEN>> m_data;
     std::array<float_t, ATTR_LEN> m_attr_arr;
     std::unordered_map<uint32_t, float_t> m_dep_wd_plan;
+
+};
+
+class NetworthAdapter : public StrStreamGenerator {
+private:
+    NetWorth m_networthObj;
+
+public:
+    NetworthAdapter(const NetWorth& networthObj) : m_networthObj(networthObj) {}
+    std::vector<std::string> generateDataNames() const override;
+    std::vector<std::vector<std::string>> generateDataLines() const override;
+    std::vector<std::string> generateInputPreview() const override;
 
 };
 

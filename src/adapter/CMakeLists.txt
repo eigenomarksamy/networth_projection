@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.2)
 project(adapter)
 
-add_library(adapter INTERFACE)
-target_include_directories(adapter INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(SOURCES
+    str_adapter.cpp
+)
+
+add_library(adapter STATIC ${SOURCES})
+target_include_directories(adapter PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 install(TARGETS adapter
         ARCHIVE DESTINATION libadapter

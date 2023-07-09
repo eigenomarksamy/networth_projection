@@ -2,10 +2,15 @@
 #include "utils.hpp"
 #include "networth.hpp"
 
-networth::NetWorth::NetWorth (uint32_t nw, uint32_t yearly_income, uint8_t age_retirement,
-                    uint8_t cur_age, Percentages percentages)
+networth::NetWorth::NetWorth (uint32_t nw,
+                              uint32_t yearly_income,
+                              uint8_t age_retirement,
+                              uint8_t cur_age,
+                              const std::unordered_map<uint32_t, float_t>& extras,
+                              Percentages percentages)
                     : m_init_nw(nw), m_yearly_income(yearly_income),
                         m_age_retirement(age_retirement), m_cur_age(cur_age),
+                        m_dep_wd_plan(extras),
                         m_percentages(percentages) {
     m_cur_year = 1;
     m_init_age = m_cur_age;
