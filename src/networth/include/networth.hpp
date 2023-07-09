@@ -6,10 +6,24 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "str_adapter.hpp"
+#include "computation_adapter.hpp"
 
 namespace networth {
 
-class NetWorth {
+class NetworthAdapter : public StrStreamGenerator {
+private:
+    NetWorth m_networthObj;
+
+public:
+    NetworthAdapter(const NetWorth& networthObj) : m_networthObj(networthObj) {}
+    std::vector<std::string> generateDataNames() const override;
+    std::vector<std::vector<std::string>> generateDataLines() const override;
+    std::vector<std::string> generateInputPreview() const override;
+
+};
+
+class NetWorth : public StaticComputation {
 
 public:
     struct Percentages{
@@ -35,17 +49,26 @@ public:
     NetWorth (uint32_t nw, uint32_t yearly_income, uint8_t age_retirement,
               uint8_t cur_age, Percentages percentages);
 
-    void printTabulatedData() const;
-
-    void computeData();
-
     void setDepWithdrawalPlan(const std::unordered_map<uint32_t, float_t>& plan) {
         this->m_dep_wd_plan = plan;
     }
 
     std::vector<std::array<float_t, ATTR_LEN>> getData() const { return m_data; }
 
-    std::vector<std::string> getDataNames() const;
+    void printTabulatedData() const override;
+
+    void computeData() override;
+
+    std::vector<std::string> getDataNames() const override;
+
+    uint32_t getInitialNetworth() const { return m_init_nw; }
+    uint32_t getYearlyIncome() const { return m_yearly_income; }
+    uint8_t getAgeRetirement() const { return m_age_retirement; }
+    uint8_t getInitialAge() const { return m_init_age; }
+    float_t getYearlyIncomeIncrease() const { return m_percentages.yearly_income_increase; }
+    float_t getPortfolioYearlyReturn() const { return m_percentages.portfolio_yearly_return; }
+    float_t getPortfolioFees() const { return m_percentages.portfolio_fees; }
+    float_t getPercentageOfInvesting() const { return m_percentages.investing; }
 
 private:
     uint32_t m_init_nw;

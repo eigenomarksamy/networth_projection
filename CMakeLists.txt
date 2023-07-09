@@ -9,6 +9,7 @@ set(SRC
 include_directories(lib/include)
 
 add_subdirectory(src/lib)
+add_subdirectory(src/adapter)
 add_subdirectory(src/networth)
 add_subdirectory(src/mortgage)
 add_subdirectory(src/portfolio)
@@ -18,6 +19,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC})
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     PRIVATE
+    adapter
     utils
     fileio
     cmdio
