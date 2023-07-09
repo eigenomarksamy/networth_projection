@@ -34,6 +34,9 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
 void fillDirectoryConfigurationNames(DirectoryGeneratorCfg& dircfg);
 bool readDirectoryConfigurationValues(DirectoryGeneratorCfg& dir_cfg,
                                       const std::string conf_file);
+static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
+                                const DirectoryNestedGeneratorCfg& directories);
+static void executeCmdPromptUi(const DirectoryGeneratorCfg& directories);
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
                             const std::string& directory) {
@@ -96,6 +99,51 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
     return status;
 }
 
+static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
+                                const DirectoryNestedGeneratorCfg& directories) {
+    if (portfolioInput.is_multi_prtfolio) {
+        if (portfolioInput.is_new) {
+            portfolio::PortfolioManager portfolio_manager;
+            executeMultiPortfolioManagement(portfolio_manager);
+            generatePortfolioOverview(portfolio_manager,
+                                        directories.nested.value,
+                                        directories.overview.value);
+        }
+        else {
+            portfolio::PortfolioManager portfolio_manager;
+            if (getPortfolioFromFiles(portfolio_manager,
+                                        portfolioInput.load_all_portfolios,
+                                        portfolioInput.portfolio_list,
+                                        directories.nested.value)) {
+                executeMultiPortfolioManagement(portfolio_manager);
+                generatePortfolioOverview(portfolio_manager,
+                                        directories.nested.value,
+                                        directories.overview.value);
+            }
+        }
+    }
+    else {
+        if (portfolioInput.is_new) {
+            portfolio::Portfolio portfolio = portfolio::Portfolio(portfolioInput.name);
+            executePortfolioManagement(portfolio);
+            generatePortfolioOverview(portfolio,
+                                        directories.nested.value,
+                                        directories.overview.value);
+        }
+        else {
+            portfolio::Portfolio portfolio;
+            if (getPortfolioFromFiles(portfolio,
+                                        portfolioInput.name,
+                                        directories.nested.value)) {
+                executePortfolioManagement(portfolio);
+                generatePortfolioOverview(portfolio,
+                                        directories.nested.value,
+                                        directories.overview.value);
+            }
+        }
+    }
+}
+
 static void executeCmdPromptUi(const DirectoryGeneratorCfg& directories) {
     InputDataContainer user_input;
     getProgramSelector(user_input);
@@ -103,48 +151,11 @@ static void executeCmdPromptUi(const DirectoryGeneratorCfg& directories) {
         || user_input.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
         executeStaticComputation(user_input, directories);
     }
-    if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
-        if (user_input.portfolio_manager.is_multi_prtfolio) {
-            if (user_input.portfolio_manager.is_new) {
-                portfolio::PortfolioManager portfolio_manager;
-                executeMultiPortfolioManagement(portfolio_manager);
-                generatePortfolioOverview(portfolio_manager,
-                                          directories.portfolio_manager.nested.value,
-                                          directories.portfolio_manager.overview.value);
-            }
-            else {
-                portfolio::PortfolioManager portfolio_manager;
-                if (getPortfolioFromFiles(portfolio_manager,
-                                          user_input.portfolio_manager.load_all_portfolios,
-                                          user_input.portfolio_manager.portfolio_list,
-                                          directories.portfolio_manager.nested.value)) {
-                    executeMultiPortfolioManagement(portfolio_manager);
-                    generatePortfolioOverview(portfolio_manager,
-                                          directories.portfolio_manager.nested.value,
-                                          directories.portfolio_manager.overview.value);
-                }
-            }
-        }
-        else {
-            if (user_input.portfolio_manager.is_new) {
-                portfolio::Portfolio portfolio = portfolio::Portfolio(user_input.portfolio_manager.name);
-                executePortfolioManagement(portfolio);
-                generatePortfolioOverview(portfolio,
-                                          directories.portfolio_manager.nested.value,
-                                          directories.portfolio_manager.overview.value);
-            }
-            else {
-                portfolio::Portfolio portfolio;
-                if (getPortfolioFromFiles(portfolio,
-                                          user_input.portfolio_manager.name,
-                                          directories.portfolio_manager.nested.value)) {
-                    executePortfolioManagement(portfolio);
-                    generatePortfolioOverview(portfolio,
-                                          directories.portfolio_manager.nested.value,
-                                          directories.portfolio_manager.overview.value);
-                }
-            }
-        }
+    else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
+        executePortfolioMgr(user_input.portfolio_manager, directories.portfolio_manager);
+    }
+    else {
+        return;
     }
 }
 
