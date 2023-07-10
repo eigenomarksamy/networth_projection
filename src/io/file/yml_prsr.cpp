@@ -26,7 +26,8 @@ YAML::Node YamlParser::getFieldValue(const std::string& fieldName) const {
     return node;
 }
 
-void YamlParser::extractFieldNamesRecursive(const YAML::Node& node, const std::string& parentName) {
+void YamlParser::extractFieldNamesRecursive(const YAML::Node& node,
+                                            const std::string& parentName) {
     if (node.IsMap()) {
         for (const auto& it : node) {
             if (it.second.IsMap()) {
@@ -37,13 +38,14 @@ void YamlParser::extractFieldNamesRecursive(const YAML::Node& node, const std::s
                 std::string fieldName = parentName + it.first.as<std::string>();
                 std::string fieldValue = it.second.as<std::string>();
                 m_fieldNames.push_back(fieldName);
-                m_dataMap[fieldName] = fieldValue; // Populate the attribute map
+                m_dataMap[fieldName] = fieldValue;
             }
         }
     }
 }
 
-YAML::Node YamlParser::findFieldNode(const YAML::Node& node, const std::string& fieldName) const {
+YAML::Node YamlParser::findFieldNode(const YAML::Node& node,
+                                     const std::string& fieldName) const {
     YAML::Node result;
 
     if (node.IsMap()) {
@@ -63,7 +65,8 @@ YAML::Node YamlParser::findFieldNode(const YAML::Node& node, const std::string& 
     return result;
 }
 
-bool YamlParser::getFieldScalarValue(const std::string& fieldName, std::string& fieldValue) const {
+bool YamlParser::getFieldScalarValue(const std::string& fieldName,
+                                     std::string& fieldValue) const {
     YAML::Node node = findFieldNode(m_data, fieldName);
     std::cout << node.Type() << std::endl;
     if (node.IsScalar()) {
