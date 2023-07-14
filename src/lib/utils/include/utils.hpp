@@ -53,4 +53,7 @@ inline std::size_t generateHashForString(const std::string& str) {
 
 uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target);
 
+void splitStr(const std::string& str, const char separator,
+              std::vector<std::string>& strings);
+
 #endif /* UTILS_HPP_ */

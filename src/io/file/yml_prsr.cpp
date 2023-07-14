@@ -91,6 +91,10 @@ bool YamlParser::findAttributeByName(const std::string& fieldName,
     return false;
 }
 
+// std::map<std::string, std::string> YamlParser::getChildrenFields(const std::string& fullFieldName) const {
+    
+// }
+
 bool getValueFromYml(const std::string& fileName,
                      const std::string& fieldName,
                      std::string& fieldValue,
@@ -106,3 +110,27 @@ bool getValueFromYml(const std::string& fileName,
     }
     return false;
 }
+
+bool getValuesFromYml(const std::string& fileName,
+                      const std::vector<std::string>& fieldNames,
+                      std::vector<std::string>& fieldValues) {
+    YamlParser parser(fileName);
+    bool ret = false;
+    if (parser.parseYamlFile() && (fieldNames.size() == fieldValues.size())) {
+        ret = true;
+        parser.extractFieldNames();
+        for (size_t i = 0; i < fieldNames.size(); ++i) {
+            ret &= parser.findAttributeByName(fieldNames[i], fieldValues[i]);
+        }
+    }
+    return ret;
+}
+
+// bool getChildrenValuesFromYml(const std::string& fileName,
+//                               const std::string& fieldName,
+//                               std::map<std::string, std::string>& fieldChildren) {
+//     YamlParser parser(fileName);
+//     if (parser.parseYamlFile()) {
+
+//     }
+// }

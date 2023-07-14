@@ -36,7 +36,10 @@ static void generateStaticComputationFiles(const std::string& fileOutput,
 }
 
 void executeStaticComputation(const InputDataContainer& inputObj,
-                              const DirectoryGeneratorCfg& dirCfg) {
+                              const std::string& networth_projector_path_output,
+                              const std::string& networth_projector_path_input,
+                              const std::string& mortgage_caculator_path_output,
+                              const std::string& mortgage_calculator_path_input) {
     if (inputObj.specifier == InputDataContainer::Specifier::NETWORTH_INPUT) {
         std::unordered_map<uint32_t, float_t> extra_money_map;
         convert2DVectorToUnorderedMap(inputObj.networth_projector.year_to_amount,
@@ -55,8 +58,8 @@ void executeStaticComputation(const InputDataContainer& inputObj,
         computationObj.computeData();
         computationObj.printTabulatedData();
         auto generationObj = networth::NetworthAdapter(computationObj);
-        generateStaticComputationFiles(dirCfg.networth_projector.output.value,
-                                       dirCfg.networth_projector.input.value,
+        generateStaticComputationFiles(networth_projector_path_output,
+                                       networth_projector_path_input,
                                        generationObj);
     }
     else if (inputObj.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
@@ -71,8 +74,8 @@ void executeStaticComputation(const InputDataContainer& inputObj,
         computationObj.computeData();
         computationObj.printTabulatedData();
         auto generationObj = mortgage::MortgageAdapter(computationObj);
-        generateStaticComputationFiles(dirCfg.mortgage_calculator.output.value,
-                                       dirCfg.mortgage_calculator.input.value,
+        generateStaticComputationFiles(mortgage_caculator_path_output,
+                                       mortgage_calculator_path_input,
                                        generationObj);
     }
 }

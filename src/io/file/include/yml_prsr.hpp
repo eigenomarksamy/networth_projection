@@ -30,6 +30,8 @@ public:
     bool findAttributeByName(const std::string& fieldName,
                              std::string& fieldValue) const;
 
+    // std::map<std::string, std::string> getChildrenFields(const std::string& fullFieldName) const;
+
 private:
     std::string m_filename;
     std::vector<std::string> m_fieldNames;
@@ -44,5 +46,13 @@ bool getValueFromYml(const std::string& fileName,
                      const std::string& fieldName,
                      std::string& fieldValue,
                      const std::string& defaultValue="");
+
+bool getValuesFromYml(const std::string& fileName,
+                      const std::vector<std::string>& fieldNames,
+                      std::vector<std::string>& fieldValues);
+
+// bool getChildrenValuesFromYml(const std::string& fileName,
+//                               const std::string& fieldName,
+//                               std::map<std::string, std::string>& fieldChildren);
 
 #endif /* YML_PRSR */

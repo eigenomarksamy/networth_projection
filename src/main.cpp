@@ -6,13 +6,13 @@
 #include "mortgage.hpp"
 #include "file_generator.hpp"
 #include "data_adapter.hpp"
-#include "conf_input_types.hpp"
 #include "portfolio.hpp"
 #include "utils.hpp"
 #include "kafka.hpp"
 #include "input_factory.hpp"
 #include "yml_prsr.hpp"
 #include "activation.hpp"
+#include "conf_resolver.hpp"
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
                             const std::string& directory);
@@ -31,12 +31,16 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
                            const bool load_all_portfolios,
                            const std::vector<std::string>& list_portfolios,
                            const std::string& directory);
-void fillDirectoryConfigurationNames(DirectoryGeneratorCfg& dircfg);
-bool readDirectoryConfigurationValues(DirectoryGeneratorCfg& dir_cfg,
-                                      const std::string conf_file);
 static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
-                                const DirectoryNestedGeneratorCfg& directories);
-static void executeCmdPromptUi(const DirectoryGeneratorCfg& directories);
+                                const std::string& porto_mgr_path_nested,
+                                const std::string& porto_mgr_path_overview);
+static void executeCmdPromptUi(const std::string& networth_projector_path_output,
+                               const std::string& networth_projector_path_input,
+                               const std::string& mortgage_caculator_path_output,
+                               const std::string& mortgage_calculator_path_input,
+                               const std::string& porto_mgr_path_nested,
+                               const std::string& porto_mgr_path_overview);
+static void resolveDirCfg(const std::string& confPath, DirectoriesValues& dirs);
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
                             const std::string& directory) {
@@ -100,25 +104,26 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
 }
 
 static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
-                                const DirectoryNestedGeneratorCfg& directories) {
+                                const std::string& porto_mgr_path_nested,
+                                const std::string& porto_mgr_path_overview) {
     if (portfolioInput.is_multi_prtfolio) {
         if (portfolioInput.is_new) {
             portfolio::PortfolioManager portfolio_manager;
             executeMultiPortfolioManagement(portfolio_manager);
             generatePortfolioOverview(portfolio_manager,
-                                        directories.nested.value,
-                                        directories.overview.value);
+                                      porto_mgr_path_nested,
+                                      porto_mgr_path_overview);
         }
         else {
             portfolio::PortfolioManager portfolio_manager;
             if (getPortfolioFromFiles(portfolio_manager,
-                                        portfolioInput.load_all_portfolios,
-                                        portfolioInput.portfolio_list,
-                                        directories.nested.value)) {
+                                      portfolioInput.load_all_portfolios,
+                                      portfolioInput.portfolio_list,
+                                      porto_mgr_path_nested)) {
                 executeMultiPortfolioManagement(portfolio_manager);
                 generatePortfolioOverview(portfolio_manager,
-                                        directories.nested.value,
-                                        directories.overview.value);
+                                          porto_mgr_path_nested,
+                                          porto_mgr_path_overview);
             }
         }
     }
@@ -127,69 +132,72 @@ static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
             portfolio::Portfolio portfolio = portfolio::Portfolio(portfolioInput.name);
             executePortfolioManagement(portfolio);
             generatePortfolioOverview(portfolio,
-                                        directories.nested.value,
-                                        directories.overview.value);
+                                      porto_mgr_path_nested,
+                                      porto_mgr_path_overview);
         }
         else {
             portfolio::Portfolio portfolio;
             if (getPortfolioFromFiles(portfolio,
-                                        portfolioInput.name,
-                                        directories.nested.value)) {
+                                      portfolioInput.name,
+                                      porto_mgr_path_nested)) {
                 executePortfolioManagement(portfolio);
                 generatePortfolioOverview(portfolio,
-                                        directories.nested.value,
-                                        directories.overview.value);
+                                          porto_mgr_path_nested,
+                                          porto_mgr_path_overview);
             }
         }
     }
 }
 
-static void executeCmdPromptUi(const DirectoryGeneratorCfg& directories) {
+static void executeCmdPromptUi(const std::string& networth_projector_path_output,
+                               const std::string& networth_projector_path_input,
+                               const std::string& mortgage_caculator_path_output,
+                               const std::string& mortgage_calculator_path_input,
+                               const std::string& porto_mgr_path_nested,
+                               const std::string& porto_mgr_path_overview) {
     InputDataContainer user_input;
     getProgramSelector(user_input);
     if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT
         || user_input.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
-        executeStaticComputation(user_input, directories);
+        executeStaticComputation(user_input,
+                                 networth_projector_path_output,
+                                 networth_projector_path_input,
+                                 mortgage_caculator_path_output,
+                                 mortgage_calculator_path_input);
     }
     else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
-        executePortfolioMgr(user_input.portfolio_manager, directories.portfolio_manager);
+        executePortfolioMgr(user_input.portfolio_manager,
+                            porto_mgr_path_nested,
+                            porto_mgr_path_overview);
     }
     else {
         return;
     }
 }
 
-void fillDirectoryConfigurationNames(DirectoryGeneratorCfg& dircfg) {
-    dircfg.mortgage_calculator.input.name = "generation.mortgage-calculator.input";
-    dircfg.mortgage_calculator.output.name = "generation.mortgage-calculator.output";
-    dircfg.networth_projector.input.name = "generation.networth-projector.input";
-    dircfg.networth_projector.output.name = "generation.networth-projector.output";
-    dircfg.portfolio_manager.nested.name = "generation.portfolio-manager.output.portfolios";
-    dircfg.portfolio_manager.overview.name = "generation.portfolio-manager.output.overview";
-}
-
-bool readDirectoryConfigurationValues(DirectoryGeneratorCfg& dir_cfg,
-                                      const std::string conf_file) {
-    fillDirectoryConfigurationNames(dir_cfg);
-    (void)getValueFromYml(conf_file, dir_cfg.networth_projector.input.name,
-                          dir_cfg.networth_projector.input.value);
-    (void)getValueFromYml(conf_file, dir_cfg.networth_projector.output.name,
-                          dir_cfg.networth_projector.output.value);
-    (void)getValueFromYml(conf_file, dir_cfg.mortgage_calculator.input.name,
-                          dir_cfg.mortgage_calculator.input.value);
-    (void)getValueFromYml(conf_file, dir_cfg.mortgage_calculator.output.name,
-                          dir_cfg.mortgage_calculator.output.value);
-    (void)getValueFromYml(conf_file, dir_cfg.portfolio_manager.nested.name,
-                          dir_cfg.portfolio_manager.nested.value);
-    (void)getValueFromYml(conf_file, dir_cfg.portfolio_manager.overview.name,
-                          dir_cfg.portfolio_manager.overview.value);
-    return true;
+static void resolveDirCfg(const std::string& confPath, DirectoriesValues& dirs) {
+    DirCfg dir_cfg(confPath);
+    dirs.mortg_calc_in = DirCfg::createConfigElm("generation.mortgage-calculator.input");
+    dir_cfg.addConfigElement(dirs.mortg_calc_in);
+    dirs.netwo_calc_in = DirCfg::createConfigElm("generation.networth-projector.input");
+    dir_cfg.addConfigElement(dirs.netwo_calc_in);
+    dirs.mortg_calc_out = DirCfg::createConfigElm("generation.mortgage-calculator.output");
+    dir_cfg.addConfigElement(dirs.mortg_calc_out);
+    dirs.netwo_calc_out = DirCfg::createConfigElm("generation.networth-projector.output");
+    dir_cfg.addConfigElement(dirs.netwo_calc_out);
+    dirs.porto_dirs_out = DirCfg::createConfigElm("generation.portfolio-manager.output.portfolios");
+    dir_cfg.addConfigElement(dirs.porto_dirs_out);
+    dirs.porto_overview = DirCfg::createConfigElm("generation.portfolio-manager.output.overview");
+    dir_cfg.addConfigElement(dirs.porto_overview);
+    dir_cfg.readCfg(false, false);
 }
 
 int main() {
     std::string dir_conf_file = "conf/directories.yml";
-    DirectoryGeneratorCfg directories;
-    (void)readDirectoryConfigurationValues(directories, dir_conf_file);
-    executeCmdPromptUi(directories);
+    DirectoriesValues dirs;
+    resolveDirCfg(dir_conf_file, dirs);
+    executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+                       dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+                       dirs.porto_dirs_out->value, dirs.porto_overview->value);
     return 0;
 }
