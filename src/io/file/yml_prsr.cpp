@@ -91,9 +91,20 @@ bool YamlParser::findAttributeByName(const std::string& fieldName,
     return false;
 }
 
-// std::map<std::string, std::string> YamlParser::getChildrenFields(const std::string& fullFieldName) const {
-    
-// }
+std::map<std::string, std::string> YamlParser::getChildrenFields(const std::string& fullFieldName) const {
+    std::map<std::string, std::string> childrenFields;
+    YAML::Node parentNode = findFieldNode(m_data, fullFieldName);
+    if (!parentNode.IsNull() && parentNode.IsMap()) {
+        for (const auto& field : parentNode) {
+            std::string childFieldName = fullFieldName + "." + field.first.as<std::string>();
+            std::string fieldValue;
+            if (getFieldScalarValue(childFieldName, fieldValue)) {
+                childrenFields[childFieldName] = fieldValue;
+            }
+        }
+    }
+    return childrenFields;
+}
 
 bool getValueFromYml(const std::string& fileName,
                      const std::string& fieldName,
@@ -126,11 +137,13 @@ bool getValuesFromYml(const std::string& fileName,
     return ret;
 }
 
-// bool getChildrenValuesFromYml(const std::string& fileName,
-//                               const std::string& fieldName,
-//                               std::map<std::string, std::string>& fieldChildren) {
-//     YamlParser parser(fileName);
-//     if (parser.parseYamlFile()) {
-
-//     }
-// }
+bool getChildrenValuesFromYml(const std::string& fileName,
+                              const std::string& fieldName,
+                              std::map<std::string, std::string>& fieldChildren) {
+    YamlParser parser(fileName);
+    if (parser.parseYamlFile()) {
+        fieldChildren = parser.getChildrenFields(fieldName);
+        return true;
+    }
+    return false;
+}
