@@ -57,12 +57,22 @@ std::string YmlCfg::getValue(const std::string& fullName) {
     return retVal;
 }
 
-std::shared_ptr<config_elm_t> YmlCfg::createConfigElm(const std::string& fullName) {
+std::shared_ptr<config_elm_t> YmlCfg::createConfigElm(const std::string& fullName,
+                                                      const std::string& fileName,
+                                                      bool lookForChildren) {
     std::vector<std::string> names;
     splitStr(fullName, '.', names);
     std::string firstName = names.back();
     names.pop_back();
     config_elm_t config(firstName, names);
-    auto ptr = std::make_shared<config_elm_t>(firstName, names);
+    if (lookForChildren && fileName == "") {
+        lookForChildren = false;
+    }
+    else if (lookForChildren) {
+        if (!hasChildren(fileName, fullName)) {
+            lookForChildren = false;
+        }
+    }
+    auto ptr = std::make_shared<config_elm_t>(lookForChildren, fullName, names);
     return ptr;
 }

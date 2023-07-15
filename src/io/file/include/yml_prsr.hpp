@@ -62,4 +62,7 @@ bool getChildrenValuesFromYml(const std::string& fileName,
                               const std::string& fieldName,
                               std::map<std::string, std::string>& fieldChildren);
 
+bool hasChildren(const std::string& fileName,
+                 const std::string& fieldName);
+
 #endif /* YML_PRSR */

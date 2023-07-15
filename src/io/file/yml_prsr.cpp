@@ -144,11 +144,20 @@ bool getChildrenValuesFromYml(const std::string& fileName,
                               const std::string& fieldName,
                               std::map<std::string, std::string>& fieldChildren) {
     YamlParser parser(fileName);
+    size_t init_size = fieldChildren.size();
     if (parser.parseYamlFile()) {
         fieldChildren = parser.getChildrenFields(fieldName);
-        return true;
+        if (init_size < fieldChildren.size()) {
+            return true;
+        }
     }
     return false;
+}
+
+bool hasChildren(const std::string& fileName,
+                 const std::string& fieldName) {
+    std::map<std::string, std::string> tmp;
+    return getChildrenValuesFromYml(fileName, fieldName, tmp);
 }
 
 void YmlUtils::displayAllFields(const std::string& fileName) {

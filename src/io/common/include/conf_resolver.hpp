@@ -7,29 +7,24 @@
 #include <memory>
 
 typedef struct ConfigElm {
-    bool lookForChildren;
+    bool optionalChildren;
     std::string full_name;
     std::string name;
     std::string value;
-    std::vector<std::string> childrenValues;
-    ConfigElm(const std::string& name)
-      : name(name), full_name(name), lookForChildren(false) {}
+    std::map<std::string, std::string> children;
     ConfigElm(const std::string& name,
               const std::vector<std::string>& family)
-      : name(name), lookForChildren(false) {
+      : name(name), optionalChildren(false) {
         full_name = "";
         for (const auto& fam : family) {
             full_name += fam + ".";
         }
         full_name += name;
     }
-    explicit ConfigElm(const bool lookForChildren,
-                       const std::string& name)
-      : name(name), full_name(name), lookForChildren(lookForChildren) {}
-    explicit ConfigElm (const bool lookForChildren,
-                        const std::string& name,
-                        const std::vector<std::string>& family)
-      : name(name), lookForChildren(lookForChildren) {
+    explicit ConfigElm(const bool optionalChildren,
+                       const std::string& name,
+                       const std::vector<std::string>& family)
+      : name(name), optionalChildren(optionalChildren) {
         full_name = "";
         for (const auto& fam : family) {
             full_name += fam + ".";
@@ -45,7 +40,9 @@ public:
     void addConfigElement(const std::shared_ptr<config_elm_t>& elemnt) { m_cfgElms.push_back(elemnt); }
     bool readCfg(const bool createMap, const bool useDefaults);
     std::string getValue(const std::string& fullName);
-    static std::shared_ptr<config_elm_t> createConfigElm(const std::string& fullName);
+    static std::shared_ptr<config_elm_t> createConfigElm(const std::string& fullName,
+                                                         const std::string& fileName="",
+                                                         bool lookForChildren=false);
 private:
     std::string m_fileName;
     std::vector<std::shared_ptr<config_elm_t>> m_cfgElms;
