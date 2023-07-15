@@ -246,11 +246,15 @@ int main() {
     DirectoriesValues dirs;
     NetworthValues nw_cfg_values;
     MortgageValues mortg_cfg_values;
+    InputDataNetworthProjector input_data_nw_from_yml;
+    InputDataMortgageCalculator input_data_mortg_from_yml;
     resolveCfg(dir_conf_file, dirs);
     resolveCfg(networth_conf_file, nw_cfg_values);
     resolveCfg(mortgage_conf_file, mortg_cfg_values);
-    executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
-                       dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-                       dirs.porto_dirs_out->value, dirs.porto_overview->value);
+    convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
+    convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
+    // executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+    //                    dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+    //                    dirs.porto_dirs_out->value, dirs.porto_overview->value);
     return 0;
 }

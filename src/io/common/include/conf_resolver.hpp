@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include "utils.hpp"
 
 typedef struct ConfigElm {
     std::string full_name;

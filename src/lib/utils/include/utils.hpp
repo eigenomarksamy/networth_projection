@@ -7,6 +7,9 @@
 #include <map>
 #include <iostream>
 #include <stdexcept>
+#include <variant>
+#include <sstream>
+#include <cstdint>
 
 template<typename T>
 float_t getPercent(T percent) {
@@ -54,6 +57,14 @@ template<typename K, typename V>
 std::ostream& operator<<(std::ostream& out, const std::map<K, V>& m) {
     printMap(out, m);
     return out;
+}
+
+template <typename T>
+T convertToNumeric(const std::string& str) {
+    T result;
+    std::stringstream ss(str);
+    ss >> result;
+    return result;
 }
 
 std::string getLocalDateTime(const char format[]);

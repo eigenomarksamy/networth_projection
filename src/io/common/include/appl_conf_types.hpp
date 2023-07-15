@@ -2,6 +2,7 @@
 #define APPL_CONF_TYPES_HPP_
 
 #include "conf_resolver.hpp"
+#include "input_types_cfg.hpp"
 
 struct DirectoriesValues {
     std::shared_ptr<config_elm_t> mortg_calc_in;
@@ -34,5 +35,9 @@ struct MortgageValues {
     std::shared_ptr<config_elm_t> rent_to_compare;
     std::shared_ptr<config_elm_t> annual_rent_increase;
 };
+
+void convertNetworthYmlData(InputDataNetworthProjector& input, const NetworthValues& values);
+
+void convertMortgageYmlData(InputDataMortgageCalculator& input, const MortgageValues& values);
 
 #endif /* APPL_CONF_TYPES_HPP_ */

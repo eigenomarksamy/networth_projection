@@ -1,6 +1,7 @@
 set(SOURCES
     data_adapter.cpp
     conf_resolver.cpp
+    appl_type_converter.cpp
 )
 
 add_library(commonio STATIC ${SOURCES})
