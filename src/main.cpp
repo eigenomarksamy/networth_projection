@@ -42,6 +42,7 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const std::string& porto_mgr_path_nested,
                                const std::string& porto_mgr_path_overview);
 static void resolveDirCfg(const std::string& confPath, DirectoriesValues& dirs);
+static void resolveNetworthCfg(const std::string& confPath, NetworthValues& values);
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
                             const std::string& directory) {
@@ -193,7 +194,7 @@ static void resolveDirCfg(const std::string& confPath, DirectoriesValues& dirs) 
     dir_cfg.readCfg(false, false);
 }
 
-void resolveNetworthCfg(const std::string& confPath, NetworthValues& values) {
+static void resolveNetworthCfg(const std::string& confPath, NetworthValues& values) {
     YmlCfg cfg(confPath);
     values.age_current = YmlCfg::createConfigElm("current-age");
     cfg.addConfigElement(values.age_current);
@@ -223,8 +224,8 @@ int main() {
     NetworthValues nw_cfg_values;
     resolveDirCfg(dir_conf_file, dirs);
     resolveNetworthCfg(networth_conf_file, nw_cfg_values);
-    // executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
-    //                    dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-    //                    dirs.porto_dirs_out->value, dirs.porto_overview->value);
+    executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+                       dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+                       dirs.porto_dirs_out->value, dirs.porto_overview->value);
     return 0;
 }
