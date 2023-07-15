@@ -176,18 +176,18 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
 }
 
 static void resolveDirCfg(const std::string& confPath, DirectoriesValues& dirs) {
-    DirCfg dir_cfg(confPath);
-    dirs.mortg_calc_in = DirCfg::createConfigElm("generation.mortgage-calculator.input");
+    YmlCfg dir_cfg(confPath);
+    dirs.mortg_calc_in = YmlCfg::createConfigElm("generation.mortgage-calculator.input");
     dir_cfg.addConfigElement(dirs.mortg_calc_in);
-    dirs.netwo_calc_in = DirCfg::createConfigElm("generation.networth-projector.input");
+    dirs.netwo_calc_in = YmlCfg::createConfigElm("generation.networth-projector.input");
     dir_cfg.addConfigElement(dirs.netwo_calc_in);
-    dirs.mortg_calc_out = DirCfg::createConfigElm("generation.mortgage-calculator.output");
+    dirs.mortg_calc_out = YmlCfg::createConfigElm("generation.mortgage-calculator.output");
     dir_cfg.addConfigElement(dirs.mortg_calc_out);
-    dirs.netwo_calc_out = DirCfg::createConfigElm("generation.networth-projector.output");
+    dirs.netwo_calc_out = YmlCfg::createConfigElm("generation.networth-projector.output");
     dir_cfg.addConfigElement(dirs.netwo_calc_out);
-    dirs.porto_dirs_out = DirCfg::createConfigElm("generation.portfolio-manager.output.portfolios");
+    dirs.porto_dirs_out = YmlCfg::createConfigElm("generation.portfolio-manager.output.portfolios");
     dir_cfg.addConfigElement(dirs.porto_dirs_out);
-    dirs.porto_overview = DirCfg::createConfigElm("generation.portfolio-manager.output.overview");
+    dirs.porto_overview = YmlCfg::createConfigElm("generation.portfolio-manager.output.overview");
     dir_cfg.addConfigElement(dirs.porto_overview);
     dir_cfg.readCfg(false, false);
 }

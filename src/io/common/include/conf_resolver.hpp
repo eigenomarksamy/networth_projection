@@ -31,9 +31,9 @@ struct DirectoriesValues {
     std::shared_ptr<config_elm_t> porto_overview;
 };
 
-class DirCfg {
+class YmlCfg {
 public:
-    DirCfg(const std::string& confFile) : m_fileName(confFile) {}
+    YmlCfg(const std::string& confFile) : m_fileName(confFile) {}
     void addConfigElement(const std::vector<std::shared_ptr<config_elm_t>>& elemnts);
     void addConfigElement(const std::shared_ptr<config_elm_t>& elemnt) { m_cfgElms.push_back(elemnt); }
     bool readCfg(const bool createMap, const bool useDefaults);

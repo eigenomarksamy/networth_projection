@@ -2,13 +2,13 @@
 #include "yml_prsr.hpp"
 #include "utils.hpp"
 
-void DirCfg::addConfigElement(const std::vector<std::shared_ptr<config_elm_t>>& elemnts) {
+void YmlCfg::addConfigElement(const std::vector<std::shared_ptr<config_elm_t>>& elemnts) {
     for (const auto& elm : elemnts) {
         addConfigElement(elm);
     }
 }
 
-bool DirCfg::readCfg(const bool createMap, const bool useDefaults) {
+bool YmlCfg::readCfg(const bool createMap, const bool useDefaults) {
     bool retVal;
     if (useDefaults) {
         for (auto& cfgElm : m_cfgElms) {
@@ -41,7 +41,7 @@ bool DirCfg::readCfg(const bool createMap, const bool useDefaults) {
     return retVal;
 }
 
-std::string DirCfg::getValue(const std::string& fullName) {
+std::string YmlCfg::getValue(const std::string& fullName) {
     std::string retVal = "";
     if (m_cfgMap.find(fullName) != m_cfgMap.end()) {
         retVal = m_cfgMap[fullName];
@@ -57,7 +57,7 @@ std::string DirCfg::getValue(const std::string& fullName) {
     return retVal;
 }
 
-std::shared_ptr<config_elm_t> DirCfg::createConfigElm(const std::string& fullName) {
+std::shared_ptr<config_elm_t> YmlCfg::createConfigElm(const std::string& fullName) {
     std::vector<std::string> names;
     splitStr(fullName, '.', names);
     std::string firstName = names.back();
