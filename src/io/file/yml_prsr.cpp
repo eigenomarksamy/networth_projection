@@ -1,4 +1,6 @@
+#include <iostream>
 #include "yml_prsr.hpp"
+#include "utils.hpp"
 
 bool YamlParser::parseYamlFile() {
     try {
@@ -146,4 +148,12 @@ bool getChildrenValuesFromYml(const std::string& fileName,
         return true;
     }
     return false;
+}
+
+void YmlUtils::displayAllFields(const std::string& fileName) {
+    YamlParser parser(fileName);
+    if (parser.parseYamlFile()) {
+        parser.extractFieldNames();
+        std::cout << parser.m_dataMap;
+    }
 }

@@ -32,6 +32,8 @@ public:
 
     std::map<std::string, std::string> getChildrenFields(const std::string& fullFieldName) const;
 
+    friend class YmlUtils;
+
 private:
     std::string m_filename;
     std::vector<std::string> m_fieldNames;
@@ -40,6 +42,11 @@ private:
 
     void extractFieldNamesRecursive(const YAML::Node& node, const std::string& parentKey);
     YAML::Node findFieldNode(const YAML::Node& node, const std::string& fieldName) const;
+};
+
+class YmlUtils {
+public:
+    void displayAllFields(const std::string& fileName);
 };
 
 bool getValueFromYml(const std::string& fileName,

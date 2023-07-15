@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <iostream>
 #include <stdexcept>
 
@@ -37,7 +38,20 @@ void printMap(std::ostream& out, std::unordered_map<K, V> const &m) {
 }
 
 template<typename K, typename V>
+void printMap(std::ostream& out, std::map<K, V> const &m) {
+    for (auto const &pair: m) {
+        std::cout << "{" << pair.first << ": " << pair.second << "}\n";
+    }
+}
+
+template<typename K, typename V>
 std::ostream& operator<<(std::ostream& out, const std::unordered_map<K, V>& m) {
+    printMap(out, m);
+    return out;
+}
+
+template<typename K, typename V>
+std::ostream& operator<<(std::ostream& out, const std::map<K, V>& m) {
     printMap(out, m);
     return out;
 }
