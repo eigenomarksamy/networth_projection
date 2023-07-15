@@ -109,6 +109,14 @@ std::map<std::string, std::string> YamlParser::getChildrenFields(const std::stri
     return childrenFields;
 }
 
+void YmlUtils::displayAllFields(const std::string& fileName) {
+    YamlParser parser(fileName);
+    if (parser.parseYamlFile()) {
+        parser.extractFieldNames();
+        std::cout << parser.m_dataMap;
+    }
+}
+
 bool getValueFromYml(const std::string& fileName,
                      const std::string& fieldName,
                      std::string& fieldValue,
@@ -154,16 +162,21 @@ bool getChildrenValuesFromYml(const std::string& fileName,
     return false;
 }
 
+bool getChildrenNamesFromYml(const std::string& fileName,
+                             const std::string& fieldName,
+                             std::vector<std::string>& childrenNames) {
+    std::map<std::string, std::string> tmp;
+    if (getChildrenValuesFromYml(fileName, fieldName, tmp)) {
+        for (auto& t : tmp) {
+            childrenNames.push_back(t.first);
+        }
+        return true;
+    }
+    return false;
+}
+
 bool hasChildren(const std::string& fileName,
                  const std::string& fieldName) {
     std::map<std::string, std::string> tmp;
     return getChildrenValuesFromYml(fileName, fieldName, tmp);
-}
-
-void YmlUtils::displayAllFields(const std::string& fileName) {
-    YamlParser parser(fileName);
-    if (parser.parseYamlFile()) {
-        parser.extractFieldNames();
-        std::cout << parser.m_dataMap;
-    }
 }

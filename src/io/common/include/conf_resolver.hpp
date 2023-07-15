@@ -7,24 +7,12 @@
 #include <memory>
 
 typedef struct ConfigElm {
-    bool optionalChildren;
     std::string full_name;
     std::string name;
     std::string value;
-    std::map<std::string, std::string> children;
     ConfigElm(const std::string& name,
               const std::vector<std::string>& family)
-      : name(name), optionalChildren(false) {
-        full_name = "";
-        for (const auto& fam : family) {
-            full_name += fam + ".";
-        }
-        full_name += name;
-    }
-    explicit ConfigElm(const bool optionalChildren,
-                       const std::string& name,
-                       const std::vector<std::string>& family)
-      : name(name), optionalChildren(optionalChildren) {
+      : name(name) {
         full_name = "";
         for (const auto& fam : family) {
             full_name += fam + ".";
@@ -40,9 +28,10 @@ public:
     void addConfigElement(const std::shared_ptr<config_elm_t>& elemnt) { m_cfgElms.push_back(elemnt); }
     bool readCfg(const bool createMap, const bool useDefaults);
     std::string getValue(const std::string& fullName);
-    static std::shared_ptr<config_elm_t> createConfigElm(const std::string& fullName,
-                                                         const std::string& fileName="",
-                                                         bool lookForChildren=false);
+    static std::shared_ptr<config_elm_t> createConfigElm(const std::string& fullName);
+    static std::vector<std::shared_ptr<config_elm_t>> createConfigElm(
+                                                         const std::string& fullName,
+                                                         const std::string& fileName);
 private:
     std::string m_fileName;
     std::vector<std::shared_ptr<config_elm_t>> m_cfgElms;

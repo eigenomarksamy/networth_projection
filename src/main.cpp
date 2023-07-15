@@ -193,12 +193,38 @@ static void resolveDirCfg(const std::string& confPath, DirectoriesValues& dirs) 
     dir_cfg.readCfg(false, false);
 }
 
+void resolveNetworthCfg(const std::string& confPath, NetworthValues& values) {
+    YmlCfg cfg(confPath);
+    values.age_current = YmlCfg::createConfigElm("current-age");
+    cfg.addConfigElement(values.age_current);
+    values.age_retirement = YmlCfg::createConfigElm("age-retirement");
+    cfg.addConfigElement(values.age_retirement);
+    values.initial_networth = YmlCfg::createConfigElm("initial-networth");
+    cfg.addConfigElement(values.initial_networth);
+    values.portfolio_fees = YmlCfg::createConfigElm("portfolio-fees");
+    cfg.addConfigElement(values.portfolio_fees);
+    values.yearly_income = YmlCfg::createConfigElm("yearly-income");
+    cfg.addConfigElement(values.yearly_income);
+    values.yearly_income_raise = YmlCfg::createConfigElm("yearly-income-raise");
+    cfg.addConfigElement(values.yearly_income_raise);
+    values.yearly_investment = YmlCfg::createConfigElm("yearly-investing");
+    cfg.addConfigElement(values.yearly_investment);
+    values.yearly_roi = YmlCfg::createConfigElm("return-estimate");
+    cfg.addConfigElement(values.yearly_roi);
+    values.deposit_withdrawal = YmlCfg::createConfigElm("deposit-withdrawal", confPath);
+    cfg.addConfigElement(values.deposit_withdrawal);
+    cfg.readCfg(false, false);
+}
+
 int main() {
     std::string dir_conf_file = "conf/directories.yml";
+    std::string networth_conf_file = "conf/input/networth.yml";
     DirectoriesValues dirs;
+    NetworthValues nw_cfg_values;
     resolveDirCfg(dir_conf_file, dirs);
-    executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
-                       dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-                       dirs.porto_dirs_out->value, dirs.porto_overview->value);
+    resolveNetworthCfg(networth_conf_file, nw_cfg_values);
+    // executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+    //                    dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+    //                    dirs.porto_dirs_out->value, dirs.porto_overview->value);
     return 0;
 }

@@ -57,22 +57,28 @@ std::string YmlCfg::getValue(const std::string& fullName) {
     return retVal;
 }
 
-std::shared_ptr<config_elm_t> YmlCfg::createConfigElm(const std::string& fullName,
-                                                      const std::string& fileName,
-                                                      bool lookForChildren) {
+std::shared_ptr<config_elm_t> YmlCfg::createConfigElm(const std::string& fullName) {
     std::vector<std::string> names;
     splitStr(fullName, '.', names);
     std::string firstName = names.back();
     names.pop_back();
-    config_elm_t config(firstName, names);
-    if (lookForChildren && fileName == "") {
-        lookForChildren = false;
-    }
-    else if (lookForChildren) {
-        if (!hasChildren(fileName, fullName)) {
-            lookForChildren = false;
+    auto ptr = std::make_shared<config_elm_t>(firstName, names);
+    return ptr;
+}
+
+std::vector<std::shared_ptr<config_elm_t>> YmlCfg::createConfigElm(
+                                                      const std::string& fullName,
+                                                      const std::string& fileName) {
+    std::vector<std::shared_ptr<config_elm_t>> ptrs;
+    std::vector<std::string> children_names;
+    if (getChildrenNamesFromYml(fileName, fullName, children_names)) {
+        for (const auto& child : children_names) {
+            std::vector<std::string> names;
+            splitStr(child, '.', names);
+            std::string firstName = names.back();
+            names.pop_back();
+            ptrs.push_back(std::make_shared<config_elm_t>(firstName, names));
         }
     }
-    auto ptr = std::make_shared<config_elm_t>(lookForChildren, fullName, names);
-    return ptr;
+    return ptrs;
 }

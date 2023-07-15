@@ -62,6 +62,10 @@ bool getChildrenValuesFromYml(const std::string& fileName,
                               const std::string& fieldName,
                               std::map<std::string, std::string>& fieldChildren);
 
+bool getChildrenNamesFromYml(const std::string& fileName,
+                             const std::string& fieldName,
+                             std::vector<std::string>& childrenNames);
+
 bool hasChildren(const std::string& fileName,
                  const std::string& fieldName);
 
