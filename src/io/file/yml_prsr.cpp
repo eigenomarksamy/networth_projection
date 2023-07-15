@@ -100,7 +100,8 @@ std::map<std::string, std::string> YamlParser::getChildrenFields(const std::stri
         for (const auto& field : parentNode) {
             std::string childFieldName = fullFieldName + "." + field.first.as<std::string>();
             std::string fieldValue;
-            if (getFieldScalarValue(childFieldName, fieldValue)) {
+            if (field.second.IsScalar()) {
+                fieldValue = field.second.as<std::string>();
                 childrenFields[childFieldName] = fieldValue;
             }
         }
