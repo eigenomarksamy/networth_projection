@@ -1,0 +1,11 @@
+initial-networth: 10000
+yearly-income: 50000
+age-retirement: 60
+current-age: 30
+yearly-income-raise: 5
+yearly-investing: 15
+return-estimate: 10
+portfolio-fees: 1.5
+deposit-withdrawal:
+  2: -100
+  3: 100
