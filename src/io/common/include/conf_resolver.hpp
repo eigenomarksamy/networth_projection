@@ -28,6 +28,7 @@ public:
     void addConfigElement(const std::shared_ptr<config_elm_t>& elemnt) { m_cfgElms.push_back(elemnt); }
     bool readCfg(const bool createMap, const bool useDefaults);
     std::string getValue(const std::string& fullName);
+    std::map<std::string, std::string> getMap() const { return m_cfgMap; }
     static std::shared_ptr<config_elm_t> createConfigElm(const std::string& fullName);
     static std::vector<std::shared_ptr<config_elm_t>> createConfigElm(
                                                          const std::string& fullName,

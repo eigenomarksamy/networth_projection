@@ -46,7 +46,7 @@ private:
 
 class YmlUtils {
 public:
-    void displayAllFields(const std::string& fileName);
+    static void displayAllFields(const std::string& fileName);
 };
 
 bool getValueFromYml(const std::string& fileName,

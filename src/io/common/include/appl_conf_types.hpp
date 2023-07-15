@@ -26,7 +26,8 @@ struct NetworthValues {
 
 struct MortgageValues {
     std::shared_ptr<config_elm_t> original_price;
-    std::vector<std::shared_ptr<config_elm_t>> time_to_settle;
+    std::shared_ptr<config_elm_t> time_to_settle_months;
+    std::shared_ptr<config_elm_t> time_to_settle_years;
     std::shared_ptr<config_elm_t> interest_rate;
     std::shared_ptr<config_elm_t> market_inflation;
     std::shared_ptr<config_elm_t> initial_overhead;
