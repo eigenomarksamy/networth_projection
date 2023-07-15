@@ -14,8 +14,6 @@ public:
 
     ~DataAdapter() { }
 
-    static std::vector<std::string> generateInputLines(const InputDataContainer& inputObj);
-
     static std::vector<std::string> generatePortfolioLines(const portfolio::Portfolio& portfolioObj);
 
     static std::vector<std::string> generatePortfolioLines(const portfolio::PortfolioManager& portfolioMgrObj);
