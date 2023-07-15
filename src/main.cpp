@@ -13,6 +13,7 @@
 #include "yml_prsr.hpp"
 #include "activation.hpp"
 #include "conf_resolver.hpp"
+#include "appl_conf_types.hpp"
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
                             const std::string& directory);

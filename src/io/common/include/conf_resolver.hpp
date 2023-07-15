@@ -7,29 +7,36 @@
 #include <memory>
 
 typedef struct ConfigElm {
+    bool lookForChildren;
     std::string full_name;
     std::string name;
     std::string value;
+    std::vector<std::string> childrenValues;
+    ConfigElm(const std::string& name)
+      : name(name), full_name(name), lookForChildren(false) {}
     ConfigElm(const std::string& name,
               const std::vector<std::string>& family)
-      : name(name) {
+      : name(name), lookForChildren(false) {
         full_name = "";
         for (const auto& fam : family) {
             full_name += fam + ".";
         }
         full_name += name;
     }
-    ConfigElm(const std::string& name) : name(name), full_name(name) {}
+    explicit ConfigElm(const bool lookForChildren,
+                       const std::string& name)
+      : name(name), full_name(name), lookForChildren(lookForChildren) {}
+    explicit ConfigElm (const bool lookForChildren,
+                        const std::string& name,
+                        const std::vector<std::string>& family)
+      : name(name), lookForChildren(lookForChildren) {
+        full_name = "";
+        for (const auto& fam : family) {
+            full_name += fam + ".";
+        }
+        full_name += name;
+    }
 } config_elm_t;
-
-struct DirectoriesValues {
-    std::shared_ptr<config_elm_t> mortg_calc_in;
-    std::shared_ptr<config_elm_t> mortg_calc_out;
-    std::shared_ptr<config_elm_t> netwo_calc_in;
-    std::shared_ptr<config_elm_t> netwo_calc_out;
-    std::shared_ptr<config_elm_t> porto_dirs_out;
-    std::shared_ptr<config_elm_t> porto_overview;
-};
 
 class YmlCfg {
 public:
