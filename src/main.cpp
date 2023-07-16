@@ -236,7 +236,7 @@ static void resolveCfg(const std::string& confPath, MortgageValues& values) {
     cfg.addConfigElement(values.time_to_settle_months);
     values.time_to_settle_years = YmlCfg::createConfigElm("time-to-settle.years");
     cfg.addConfigElement(values.time_to_settle_years);
-    cfg.readCfg(true, false);
+    cfg.readCfg(true, true);
 }
 
 int main() {
@@ -253,8 +253,8 @@ int main() {
     resolveCfg(mortgage_conf_file, mortg_cfg_values);
     convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
     convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
-    // executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
-    //                    dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-    //                    dirs.porto_dirs_out->value, dirs.porto_overview->value);
+    executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+                       dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+                       dirs.porto_dirs_out->value, dirs.porto_overview->value);
     return 0;
 }

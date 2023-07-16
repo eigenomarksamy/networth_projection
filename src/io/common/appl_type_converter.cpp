@@ -29,5 +29,6 @@ void convertMortgageYmlData(InputDataMortgageCalculator& input, const MortgageVa
     input.price = convertToNumeric<decltype(input.price)>(values.original_price->value);
     input.rent_annu_increase = convertToNumeric<decltype(input.rent_annu_increase)>(values.annual_rent_increase->value);
     input.rent_to_compare = convertToNumeric<decltype(input.rent_to_compare)>(values.rent_to_compare->value);
-    // input.num_months = convertToNumeric<decltype(input.interest_rate)>(values.interest_rate->value);
+    input.num_months = convertToNumeric<decltype(input.num_months)>(values.time_to_settle_months->value);
+    input.num_months += convertToNumeric<decltype(input.num_months)>(values.time_to_settle_years->value) * 12;
 }

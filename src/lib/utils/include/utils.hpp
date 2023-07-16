@@ -61,9 +61,37 @@ std::ostream& operator<<(std::ostream& out, const std::map<K, V>& m) {
 
 template <typename T>
 T convertToNumeric(const std::string& str) {
+    if (str.empty()) {
+        return 0;
+    }
     T result;
     std::stringstream ss(str);
     ss >> result;
+    return result;
+}
+
+using NumericValue = std::variant<int32_t, double_t>;
+
+template <typename T>
+T convertToNumeric(const std::string& str, const T& defaultValue) {
+    if (str.empty()) {
+        return defaultValue;
+    }
+    T result;
+    try {
+        size_t pos;
+        if (str.find('.') != std::string::npos) {
+            double_t doubleValue = std::stod(str, &pos);
+            if (pos == str.size())
+                result = doubleValue;
+        } else {
+            int32_t intValue = std::stoi(str, &pos);
+            if (pos == str.size())
+                result = intValue;
+        }
+    } catch (const std::exception&) {
+        return defaultValue;
+    }
     return result;
 }
 
