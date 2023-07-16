@@ -8,7 +8,7 @@ set(SOURCES
 
 add_library(fileio STATIC ${SOURCES})
 
-target_link_libraries(fileio PRIVATE yaml-cpp)
+target_link_libraries(fileio PRIVATE yaml-cpp commonio utils)
 
 target_include_directories(fileio PUBLIC 
 ${yaml-cpp_SOURCE_DIR}/include

@@ -1,0 +1,11 @@
+price:
+  unit: 425000
+  overhead: 10000
+time-to-settle:
+  years: 28
+  months: 24
+interest-rate: 4.8
+market-inflation: 5
+rent-to-compare:
+  monthly: 1800
+  annual-increase: 8

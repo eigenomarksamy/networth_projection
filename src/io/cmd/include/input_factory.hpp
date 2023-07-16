@@ -11,7 +11,8 @@ class Input {
 public:
     virtual ~Input() {}
     virtual void getInputFromUser(InputDataContainer& input_data) = 0;
-    virtual void getInputFromCfg(InputDataContainer& input_data) = 0;
+    virtual void getInputFromCfg(InputDataContainer& input_data,
+                                 const InputDataContainer& conf_input) = 0;
     virtual void fillSpecifier(InputDataContainer& input_data) = 0;
 };
 
@@ -20,7 +21,8 @@ class ConcreteNetworthProjector : public Input {
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;
-    void getInputFromCfg(InputDataContainer& input_data) override;
+    void getInputFromCfg(InputDataContainer& input_data,
+                         const InputDataContainer& conf_input) override;
     void fillSpecifier(InputDataContainer& input_data) override;
 };
 
@@ -29,7 +31,8 @@ class ConcreteMortgageCalculator : public Input {
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;
-    void getInputFromCfg(InputDataContainer& input_data) override;
+    void getInputFromCfg(InputDataContainer& input_data,
+                         const InputDataContainer& conf_input) override;
     void fillSpecifier(InputDataContainer& input_data) override;
 };
 
@@ -38,7 +41,8 @@ class ConcretePortfolioManager : public Input {
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;
-    void getInputFromCfg(InputDataContainer& input_data) override;
+    void getInputFromCfg(InputDataContainer& input_data,
+                         const InputDataContainer& conf_input) override;
     void fillSpecifier(InputDataContainer& input_data) override;
 };
 
@@ -56,7 +60,8 @@ public:
     }
     virtual ~CreatorInput() {}
     virtual Input* FactoryMethod() const = 0;
-    void getDataFromUser(InputDataContainer& input_data) const;
+    void getDataFromUser(InputDataContainer& input_data,
+                         const InputDataContainer& conf_input) const;
 };
 
 class ConcreteCreatorNetworthProjector : public CreatorInput {
@@ -80,7 +85,8 @@ public:
     }
 };
 
-void getProgramSelector(InputDataContainer& input_data);
+void getProgramSelector(InputDataContainer& input_data,
+                        const InputDataContainer& conf_input);
 
 void executePortfolioManagement(portfolio::Portfolio& portfolio);
 

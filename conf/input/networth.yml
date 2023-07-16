@@ -1,0 +1,15 @@
+initial-networth: 10000
+yearly:
+  income: 50000
+  percentage:
+    income-raise: 5
+    investment: 15
+    portfolio:
+      roi: 10
+      fees: 1.5
+age:
+  retirement: 60
+  current: 30
+deposit-withdrawal:
+  2: -100
+  3: 100

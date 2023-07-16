@@ -32,3 +32,17 @@ uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target) {
     }
     return vec[left];
 }
+
+void splitStr(const std::string& str, const char separator,
+              std::vector<std::string>& strings) {
+    size_t startIdx = 0, endIdx = 0;
+    for (size_t i = 0; i <= str.size(); ++i) {
+        if (str[i] == separator || i == str.size()) {
+            endIdx = i;
+            std::string tmp;
+            tmp.append(str, startIdx, endIdx - startIdx);
+            strings.push_back(tmp);
+            startIdx = endIdx + 1;
+        }
+    }
+}

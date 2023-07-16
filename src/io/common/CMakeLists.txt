@@ -1,14 +1,21 @@
 set(SOURCES
-    adapter/data_adapter.cpp
+    data_adapter.cpp
+    conf_resolver.cpp
+    appl_type_converter.cpp
 )
 
 add_library(commonio STATIC ${SOURCES})
 
 target_include_directories(commonio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_link_libraries(commonio
+target_link_libraries(
+    commonio
     PRIVATE
-    utils networthprojector mortgagecalculator portfoliomanager cmdio
+    utils
+    fileio
+    networthprojector
+    mortgagecalculator
+    portfoliomanager
 )
 
 install(TARGETS commonio
