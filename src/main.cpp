@@ -43,9 +43,9 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const std::string& porto_mgr_path_overview,
                                const InputDataNetworthProjector& confInputNetw,
                                const InputDataMortgageCalculator& confInputMrtg);
-static void resolveCfg(const std::string& confPath, DirectoriesValues& dirs);
-static void resolveCfg(const std::string& confPath, NetworthValues& values);
-static void resolveCfg(const std::string& confPath, MortgageValues& values);
+static bool resolveCfg(const std::string& confPath, DirectoriesValues& dirs);
+static bool resolveCfg(const std::string& confPath, NetworthValues& values);
+static bool resolveCfg(const std::string& confPath, MortgageValues& values);
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
                             const std::string& directory) {
@@ -185,7 +185,7 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
     }
 }
 
-static void resolveCfg(const std::string& confPath, DirectoriesValues& dirs) {
+static bool resolveCfg(const std::string& confPath, DirectoriesValues& dirs) {
     YmlCfg dir_cfg(confPath);
     dirs.mortg_calc_in = YmlCfg::createConfigElm("generation.mortgage-calculator.input");
     dir_cfg.addConfigElement(dirs.mortg_calc_in);
@@ -199,10 +199,13 @@ static void resolveCfg(const std::string& confPath, DirectoriesValues& dirs) {
     dir_cfg.addConfigElement(dirs.porto_dirs_out);
     dirs.porto_overview = YmlCfg::createConfigElm("generation.portfolio-manager.output.overview");
     dir_cfg.addConfigElement(dirs.porto_overview);
-    dir_cfg.readCfg(false, false);
+    if (dir_cfg.readCfg(false, false)) {
+        return true;
+    }
+    return false;
 }
 
-static void resolveCfg(const std::string& confPath, NetworthValues& values) {
+static bool resolveCfg(const std::string& confPath, NetworthValues& values) {
     YmlCfg cfg(confPath);
     values.age_current = YmlCfg::createConfigElm("age.current");
     cfg.addConfigElement(values.age_current);
@@ -222,10 +225,13 @@ static void resolveCfg(const std::string& confPath, NetworthValues& values) {
     cfg.addConfigElement(values.yearly_roi);
     values.deposit_withdrawal = YmlCfg::createConfigElm("deposit-withdrawal", confPath);
     cfg.addConfigElement(values.deposit_withdrawal);
-    cfg.readCfg(true, false);
+    if (cfg.readCfg(true, false)) {
+        return true;
+    }
+    return false;
 }
 
-static void resolveCfg(const std::string& confPath, MortgageValues& values) {
+static bool resolveCfg(const std::string& confPath, MortgageValues& values) {
     YmlCfg cfg(confPath);
     values.annual_rent_increase = YmlCfg::createConfigElm("rent-to-compare.annual-increase");
     cfg.addConfigElement(values.annual_rent_increase);
@@ -243,7 +249,10 @@ static void resolveCfg(const std::string& confPath, MortgageValues& values) {
     cfg.addConfigElement(values.time_to_settle_months);
     values.time_to_settle_years = YmlCfg::createConfigElm("time-to-settle.years");
     cfg.addConfigElement(values.time_to_settle_years);
-    cfg.readCfg(true, true);
+    if (cfg.readCfg(true, true)) {
+        return true;
+    }
+    return false;
 }
 
 int main() {
@@ -255,11 +264,21 @@ int main() {
     MortgageValues mortg_cfg_values;
     InputDataNetworthProjector input_data_nw_from_yml;
     InputDataMortgageCalculator input_data_mortg_from_yml;
-    resolveCfg(dir_conf_file, dirs);
-    resolveCfg(networth_conf_file, nw_cfg_values);
-    resolveCfg(mortgage_conf_file, mortg_cfg_values);
-    convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
-    convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
+    bool dirCfgRet = false;
+    if (resolveCfg(dir_conf_file, dirs)) {
+        resolveCfg(mortgage_conf_file, mortg_cfg_values);
+        dirCfgRet = true;
+    }
+    bool netwCfgRet = false;
+    if (resolveCfg(networth_conf_file, nw_cfg_values)) {
+        convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
+        netwCfgRet = true;
+    }
+    bool mortgCfgRet = false;
+    if (resolveCfg(mortgage_conf_file, mortg_cfg_values)) {
+        convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
+        mortgCfgRet = true;
+    }
     executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
                        dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
                        dirs.porto_dirs_out->value, dirs.porto_overview->value,
