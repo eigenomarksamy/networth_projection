@@ -40,7 +40,9 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const std::string& mortgage_caculator_path_output,
                                const std::string& mortgage_calculator_path_input,
                                const std::string& porto_mgr_path_nested,
-                               const std::string& porto_mgr_path_overview);
+                               const std::string& porto_mgr_path_overview,
+                               const InputDataNetworthProjector& confInputNetw,
+                               const InputDataMortgageCalculator& confInputMrtg);
 static void resolveCfg(const std::string& confPath, DirectoriesValues& dirs);
 static void resolveCfg(const std::string& confPath, NetworthValues& values);
 static void resolveCfg(const std::string& confPath, MortgageValues& values);
@@ -157,9 +159,14 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const std::string& mortgage_caculator_path_output,
                                const std::string& mortgage_calculator_path_input,
                                const std::string& porto_mgr_path_nested,
-                               const std::string& porto_mgr_path_overview) {
+                               const std::string& porto_mgr_path_overview,
+                               const InputDataNetworthProjector& confInputNetw,
+                               const InputDataMortgageCalculator& confInputMrtg) {
     InputDataContainer user_input;
-    getProgramSelector(user_input);
+    InputDataContainer confInput;
+    confInput.mortgage_calculator = confInputMrtg;
+    confInput.networth_projector = confInputNetw;
+    getProgramSelector(user_input, confInput);
     if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT
         || user_input.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
         executeStaticComputation(user_input,
@@ -255,6 +262,7 @@ int main() {
     convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
     executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
                        dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-                       dirs.porto_dirs_out->value, dirs.porto_overview->value);
+                       dirs.porto_dirs_out->value, dirs.porto_overview->value,
+                       input_data_nw_from_yml, input_data_mortg_from_yml);
     return 0;
 }

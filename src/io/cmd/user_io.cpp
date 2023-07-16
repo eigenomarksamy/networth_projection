@@ -26,8 +26,9 @@ void ConcreteNetworthProjector::getInputFromUser(InputDataContainer& input_data)
                          "year and deposit/withdrawal");
 }
 
-void ConcreteNetworthProjector::getInputFromCfg(InputDataContainer& input_data) {
-    std::cout << "Feature not yet implemented!" << std::flush << std::endl;
+void ConcreteNetworthProjector::getInputFromCfg(InputDataContainer& input_data,
+                                               const InputDataContainer& conf_input) {
+    input_data.networth_projector = conf_input.networth_projector;
 }
 
 void ConcreteMortgageCalculator::fillSpecifier(InputDataContainer& input_data) {
@@ -51,8 +52,9 @@ void ConcreteMortgageCalculator::getInputFromUser(InputDataContainer& input_data
                          std::string("rent annual increase"));
 }
 
-void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data) {
-    std::cout << "Feature not yet implemented!" << std::flush << std::endl;
+void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data,
+                                                 const InputDataContainer& conf_input) {
+    input_data.mortgage_calculator = conf_input.mortgage_calculator;
 }
 
 void ConcretePortfolioManager::fillSpecifier(InputDataContainer& input_data) {
@@ -79,11 +81,13 @@ void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) 
     }
 }
 
-void ConcretePortfolioManager::getInputFromCfg(InputDataContainer& input_data) {
-    std::cout << "Feature not yet implemented!" << std::flush << std::endl;
+void ConcretePortfolioManager::getInputFromCfg(InputDataContainer& input_data,
+                                               const InputDataContainer& conf_input) {
+    std::cout << "Feature not yet implemented!" << std::endl;
 }
 
-void CreatorInput::getDataFromUser(InputDataContainer& input_data) const {
+void CreatorInput::getDataFromUser(InputDataContainer& input_data,
+                                   const InputDataContainer& conf_input) const {
     Input* input = this->FactoryMethod();
     std::string usr_selection;
     if(getStaticUserSelectionFromMenu("data source",
@@ -95,17 +99,19 @@ void CreatorInput::getDataFromUser(InputDataContainer& input_data) const {
             input->getInputFromUser(input_data);
         }
         else if (usr_selection == "2") {
-            input->getInputFromCfg(input_data);
+            input->getInputFromCfg(input_data, conf_input);
         }
     }
 }
 
 static void getUserInputData(const CreatorInput& input,
-                             InputDataContainer& input_data) {
-    input.getDataFromUser(input_data);
+                             InputDataContainer& input_data,
+                             const InputDataContainer& conf_input) {
+    input.getDataFromUser(input_data, conf_input);
 }
 
-void getProgramSelector(InputDataContainer& input_data) {
+void getProgramSelector(InputDataContainer& input_data,
+                        const InputDataContainer& conf_input) {
     std::string usr_selection;
     auto selections = createChoicesMap(std::vector<std::string> {"n", "m", "p"},
                             std::vector<std::string> {"networth projection",
@@ -116,15 +122,15 @@ void getProgramSelector(InputDataContainer& input_data) {
                                        usr_selection)) {
         if (usr_selection == "n") {
             CreatorInput* creator_input = new ConcreteCreatorNetworthProjector();
-            getUserInputData(*creator_input, input_data);
+            getUserInputData(*creator_input, input_data, conf_input);
         }
         else if (usr_selection == "m") {
             CreatorInput* creator_input = new ConcreteCreatorMortgageCalculator();
-            getUserInputData(*creator_input, input_data);
+            getUserInputData(*creator_input, input_data, conf_input);
         }
         else if (usr_selection == "p") {
             CreatorInput* creator_input = new ConcreteCreatorPortfolioManager();
-            getUserInputData(*creator_input, input_data);
+            getUserInputData(*creator_input, input_data, conf_input);
         }
     }
 }
