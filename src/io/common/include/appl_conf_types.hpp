@@ -40,4 +40,8 @@ void convertNetworthYmlData(InputDataNetworthProjector& input, const NetworthVal
 
 void convertMortgageYmlData(InputDataMortgageCalculator& input, const MortgageValues& values);
 
+bool resolveCfg(const std::string& confPath, DirectoriesValues& dirs);
+bool resolveCfg(const std::string& confPath, NetworthValues& values);
+bool resolveCfg(const std::string& confPath, MortgageValues& values);
+
 #endif /* APPL_CONF_TYPES_HPP_ */

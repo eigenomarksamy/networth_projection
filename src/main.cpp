@@ -43,9 +43,6 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const std::string& porto_mgr_path_overview,
                                const InputDataNetworthProjector& confInputNetw,
                                const InputDataMortgageCalculator& confInputMrtg);
-static bool resolveCfg(const std::string& confPath, DirectoriesValues& dirs);
-static bool resolveCfg(const std::string& confPath, NetworthValues& values);
-static bool resolveCfg(const std::string& confPath, MortgageValues& values);
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
                             const std::string& directory) {
@@ -185,76 +182,6 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
     }
 }
 
-static bool resolveCfg(const std::string& confPath, DirectoriesValues& dirs) {
-    YmlCfg dir_cfg(confPath);
-    dirs.mortg_calc_in = YmlCfg::createConfigElm("generation.mortgage-calculator.input");
-    dir_cfg.addConfigElement(dirs.mortg_calc_in);
-    dirs.netwo_calc_in = YmlCfg::createConfigElm("generation.networth-projector.input");
-    dir_cfg.addConfigElement(dirs.netwo_calc_in);
-    dirs.mortg_calc_out = YmlCfg::createConfigElm("generation.mortgage-calculator.output");
-    dir_cfg.addConfigElement(dirs.mortg_calc_out);
-    dirs.netwo_calc_out = YmlCfg::createConfigElm("generation.networth-projector.output");
-    dir_cfg.addConfigElement(dirs.netwo_calc_out);
-    dirs.porto_dirs_out = YmlCfg::createConfigElm("generation.portfolio-manager.output.portfolios");
-    dir_cfg.addConfigElement(dirs.porto_dirs_out);
-    dirs.porto_overview = YmlCfg::createConfigElm("generation.portfolio-manager.output.overview");
-    dir_cfg.addConfigElement(dirs.porto_overview);
-    if (dir_cfg.readCfg(false, false)) {
-        return true;
-    }
-    return false;
-}
-
-static bool resolveCfg(const std::string& confPath, NetworthValues& values) {
-    YmlCfg cfg(confPath);
-    values.age_current = YmlCfg::createConfigElm("age.current");
-    cfg.addConfigElement(values.age_current);
-    values.age_retirement = YmlCfg::createConfigElm("age.retirement");
-    cfg.addConfigElement(values.age_retirement);
-    values.initial_networth = YmlCfg::createConfigElm("initial-networth");
-    cfg.addConfigElement(values.initial_networth);
-    values.portfolio_fees = YmlCfg::createConfigElm("yearly.percentage.portfolio.fees");
-    cfg.addConfigElement(values.portfolio_fees);
-    values.yearly_income = YmlCfg::createConfigElm("yearly.income");
-    cfg.addConfigElement(values.yearly_income);
-    values.yearly_income_raise = YmlCfg::createConfigElm("yearly.percentage.income-raise");
-    cfg.addConfigElement(values.yearly_income_raise);
-    values.yearly_investment = YmlCfg::createConfigElm("yearly.percentage.investment");
-    cfg.addConfigElement(values.yearly_investment);
-    values.yearly_roi = YmlCfg::createConfigElm("yearly.percentage.portfolio.roi");
-    cfg.addConfigElement(values.yearly_roi);
-    values.deposit_withdrawal = YmlCfg::createConfigElm("deposit-withdrawal", confPath);
-    cfg.addConfigElement(values.deposit_withdrawal);
-    if (cfg.readCfg(true, false)) {
-        return true;
-    }
-    return false;
-}
-
-static bool resolveCfg(const std::string& confPath, MortgageValues& values) {
-    YmlCfg cfg(confPath);
-    values.annual_rent_increase = YmlCfg::createConfigElm("rent-to-compare.annual-increase");
-    cfg.addConfigElement(values.annual_rent_increase);
-    values.initial_overhead = YmlCfg::createConfigElm("price.overhead");
-    cfg.addConfigElement(values.initial_overhead);
-    values.interest_rate = YmlCfg::createConfigElm("interest-rate");
-    cfg.addConfigElement(values.interest_rate);
-    values.market_inflation = YmlCfg::createConfigElm("market-inflation");
-    cfg.addConfigElement(values.market_inflation);
-    values.original_price = YmlCfg::createConfigElm("price.unit");
-    cfg.addConfigElement(values.original_price);
-    values.rent_to_compare = YmlCfg::createConfigElm("rent-to-compare.monthly");
-    cfg.addConfigElement(values.rent_to_compare);
-    values.time_to_settle_months = YmlCfg::createConfigElm("time-to-settle.months");
-    cfg.addConfigElement(values.time_to_settle_months);
-    values.time_to_settle_years = YmlCfg::createConfigElm("time-to-settle.years");
-    cfg.addConfigElement(values.time_to_settle_years);
-    if (cfg.readCfg(true, true)) {
-        return true;
-    }
-    return false;
-}
-
 int main() {
     std::string dir_conf_file = "conf/directories.yml";
     std::string networth_conf_file = "conf/input/networth.yml";
@@ -266,7 +193,6 @@ int main() {
     InputDataMortgageCalculator input_data_mortg_from_yml;
     bool dirCfgRet = false;
     if (resolveCfg(dir_conf_file, dirs)) {
-        resolveCfg(mortgage_conf_file, mortg_cfg_values);
         dirCfgRet = true;
     }
     bool netwCfgRet = false;
