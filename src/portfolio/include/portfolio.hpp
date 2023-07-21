@@ -33,6 +33,8 @@ public:
     friend void displayPortfolio(const Portfolio& obj);
 };
 
+void displayPortfolio(const Portfolio& obj);
+
 class PortfolioManager {
 
     std::vector<std::unique_ptr<Portfolio>> m_portfolios;

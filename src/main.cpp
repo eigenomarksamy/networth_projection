@@ -17,27 +17,6 @@
 #include "conf_resolver.hpp"
 #include "appl_conf_types.hpp"
 
-void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
-                            const std::string& directory,
-                            const bool autoSave);
-void generatePortfolioFiles(const portfolio::Portfolio& portfolio,
-                            const std::string& directory,
-                            const bool autoSave);
-void generatePortfolioOverview(const portfolio::Portfolio& portfolio,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave);
-void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave);
-bool getPortfolioFromFiles(portfolio::Portfolio& portfolio,
-                           const std::string& name,
-                           const std::string& directory);
-bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
-                           const bool load_all_portfolios,
-                           const std::vector<std::string>& list_portfolios,
-                           const std::string& directory);
 static void executePortfolioMgr(const portfolio::PortfolioMgrCfg& portfolioInput);
 static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& networth_projector_path_input,
@@ -45,76 +24,6 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& mortgage_calculator_path_input,
                               const InputDataNetworthProjector& confInputNetw,
                               const InputDataMortgageCalculator& confInputMrtg);
-
-void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
-                            const std::string& directory,
-                            const bool autoSave) {
-    for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
-        auto portfolio = portfolioMgr.getPortfolio(i);
-        std::string question = "save portfolio " + portfolio.getName();
-        if (autoSave || getUserYesNo(question)) {
-            portfolio::savePortfolio(portfolio, directory + portfolio.getName());
-        }
-    }
-}
-
-void generatePortfolioFiles(const portfolio::Portfolio& portfolio,
-                            const std::string& directory,
-                            const bool autoSave) {
-    if (autoSave || getUserYesNo("save portfolio " + portfolio.getName())) {
-        portfolio::savePortfolio(portfolio, directory + portfolio.getName());
-    }
-}
-
-void generatePortfolioOverview(const portfolio::Portfolio& portfolio,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave) {
-    auto portfolioTxt = portfolio::DataAdapter::generatePortfolioLines(portfolio);
-    FileGenerator file(outputFile);
-    file.generateTxt(portfolioTxt);
-    generatePortfolioFiles(portfolio, directory, autoSave);
-}
-
-void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave) {
-    auto portfolioTxt = portfolio::DataAdapter::generatePortfolioLines(portfolioMgr);
-    FileGenerator file(outputFile);
-    file.generateTxt(portfolioTxt);
-    generatePortfolioFiles(portfolioMgr, directory, autoSave);
-}
-
-bool getPortfolioFromFiles(portfolio::Portfolio& portfolio,
-                           const std::string& name,
-                           const std::string& directory) {
-    return portfolio::loadPortfolio(portfolio, directory + name);
-}
-
-bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
-                           const bool load_all_portfolios,
-                           const std::vector<std::string>& list_portfolios,
-                           const std::string& directory) {
-    bool status = true;
-    std::string directoryPath = directory;
-    std::vector<std::string> names;
-    if (load_all_portfolios)
-        names = getFileNames(directoryPath);
-    else
-        names = list_portfolios;
-    for (const auto& name : names) {
-        portfolio::Portfolio portfolio;
-        if (getPortfolioFromFiles(portfolio, name, directory)) {
-            portfolioMgr.addPortfolio(portfolio);
-            status &= true;
-        }
-        else {
-            status = false;
-        }
-    }
-    return status;
-}
 
 static void executePortfolioMgr(const portfolio::PortfolioMgrCfg& portfolioInput) {
     if (portfolioInput.is_multi_prtfolio) {
@@ -202,7 +111,8 @@ int main() {
                           input_data_nw_from_yml, input_data_mortg_from_yml);
     }
     if (getUserYesNo("portfolio manager mode")) {
-        executePortfolioMgr(portfolio::PortfolioMgrCfg());
+        portfolio::PortfolioMgrCfg portfolioCfg;
+        executePortfolioMgr(portfolioCfg);
     }
     return 0;
 }

@@ -4,12 +4,43 @@
 #include "cmd_common.hpp"
 #include "portfolio.hpp"
 #include "portfolio_appl.hpp"
+#include "file_generator.hpp"
 
 namespace portfolio {
 
 static int16_t selectPortfolio(const portfolio::PortfolioManager& portfolio_manager);
 
 } // namespace portfolio
+
+bool portfolio::getPortfolioFromFiles(portfolio::Portfolio& portfolio,
+                           const std::string& name,
+                           const std::string& directory) {
+    return portfolio::loadPortfolio(portfolio, directory + name);
+}
+
+bool portfolio::getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios,
+                           const std::string& directory) {
+    bool status = true;
+    std::string directoryPath = directory;
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
+    for (const auto& name : names) {
+        portfolio::Portfolio portfolio;
+        if (getPortfolioFromFiles(portfolio, name, directory)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
+        }
+        else {
+            status = false;
+        }
+    }
+    return status;
+}
 
 void portfolio::displayPortfolio(const Portfolio& obj) {
     std::cout << "Portfolio: " << obj.m_name << std::endl;

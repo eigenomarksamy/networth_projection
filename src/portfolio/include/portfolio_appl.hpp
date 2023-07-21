@@ -13,6 +13,14 @@ void savePortfolio(const Portfolio& portfolio, const std::string& filename);
 
 bool loadPortfolio(Portfolio& portfolio, const std::string& filename);
 
+bool getPortfolioFromFiles(portfolio::Portfolio& portfolio,
+                           const std::string& name,
+                           const std::string& directory);
+bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios,
+                           const std::string& directory);
+
 } // namespace portfolio
 
 #endif /* PORTFOLIO_APPL_HPP_ */

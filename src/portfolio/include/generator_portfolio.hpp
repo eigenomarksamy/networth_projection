@@ -20,6 +20,24 @@ public:
     static std::vector<std::string> generatePortfolioLines(const portfolio::PortfolioManager& portfolioMgrObj);
 };
 
+void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
+                            const std::string& directory,
+                            const bool autoSave);
+
+void generatePortfolioFiles(const portfolio::Portfolio& portfolio,
+                            const std::string& directory,
+                            const bool autoSave);
+
+void generatePortfolioOverview(const portfolio::Portfolio& portfolio,
+                               const std::string& directory,
+                               const std::string& outputFile,
+                               const bool autoSave);
+
+void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
+                               const std::string& directory,
+                               const std::string& outputFile,
+                               const bool autoSave);
+
 } // namespace portfolio
 
 #endif /* GENERATOR_PORTFOLIO_HPP_ */

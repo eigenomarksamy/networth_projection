@@ -13,6 +13,7 @@ target_link_libraries(
     PRIVATE
     utils
     cmdio
+    fileio
 )
 
 install(TARGETS portfoliomanager
