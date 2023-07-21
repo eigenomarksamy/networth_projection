@@ -1,5 +1,6 @@
 set(SOURCES
     portfolio.cpp
+    portfolio_appl.cpp
 )
 
 add_library(portfoliomanager STATIC ${SOURCES})
