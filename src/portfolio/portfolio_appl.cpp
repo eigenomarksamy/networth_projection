@@ -253,23 +253,6 @@ void portfolio::executeMultiPortfolioManagement(portfolio::PortfolioManager& por
     }
 }
 
-void portfolio::savePortfolio(const Portfolio& portfolio, const std::string& filename) {
-    std::ofstream file(filename);
-    if (file.is_open()) {
-        file << portfolio.getName() << std::endl;
-        const std::vector<Investment>& investments = portfolio.getInvestments();
-        for (const Investment& investment : investments) {
-            file << investment.getName() << "," << investment.getTicker() << ","
-                 << investment.getPurchasePrice() << "," << investment.getQuantity() << std::endl;
-        }
-        std::cout << "Portfolio saved to " << filename << std::endl;
-    }
-    else {
-        std::cout << "Unable to open file for saving portfolio." << std::endl;
-    }
-    file.close();
-}
-
 bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename) {
     bool status = true;
     std::ifstream file(filename);
@@ -298,4 +281,26 @@ bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename)
     }
     file.close();
     return status;
+}
+
+void portfolio::setUpPortfolio(PortfolioMgrCfg& conf) {
+    getGenericInputParam(conf.is_new,
+                         std::string("create new profile"));
+    getGenericInputParam(conf.is_multi_prtfolio,
+                         std::string("multi portfolio mode"));
+    if (!conf.is_multi_prtfolio) {
+        getGenericInputParam(conf.name,
+                             std::string("name of portfolio"));
+    }
+    if (!conf.is_new
+        && conf.is_multi_prtfolio) {
+        getGenericInputParam(conf.load_all_portfolios,
+                             std::string("load all portfolios"));
+        if (!conf.load_all_portfolios) {
+            getGenericInputParam(conf.portfolio_list,
+                                std::string("portfolios names"));
+        }
+    }
+    getGenericInputParam(conf.auto_save,
+                         std::string("auto save"));
 }

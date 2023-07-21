@@ -112,6 +112,7 @@ int main() {
     }
     if (getUserYesNo("portfolio manager mode")) {
         portfolio::PortfolioMgrCfg portfolioCfg;
+        portfolio::setUpPortfolio(portfolioCfg);
         executePortfolioMgr(portfolioCfg);
     }
     return 0;

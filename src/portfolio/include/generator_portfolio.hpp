@@ -38,6 +38,8 @@ void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
                                const std::string& outputFile,
                                const bool autoSave);
 
+void savePortfolio(const Portfolio& portfolio, const std::string& filename);
+
 } // namespace portfolio
 
 #endif /* GENERATOR_PORTFOLIO_HPP_ */

@@ -1,5 +1,4 @@
 #include "generator_portfolio.hpp"
-#include "portfolio_appl.hpp"
 #include "cmd_common.hpp"
 #include "file_generator.hpp"
 
@@ -65,4 +64,21 @@ void portfolio::generatePortfolioOverview(const portfolio::PortfolioManager& por
     FileGenerator file(outputFile);
     file.generateTxt(portfolioTxt);
     generatePortfolioFiles(portfolioMgr, directory, autoSave);
+}
+
+void portfolio::savePortfolio(const Portfolio& portfolio, const std::string& filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << portfolio.getName() << std::endl;
+        const std::vector<Investment>& investments = portfolio.getInvestments();
+        for (const Investment& investment : investments) {
+            file << investment.getName() << "," << investment.getTicker() << ","
+                 << investment.getPurchasePrice() << "," << investment.getQuantity() << std::endl;
+        }
+        std::cout << "Portfolio saved to " << filename << std::endl;
+    }
+    else {
+        std::cout << "Unable to open file for saving portfolio." << std::endl;
+    }
+    file.close();
 }
