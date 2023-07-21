@@ -43,8 +43,6 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const std::string& networth_projector_path_input,
                                const std::string& mortgage_caculator_path_output,
                                const std::string& mortgage_calculator_path_input,
-                               const std::string& porto_mgr_path_nested,
-                               const std::string& porto_mgr_path_overview,
                                const InputDataNetworthProjector& confInputNetw,
                                const InputDataMortgageCalculator& confInputMrtg);
 
@@ -160,8 +158,6 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const std::string& networth_projector_path_input,
                                const std::string& mortgage_caculator_path_output,
                                const std::string& mortgage_calculator_path_input,
-                               const std::string& porto_mgr_path_nested,
-                               const std::string& porto_mgr_path_overview,
                                const InputDataNetworthProjector& confInputNetw,
                                const InputDataMortgageCalculator& confInputMrtg) {
     InputDataContainer user_input;
@@ -177,11 +173,11 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                  mortgage_caculator_path_output,
                                  mortgage_calculator_path_input);
     }
-    else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
-        executePortfolioMgr(user_input.portfolio_manager,
-                            porto_mgr_path_nested,
-                            porto_mgr_path_overview);
-    }
+    // else if (user_input.specifier == InputDataContainer::Specifier::PORTFOLIO_INPUT) {
+    //     executePortfolioMgr(user_input.portfolio_manager,
+    //                         porto_mgr_path_nested,
+    //                         porto_mgr_path_overview);
+    // }
     else {
         return;
     }
@@ -212,7 +208,6 @@ int main() {
     }
     executeCmdPromptUi(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
                        dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-                       dirs.porto_dirs_out->value, dirs.porto_overview->value,
                        input_data_nw_from_yml, input_data_mortg_from_yml);
     return 0;
 }

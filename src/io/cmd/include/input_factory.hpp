@@ -36,16 +36,6 @@ public:
     void fillSpecifier(InputDataContainer& input_data) override;
 };
 
-class ConcretePortfolioManager : public Input {
-    InputPortfolioManager m_params;
-
-public:
-    void getInputFromUser(InputDataContainer& input_data) override;
-    void getInputFromCfg(InputDataContainer& input_data,
-                         const InputDataContainer& conf_input) override;
-    void fillSpecifier(InputDataContainer& input_data) override;
-};
-
 class CreatorInput {
     std::map<std::string, std::string> m_data_source_menu_displayable_choices;
 public:
@@ -75,13 +65,6 @@ class ConcreteCreatorMortgageCalculator : public CreatorInput {
 public:
     Input* FactoryMethod() const override {
         return new ConcreteMortgageCalculator();
-    }
-};
-
-class ConcreteCreatorPortfolioManager : public CreatorInput {
-public:
-    Input* FactoryMethod() const override {
-        return new ConcretePortfolioManager();
     }
 };
 

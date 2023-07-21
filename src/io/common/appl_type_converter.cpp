@@ -43,10 +43,6 @@ bool resolveCfg(const std::string& confPath, DirectoriesValues& dirs) {
     dir_cfg.addConfigElement(dirs.mortg_calc_out);
     dirs.netwo_calc_out = YmlCfg::createConfigElm("generation.networth-projector.output");
     dir_cfg.addConfigElement(dirs.netwo_calc_out);
-    dirs.porto_dirs_out = YmlCfg::createConfigElm("generation.portfolio-manager.output.portfolios");
-    dir_cfg.addConfigElement(dirs.porto_dirs_out);
-    dirs.porto_overview = YmlCfg::createConfigElm("generation.portfolio-manager.output.overview");
-    dir_cfg.addConfigElement(dirs.porto_overview);
     if (dir_cfg.readCfg(false, false)) {
         return true;
     }

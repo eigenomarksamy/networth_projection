@@ -9,8 +9,6 @@ struct DirectoriesValues {
     std::shared_ptr<config_elm_t> mortg_calc_out;
     std::shared_ptr<config_elm_t> netwo_calc_in;
     std::shared_ptr<config_elm_t> netwo_calc_out;
-    std::shared_ptr<config_elm_t> porto_dirs_out;
-    std::shared_ptr<config_elm_t> porto_overview;
 };
 
 struct NetworthValues {

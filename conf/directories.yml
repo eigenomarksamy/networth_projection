@@ -5,7 +5,3 @@ generation:
   mortgage-calculator:
     output: gen/mortgage_out.csv
     input: gen/mortgage_in.txt
-  portfolio-manager:
-    output:
-      overview: gen/portfolios_overview.txt
-      portfolios: gen/portfolios/

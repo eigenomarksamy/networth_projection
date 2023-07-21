@@ -41,12 +41,10 @@ struct InputDataContainer {
     enum Specifier {
         NONE = 0,
         NETWORTH_INPUT,
-        MORTGAGE_INPUT,
-        PORTFOLIO_INPUT
+        MORTGAGE_INPUT
     };
     InputDataNetworthProjector networth_projector;
     InputDataMortgageCalculator mortgage_calculator;
-    InputPortfolioManager portfolio_manager;
     Specifier specifier;
 };
 

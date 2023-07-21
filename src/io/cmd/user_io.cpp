@@ -57,37 +57,6 @@ void ConcreteMortgageCalculator::getInputFromCfg(InputDataContainer& input_data,
     input_data.mortgage_calculator = conf_input.mortgage_calculator;
 }
 
-void ConcretePortfolioManager::fillSpecifier(InputDataContainer& input_data) {
-    input_data.specifier = InputDataContainer::Specifier::PORTFOLIO_INPUT;
-}
-
-void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) {
-    getGenericInputParam(input_data.portfolio_manager.is_new,
-                         std::string("create new profile"));
-    getGenericInputParam(input_data.portfolio_manager.is_multi_prtfolio,
-                         std::string("multi portfolio mode"));
-    if (!input_data.portfolio_manager.is_multi_prtfolio) {
-        getGenericInputParam(input_data.portfolio_manager.name,
-                             std::string("name of portfolio"));
-    }
-    if (!input_data.portfolio_manager.is_new
-        && input_data.portfolio_manager.is_multi_prtfolio) {
-        getGenericInputParam(input_data.portfolio_manager.load_all_portfolios,
-                             std::string("load all portfolios"));
-        if (!input_data.portfolio_manager.load_all_portfolios) {
-            getGenericInputParam(input_data.portfolio_manager.portfolio_list,
-                                std::string("portfolios names"));
-        }
-    }
-    getGenericInputParam(input_data.portfolio_manager.auto_save,
-                         std::string("auto save"));
-}
-
-void ConcretePortfolioManager::getInputFromCfg(InputDataContainer& input_data,
-                                               const InputDataContainer& conf_input) {
-    std::cout << "Feature not yet implemented!" << std::endl;
-}
-
 void CreatorInput::getDataFromUser(InputDataContainer& input_data,
                                    const InputDataContainer& conf_input) const {
     Input* input = this->FactoryMethod();
@@ -115,10 +84,9 @@ static void getUserInputData(const CreatorInput& input,
 void getProgramSelector(InputDataContainer& input_data,
                         const InputDataContainer& conf_input) {
     std::string usr_selection;
-    auto selections = createChoicesMap(std::vector<std::string> {"n", "m", "p"},
+    auto selections = createChoicesMap(std::vector<std::string> {"n", "m"},
                             std::vector<std::string> {"networth projection",
-                                                        "mortgage calculation",
-                                                        "portfolio manager"});
+                                                        "mortgage calculation"});
     if (getStaticUserSelectionFromMenu("program selector",
                                        selections,
                                        usr_selection)) {
@@ -130,9 +98,21 @@ void getProgramSelector(InputDataContainer& input_data,
             CreatorInput* creator_input = new ConcreteCreatorMortgageCalculator();
             getUserInputData(*creator_input, input_data, conf_input);
         }
-        else if (usr_selection == "p") {
-            CreatorInput* creator_input = new ConcreteCreatorPortfolioManager();
-            getUserInputData(*creator_input, input_data, conf_input);
+    }
+}
+
+bool doesUserWantStaticProgram() {
+    std::string usr_select;
+    auto selections = createChoicesMap(std::vector<std::string> {"y", "n"},
+                            std::vector<std::string> {"yes", "no"});
+    if (getStaticUserSelectionFromMenu("program mode selector",
+                                       selections, usr_select)) {
+        if (usr_select == "y") {
+
+        }
+        else if (usr_select == "n") {
+
         }
     }
+    return false;
 }
