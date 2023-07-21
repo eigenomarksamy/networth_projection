@@ -124,43 +124,34 @@ static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
     if (portfolioInput.is_multi_prtfolio) {
         portfolio::PortfolioManager portfolio_manager;
         bool valid = false;
-        if (portfolioInput.is_new) {
+        if (portfolioInput.is_new || getPortfolioFromFiles(portfolio_manager,
+                                    portfolioInput.load_all_portfolios,
+                                    portfolioInput.portfolio_list,
+                                    porto_mgr_path_nested)) {
             valid = true;
         }
-        else {
-            if (getPortfolioFromFiles(portfolio_manager,
-                                      portfolioInput.load_all_portfolios,
-                                      portfolioInput.portfolio_list,
-                                      porto_mgr_path_nested)) {
-                valid = true;
-            }
+        if (valid) {
+            executeMultiPortfolioManagement(portfolio_manager);
+            generatePortfolioOverview(portfolio_manager,
+                                    porto_mgr_path_nested,
+                                    porto_mgr_path_overview,
+                                    portfolioInput.auto_save);
         }
-        executeMultiPortfolioManagement(portfolio_manager);
-        generatePortfolioOverview(portfolio_manager,
-                                  porto_mgr_path_nested,
-                                  porto_mgr_path_overview,
-                                  portfolioInput.auto_save);
     }
     else {
-        if (portfolioInput.is_new) {
-            portfolio::Portfolio portfolio = portfolio::Portfolio(portfolioInput.name);
-            executePortfolioManagement(portfolio);
-            generatePortfolioOverview(portfolio,
-                                      porto_mgr_path_nested,
-                                      porto_mgr_path_overview,
-                                      portfolioInput.auto_save);
-        }
-        else {
-            portfolio::Portfolio portfolio;
-            if (getPortfolioFromFiles(portfolio,
+        portfolio::Portfolio portfolio = portfolio::Portfolio(portfolioInput.name);
+        bool valid = false;
+        if (portfolioInput.is_new || getPortfolioFromFiles(portfolio,
                                       portfolioInput.name,
                                       porto_mgr_path_nested)) {
-                executePortfolioManagement(portfolio);
-                generatePortfolioOverview(portfolio,
-                                          porto_mgr_path_nested,
-                                          porto_mgr_path_overview,
-                                          portfolioInput.auto_save);
-            }
+            valid = true;
+        }
+        if (valid) {
+            executePortfolioManagement(portfolio);
+            generatePortfolioOverview(portfolio,
+                                        porto_mgr_path_nested,
+                                        porto_mgr_path_overview,
+                                        portfolioInput.auto_save);
         }
     }
 }
