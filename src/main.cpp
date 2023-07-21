@@ -16,15 +16,19 @@
 #include "appl_conf_types.hpp"
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
-                            const std::string& directory);
+                            const std::string& directory,
+                            const bool autoSave);
 void generatePortfolioFiles(const portfolio::Portfolio& portfolio,
-                            const std::string& directory);
+                            const std::string& directory,
+                            const bool autoSave);
 void generatePortfolioOverview(const portfolio::Portfolio& portfolio,
                                const std::string& directory,
-                               const std::string& outputFile);
+                               const std::string& outputFile,
+                               const bool autoSave);
 void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
                                const std::string& directory,
-                               const std::string& outputFile);
+                               const std::string& outputFile,
+                               const bool autoSave);
 bool getPortfolioFromFiles(portfolio::Portfolio& portfolio,
                            const std::string& name,
                            const std::string& directory);
@@ -45,34 +49,43 @@ static void executeCmdPromptUi(const std::string& networth_projector_path_output
                                const InputDataMortgageCalculator& confInputMrtg);
 
 void generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
-                            const std::string& directory) {
+                            const std::string& directory,
+                            const bool autoSave) {
     for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
         auto portfolio = portfolioMgr.getPortfolio(i);
-        savePortfolio(portfolio, directory + portfolio.getName());
+        std::string question = "save portfolio " + portfolio.getName();
+        if (autoSave || getUserYesNo(question)) {
+            savePortfolio(portfolio, directory + portfolio.getName());
+        }
     }
 }
 
 void generatePortfolioFiles(const portfolio::Portfolio& portfolio,
-                            const std::string& directory) {
-    savePortfolio(portfolio, directory + portfolio.getName());
+                            const std::string& directory,
+                            const bool autoSave) {
+    if (autoSave || getUserYesNo("save portfolio " + portfolio.getName())) {
+        savePortfolio(portfolio, directory + portfolio.getName());
+    }
 }
 
 void generatePortfolioOverview(const portfolio::Portfolio& portfolio,
                                const std::string& directory,
-                               const std::string& outputFile) {
+                               const std::string& outputFile,
+                               const bool autoSave) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolio);
     FileGenerator file(outputFile);
     file.generateTxt(portfolioTxt);
-    generatePortfolioFiles(portfolio, directory);
+    generatePortfolioFiles(portfolio, directory, autoSave);
 }
 
 void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
                                const std::string& directory,
-                               const std::string& outputFile) {
+                               const std::string& outputFile,
+                               const bool autoSave) {
     auto portfolioTxt = DataAdapter::generatePortfolioLines(portfolioMgr);
     FileGenerator file(outputFile);
     file.generateTxt(portfolioTxt);
-    generatePortfolioFiles(portfolioMgr, directory);
+    generatePortfolioFiles(portfolioMgr, directory, autoSave);
 }
 
 bool getPortfolioFromFiles(portfolio::Portfolio& portfolio,
@@ -109,25 +122,24 @@ static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
                                 const std::string& porto_mgr_path_nested,
                                 const std::string& porto_mgr_path_overview) {
     if (portfolioInput.is_multi_prtfolio) {
+        portfolio::PortfolioManager portfolio_manager;
+        bool valid = false;
         if (portfolioInput.is_new) {
-            portfolio::PortfolioManager portfolio_manager;
-            executeMultiPortfolioManagement(portfolio_manager);
-            generatePortfolioOverview(portfolio_manager,
-                                      porto_mgr_path_nested,
-                                      porto_mgr_path_overview);
+            valid = true;
         }
         else {
-            portfolio::PortfolioManager portfolio_manager;
             if (getPortfolioFromFiles(portfolio_manager,
                                       portfolioInput.load_all_portfolios,
                                       portfolioInput.portfolio_list,
                                       porto_mgr_path_nested)) {
-                executeMultiPortfolioManagement(portfolio_manager);
-                generatePortfolioOverview(portfolio_manager,
-                                          porto_mgr_path_nested,
-                                          porto_mgr_path_overview);
+                valid = true;
             }
         }
+        executeMultiPortfolioManagement(portfolio_manager);
+        generatePortfolioOverview(portfolio_manager,
+                                  porto_mgr_path_nested,
+                                  porto_mgr_path_overview,
+                                  portfolioInput.auto_save);
     }
     else {
         if (portfolioInput.is_new) {
@@ -135,7 +147,8 @@ static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
             executePortfolioManagement(portfolio);
             generatePortfolioOverview(portfolio,
                                       porto_mgr_path_nested,
-                                      porto_mgr_path_overview);
+                                      porto_mgr_path_overview,
+                                      portfolioInput.auto_save);
         }
         else {
             portfolio::Portfolio portfolio;
@@ -145,7 +158,8 @@ static void executePortfolioMgr(const InputPortfolioManager& portfolioInput,
                 executePortfolioManagement(portfolio);
                 generatePortfolioOverview(portfolio,
                                           porto_mgr_path_nested,
-                                          porto_mgr_path_overview);
+                                          porto_mgr_path_overview,
+                                          portfolioInput.auto_save);
             }
         }
     }

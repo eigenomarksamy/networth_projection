@@ -32,6 +32,7 @@ struct InputPortfolioManager {
     bool is_new = true;
     bool is_multi_prtfolio = true;
     bool load_all_portfolios = true;
+    bool auto_save = true;
     std::string name = "MyInvestmentPortfolio_" + getLocalDateTime();
     std::vector<std::string> portfolio_list;
 };

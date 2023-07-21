@@ -49,3 +49,15 @@ void displayManualInputGuide() {
                 << "and new line to finish and move on.\n";
     std::cout << std::endl;
 }
+
+bool getUserYesNo(const std::string& question, const bool defVal) {
+    std::string usr_input;
+    std::cout << "Do you want to " << question << "? ";
+    std::cin >> usr_input;
+    auto first_char = usr_input.at(0);
+    auto to_check = (char)std::tolower(first_char);
+    if (to_check == 'y') {
+        return true;
+    }
+    return false;
+}

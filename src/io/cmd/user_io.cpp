@@ -79,6 +79,8 @@ void ConcretePortfolioManager::getInputFromUser(InputDataContainer& input_data) 
                                 std::string("portfolios names"));
         }
     }
+    getGenericInputParam(input_data.portfolio_manager.auto_save,
+                         std::string("auto save"));
 }
 
 void ConcretePortfolioManager::getInputFromCfg(InputDataContainer& input_data,

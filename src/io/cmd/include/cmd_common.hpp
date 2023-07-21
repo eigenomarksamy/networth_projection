@@ -140,4 +140,6 @@ bool getStaticUserSelectionFromMenu(const std::string& title,
 
 void displayManualInputGuide();
 
+bool getUserYesNo(const std::string& question, const bool defVal=true);
+
 #endif /* CMD_COMMON_HPP_ */
