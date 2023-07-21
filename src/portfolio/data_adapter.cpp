@@ -1,6 +1,6 @@
-#include "data_adapter.hpp"
+#include "generator_portfolio.hpp"
 
-std::vector<std::string> DataAdapter::generatePortfolioLines(const portfolio::Portfolio& portfolioObj) {
+std::vector<std::string> portfolio::DataAdapter::generatePortfolioLines(const portfolio::Portfolio& portfolioObj) {
     std::vector<std::string> outLines;
     const std::vector<Investment>& investments = portfolioObj.getInvestments();
     outLines.push_back(portfolioObj.getName());
@@ -12,7 +12,7 @@ std::vector<std::string> DataAdapter::generatePortfolioLines(const portfolio::Po
     return outLines;
 }
 
-std::vector<std::string> DataAdapter::generatePortfolioLines(const portfolio::PortfolioManager& portfolioMgrObj) {
+std::vector<std::string> portfolio::DataAdapter::generatePortfolioLines(const portfolio::PortfolioManager& portfolioMgrObj) {
     std::vector<std::string> retGenLines;
     for (auto i = 0; i < portfolioMgrObj.getNumPortfolios(); ++i) {
         portfolio::Portfolio& portfolio = portfolioMgrObj.getPortfolio(i);

@@ -108,10 +108,7 @@ bool doesUserWantStaticProgram() {
     if (getStaticUserSelectionFromMenu("program mode selector",
                                        selections, usr_select)) {
         if (usr_select == "y") {
-
-        }
-        else if (usr_select == "n") {
-
+            return true;
         }
     }
     return false;

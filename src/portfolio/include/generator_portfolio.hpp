@@ -1,10 +1,11 @@
-#ifndef DATA_ADAPTER_HPP_
-#define DATA_ADAPTER_HPP_
+#ifndef GENERATOR_PORTFOLIO_HPP_
+#define GENERATOR_PORTFOLIO_HPP_
 
 #include <vector>
 #include <string>
 #include "portfolio.hpp"
-#include "input_types_cfg.hpp"
+
+namespace portfolio {
 
 class DataAdapter {
 
@@ -19,4 +20,6 @@ public:
     static std::vector<std::string> generatePortfolioLines(const portfolio::PortfolioManager& portfolioMgrObj);
 };
 
-#endif /* DATA_ADAPTER_HPP_ */
+} // namespace portfolio
+
+#endif /* GENERATOR_PORTFOLIO_HPP_ */

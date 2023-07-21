@@ -53,7 +53,7 @@ void displayManualInputGuide() {
 bool getUserYesNo(const std::string& question, const bool defVal) {
     constexpr int8_t newline = '\n' ;
     std::string usr_input;
-    std::cout << "Do you want to " << question << "? ";
+    std::cout << "Do you want to " << question << "? (y/n): ";
     if( std::cin.peek() != newline && std::cin >> usr_input ) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), newline );
         auto first_char = usr_input.at(0);

@@ -4,7 +4,6 @@
 #include <map>
 #include "input_types_cfg.hpp"
 #include "cmd_common.hpp"
-#include "portfolio.hpp"
 
 class Input {
 
@@ -71,8 +70,6 @@ public:
 void getProgramSelector(InputDataContainer& input_data,
                         const InputDataContainer& conf_input);
 
-void executePortfolioManagement(portfolio::Portfolio& portfolio);
-
-void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr);
+bool doesUserWantStaticProgram();
 
 #endif /* INPUT_FACTORY_HPP_ */
