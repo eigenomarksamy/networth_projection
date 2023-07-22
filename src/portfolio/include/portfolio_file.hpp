@@ -1,5 +1,5 @@
-#ifndef GENERATOR_PORTFOLIO_HPP_
-#define GENERATOR_PORTFOLIO_HPP_
+#ifndef PORTFOLIO_FILE_HPP_
+#define PORTFOLIO_FILE_HPP_
 
 #include <vector>
 #include <string>
@@ -42,4 +42,4 @@ void savePortfolio(const Portfolio& portfolio, const std::string& filename);
 
 } // namespace portfolio
 
-#endif /* GENERATOR_PORTFOLIO_HPP_ */
+#endif /* PORTFOLIO_FILE_HPP_ */

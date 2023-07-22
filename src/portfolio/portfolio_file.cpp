@@ -1,6 +1,6 @@
-#include "generator_portfolio.hpp"
 #include "cmd_common.hpp"
 #include "file_generator.hpp"
+#include "portfolio_file.hpp"
 
 std::vector<std::string> portfolio::DataAdapter::generatePortfolioLines(const portfolio::Portfolio& portfolioObj) {
     std::vector<std::string> outLines;
