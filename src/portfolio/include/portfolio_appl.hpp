@@ -21,7 +21,11 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
                            const std::vector<std::string>& list_portfolios,
                            const std::string& directory);
 
-void setUpPortfolio(PortfolioMgrCfg& conf);
+PortfolioCfgInputSource setPortfolioInputSource();
+
+void setUpPortfolioManually(PortfolioMgrCfg& conf);
+
+bool setUpPortfolioCfg(PortfolioMgrCfg& conf);
 
 } // namespace portfolio
 

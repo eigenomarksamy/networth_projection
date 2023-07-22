@@ -105,7 +105,7 @@ bool doesUserWantStaticProgram() {
     std::string usr_select;
     auto selections = createChoicesMap(std::vector<std::string> {"y", "n"},
                             std::vector<std::string> {"yes", "no"});
-    if (getStaticUserSelectionFromMenu("program mode selector",
+    if (getStaticUserSelectionFromMenu("mortgage/networth mode selector",
                                        selections, usr_select)) {
         if (usr_select == "y") {
             return true;

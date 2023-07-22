@@ -24,13 +24,15 @@ bool getStaticUserSelectionFromMenu(const std::string& title,
         for (const auto& option : options) {
             if (raw_selection == option.first) {
                 validity = true;
-                std::cin.ignore( 1000000, '\n' );
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 selection = raw_selection;
                 break;
             }
         }
-        if (!validity)
-            std::cerr << "Unknown selection!\n";
+        if (!validity) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Unknown selection!\n";
+        }
     }
     return validity;
 }

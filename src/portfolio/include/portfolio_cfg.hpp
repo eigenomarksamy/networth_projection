@@ -19,6 +19,8 @@ struct PortfolioMgrCfg {
     std::vector<std::string> portfolio_list;
 };
 
+enum class PortfolioCfgInputSource { NONE, DEFAULT, MANUAL_CMD, CONF_FILE, WEB_UI, APP_UI };
+
 } // namespace portfolio
 
 #endif /* PORTFOLIO_CFG_HPP_ */

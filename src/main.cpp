@@ -17,7 +17,7 @@
 #include "conf_resolver.hpp"
 #include "appl_conf_types.hpp"
 
-static void executePortfolioMgr(const portfolio::PortfolioMgrCfg& portfolioInput);
+static void executePortfolioMgr();
 static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& networth_projector_path_input,
                               const std::string& mortgage_caculator_path_output,
@@ -25,7 +25,9 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const InputDataNetworthProjector& confInputNetw,
                               const InputDataMortgageCalculator& confInputMrtg);
 
-static void executePortfolioMgr(const portfolio::PortfolioMgrCfg& portfolioInput) {
+static void executePortfolioMgr() {
+    portfolio::PortfolioMgrCfg portfolioInput;
+    if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
     if (portfolioInput.is_multi_prtfolio) {
         portfolio::PortfolioManager portfolio_manager;
         bool valid = false;
@@ -111,9 +113,7 @@ int main() {
                           input_data_nw_from_yml, input_data_mortg_from_yml);
     }
     if (getUserYesNo("portfolio manager mode")) {
-        portfolio::PortfolioMgrCfg portfolioCfg;
-        portfolio::setUpPortfolio(portfolioCfg);
-        executePortfolioMgr(portfolioCfg);
+        executePortfolioMgr();
     }
     return 0;
 }

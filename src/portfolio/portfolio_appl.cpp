@@ -283,14 +283,52 @@ bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename)
     return status;
 }
 
-void portfolio::setUpPortfolio(PortfolioMgrCfg& conf) {
-    getGenericInputParam(conf.is_new,
-                         std::string("create new profile"));
+portfolio::PortfolioCfgInputSource portfolio::setPortfolioInputSource() {
+    PortfolioCfgInputSource selection;
+    std::string usr_selection;
+    auto selections = createChoicesMap(std::vector<std::string> {"d", "m", "a", "w", "f"},
+                            std::vector<std::string> {"default",
+                                                      "manual",
+                                                      "application ui",
+                                                      "web ui",
+                                                      "configurations file"});
+    if (getStaticUserSelectionFromMenu("portfolio configurations source",
+                                       selections,
+                                       usr_selection)) {
+        if (usr_selection == "d") {
+            selection = PortfolioCfgInputSource::DEFAULT;
+        }
+        else if (usr_selection == "m") {
+            selection = PortfolioCfgInputSource::MANUAL_CMD;
+        }
+        else if (usr_selection == "a") {
+            selection = PortfolioCfgInputSource::APP_UI;
+        }
+        else if (usr_selection == "w") {
+            selection = PortfolioCfgInputSource::WEB_UI;
+        }
+        else if (usr_selection == "f") {
+            selection = PortfolioCfgInputSource::CONF_FILE;
+        }
+        else {
+            selection = PortfolioCfgInputSource::NONE;
+        }
+    }
+    return selection;
+}
+
+void portfolio::setUpPortfolioManually(PortfolioMgrCfg& conf) {
     getGenericInputParam(conf.is_multi_prtfolio,
-                         std::string("multi portfolio mode"));
+                         std::string("multiple portfolio mode"));
     if (!conf.is_multi_prtfolio) {
+        getGenericInputParam(conf.is_new,
+                            std::string("create new portfolio"));
         getGenericInputParam(conf.name,
                              std::string("name of portfolio"));
+    }
+    else {
+        getGenericInputParam(conf.is_new,
+                            std::string("create new portfolios"));
     }
     if (!conf.is_new
         && conf.is_multi_prtfolio) {
@@ -303,4 +341,25 @@ void portfolio::setUpPortfolio(PortfolioMgrCfg& conf) {
     }
     getGenericInputParam(conf.auto_save,
                          std::string("auto save"));
+}
+
+bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf) {
+    auto selection = setPortfolioInputSource();
+    if (PortfolioCfgInputSource::MANUAL_CMD == selection) {
+        setUpPortfolioManually(conf);
+    }
+    else if (PortfolioCfgInputSource::APP_UI == selection) {
+        std::cout << "Feature not implemented yet!" << std::endl;
+    }
+    else if (PortfolioCfgInputSource::WEB_UI == selection) {
+        std::cout << "Feature not implemented yet!" << std::endl;
+    }
+    else if (PortfolioCfgInputSource::CONF_FILE == selection) {
+        std::cout << "Feature not implemented yet!" << std::endl;
+    }
+    else if (PortfolioCfgInputSource::NONE == selection) {
+        std::cout << "Failed to set up!" << std::endl;
+        return false;
+    }
+    return true;
 }
