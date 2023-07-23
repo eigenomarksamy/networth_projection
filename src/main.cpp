@@ -16,6 +16,7 @@
 #include "activation.hpp"
 #include "conf_resolver.hpp"
 #include "appl_conf_types.hpp"
+#include "logger.hpp"
 
 static void executePortfolioMgr();
 static void executeStaticAppl(const std::string& networth_projector_path_output,
