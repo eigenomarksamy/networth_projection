@@ -4,7 +4,6 @@
 #include <map>
 #include "input_types_cfg.hpp"
 #include "cmd_common.hpp"
-#include "portfolio.hpp"
 
 class Input {
 
@@ -28,16 +27,6 @@ public:
 
 class ConcreteMortgageCalculator : public Input {
     InputDataMortgageCalculator m_params;
-
-public:
-    void getInputFromUser(InputDataContainer& input_data) override;
-    void getInputFromCfg(InputDataContainer& input_data,
-                         const InputDataContainer& conf_input) override;
-    void fillSpecifier(InputDataContainer& input_data) override;
-};
-
-class ConcretePortfolioManager : public Input {
-    InputPortfolioManager m_params;
 
 public:
     void getInputFromUser(InputDataContainer& input_data) override;
@@ -78,18 +67,9 @@ public:
     }
 };
 
-class ConcreteCreatorPortfolioManager : public CreatorInput {
-public:
-    Input* FactoryMethod() const override {
-        return new ConcretePortfolioManager();
-    }
-};
-
 void getProgramSelector(InputDataContainer& input_data,
                         const InputDataContainer& conf_input);
 
-void executePortfolioManagement(portfolio::Portfolio& portfolio);
-
-void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr);
+bool doesUserWantStaticProgram();
 
 #endif /* INPUT_FACTORY_HPP_ */

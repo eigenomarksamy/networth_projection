@@ -1,5 +1,4 @@
 set(SOURCES
-    data_adapter.cpp
     conf_resolver.cpp
     appl_type_converter.cpp
 )
@@ -15,7 +14,6 @@ target_link_libraries(
     fileio
     networthprojector
     mortgagecalculator
-    portfoliomanager
 )
 
 install(TARGETS commonio

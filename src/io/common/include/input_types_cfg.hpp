@@ -28,24 +28,14 @@ struct InputDataMortgageCalculator {
     float_t rent_annu_increase = 8.f;
 };
 
-struct InputPortfolioManager {
-    bool is_new = true;
-    bool is_multi_prtfolio = true;
-    bool load_all_portfolios = true;
-    std::string name = "MyInvestmentPortfolio_" + getLocalDateTime();
-    std::vector<std::string> portfolio_list;
-};
-
 struct InputDataContainer {
     enum Specifier {
         NONE = 0,
         NETWORTH_INPUT,
-        MORTGAGE_INPUT,
-        PORTFOLIO_INPUT
+        MORTGAGE_INPUT
     };
     InputDataNetworthProjector networth_projector;
     InputDataMortgageCalculator mortgage_calculator;
-    InputPortfolioManager portfolio_manager;
     Specifier specifier;
 };
 

@@ -26,12 +26,14 @@ public:
     bool updatedInvestmentValue(const std::string& ticker, double_t newValue);
     bool updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant);
     double_t calculateTotalValue() const;
-    void displayPortfolio() const;
     void clearInvestments();
     void setName(const std::string& name) { m_name = name; }
     std::string getName() const { return m_name; }
     std::vector<Investment> getInvestments() const { return m_investments; }
+    friend void displayPortfolio(const Portfolio& obj);
 };
+
+void displayPortfolio(const Portfolio& obj);
 
 class PortfolioManager {
 
@@ -72,10 +74,6 @@ public:
     }
 
 };
-
-void savePortfolio(const Portfolio& portfolio, const std::string& filename);
-
-bool loadPortfolio(Portfolio& portfolio, const std::string& filename);
 
 } // namespace portfolio
 

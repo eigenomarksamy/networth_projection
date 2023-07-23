@@ -1,11 +1,59 @@
 #include <iostream>
-#include <string>
-#include <math.h>
+#include <fstream>
+#include <sstream>
 #include "cmd_common.hpp"
-#include "input_factory.hpp"
 #include "portfolio.hpp"
+#include "portfolio_appl.hpp"
+#include "file_generator.hpp"
 
-static int16_t selectPortfolio(const portfolio::PortfolioManager& portfolio_manager) {
+namespace portfolio {
+
+static int16_t selectPortfolio(const portfolio::PortfolioManager& portfolio_manager);
+
+} // namespace portfolio
+
+bool portfolio::getPortfolioFromFiles(portfolio::Portfolio& portfolio,
+                           const std::string& name,
+                           const std::string& directory) {
+    return portfolio::loadPortfolio(portfolio, directory + name);
+}
+
+bool portfolio::getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios,
+                           const std::string& directory) {
+    bool status = true;
+    std::string directoryPath = directory;
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
+    for (const auto& name : names) {
+        portfolio::Portfolio portfolio;
+        if (getPortfolioFromFiles(portfolio, name, directory)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
+        }
+        else {
+            status = false;
+        }
+    }
+    return status;
+}
+
+void portfolio::displayPortfolio(const Portfolio& obj) {
+    std::cout << "Portfolio: " << obj.m_name << std::endl;
+    for (const auto& investment : obj.m_investments) {
+        std::cout << "Name: " << investment.getName() << ", Ticker: "
+                  << investment.getTicker() << ", Quantity: "
+                  << investment.getQuantity() << ", Purchase price: "
+                  << investment.getPurchasePrice()
+                  << std::endl;
+    }
+}
+
+static int16_t portfolio::selectPortfolio(const portfolio::PortfolioManager& portfolio_manager) {
     uint16_t choice = 0;
     std::cout << "There are " << portfolio_manager.getNumPortfolios() << " portfolios" << std::endl;
     if (portfolio_manager.getNumPortfolios() > 0) {
@@ -25,7 +73,7 @@ static int16_t selectPortfolio(const portfolio::PortfolioManager& portfolio_mana
     return choice - 1;
 }
 
-void executePortfolioManagement(portfolio::Portfolio& portfolio) {
+void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
     int32_t choice = 0;
     while (choice != 7) {
         std::cout << "---------------------------" << std::endl;
@@ -89,7 +137,7 @@ void executePortfolioManagement(portfolio::Portfolio& portfolio) {
                 break;
             }
             case 3: {
-                portfolio.displayPortfolio();
+                displayPortfolio(portfolio);
                 break;
             }
             case 4: {
@@ -143,7 +191,7 @@ void executePortfolioManagement(portfolio::Portfolio& portfolio) {
     }
 }
 
-void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr) {
+void portfolio::executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr) {
     int32_t choice = 0;
     while (choice != 4) {
         std::cout << "---------------------------" << std::endl;
@@ -203,4 +251,115 @@ void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr
             }
         }
     }
+}
+
+bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename) {
+    bool status = true;
+    std::ifstream file(filename);
+    portfolio.clearInvestments();
+    if (file.is_open()) {
+        std::string name, ticker, line;
+        double_t purchasePrice;
+        uint32_t quantity;
+        std::getline(file, name);
+        portfolio.setName(name);
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::getline(iss, name, ',');
+            std::getline(iss, ticker, ',');
+            iss >> purchasePrice;
+            iss.ignore();
+            iss >> quantity;
+            Investment investment(name, ticker, purchasePrice, quantity);
+            portfolio.addInvestment(investment);
+        }
+        std::cout << "Portfolio loaded from " << filename << std::endl;
+    }
+    else {
+        status = false;
+        std::cout << "Unable to open file for load portfolio.\n";
+    }
+    file.close();
+    return status;
+}
+
+portfolio::PortfolioCfgInputSource portfolio::setPortfolioInputSource() {
+    PortfolioCfgInputSource selection;
+    std::string usr_selection;
+    auto selections = createChoicesMap(std::vector<std::string> {"d", "m", "a", "w", "f"},
+                            std::vector<std::string> {"default",
+                                                      "manual",
+                                                      "application ui",
+                                                      "web ui",
+                                                      "configurations file"});
+    if (getStaticUserSelectionFromMenu("portfolio configurations source",
+                                       selections,
+                                       usr_selection)) {
+        if (usr_selection == "d") {
+            selection = PortfolioCfgInputSource::DEFAULT;
+        }
+        else if (usr_selection == "m") {
+            selection = PortfolioCfgInputSource::MANUAL_CMD;
+        }
+        else if (usr_selection == "a") {
+            selection = PortfolioCfgInputSource::APP_UI;
+        }
+        else if (usr_selection == "w") {
+            selection = PortfolioCfgInputSource::WEB_UI;
+        }
+        else if (usr_selection == "f") {
+            selection = PortfolioCfgInputSource::CONF_FILE;
+        }
+        else {
+            selection = PortfolioCfgInputSource::NONE;
+        }
+    }
+    return selection;
+}
+
+void portfolio::setUpPortfolioManually(PortfolioMgrCfg& conf) {
+    getGenericInputParam(conf.is_multi_prtfolio,
+                         std::string("multiple portfolio mode"));
+    if (!conf.is_multi_prtfolio) {
+        getGenericInputParam(conf.is_new,
+                            std::string("create new portfolio"));
+        getGenericInputParam(conf.name,
+                             std::string("name of portfolio"));
+    }
+    else {
+        getGenericInputParam(conf.is_new,
+                            std::string("create new portfolios"));
+    }
+    if (!conf.is_new
+        && conf.is_multi_prtfolio) {
+        getGenericInputParam(conf.load_all_portfolios,
+                             std::string("load all portfolios"));
+        if (!conf.load_all_portfolios) {
+            getGenericInputParam(conf.portfolio_list,
+                                std::string("portfolios names"));
+        }
+    }
+    getGenericInputParam(conf.auto_save,
+                         std::string("auto save"));
+}
+
+bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf) {
+    auto selection = setPortfolioInputSource();
+    if (PortfolioCfgInputSource::MANUAL_CMD == selection) {
+        setUpPortfolioManually(conf);
+    }
+    else if (PortfolioCfgInputSource::APP_UI == selection) {
+        std::cout << "Feature not implemented yet!" << std::endl;
+    }
+    else if (PortfolioCfgInputSource::WEB_UI == selection) {
+        std::cout << "Feature not implemented yet!" << std::endl;
+    }
+    else if (PortfolioCfgInputSource::CONF_FILE == selection) {
+        std::cout << "Feature not implemented yet!" << std::endl;
+    }
+    else if (PortfolioCfgInputSource::NONE == selection) {
+        std::cout << "Failed to set up!" << std::endl;
+        return false;
+    }
+    return true;
 }

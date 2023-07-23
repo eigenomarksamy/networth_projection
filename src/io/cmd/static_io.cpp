@@ -24,13 +24,15 @@ bool getStaticUserSelectionFromMenu(const std::string& title,
         for (const auto& option : options) {
             if (raw_selection == option.first) {
                 validity = true;
-                std::cin.ignore( 1000000, '\n' );
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 selection = raw_selection;
                 break;
             }
         }
-        if (!validity)
-            std::cerr << "Unknown selection!\n";
+        if (!validity) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Unknown selection!\n";
+        }
     }
     return validity;
 }
@@ -48,4 +50,23 @@ void displayManualInputGuide() {
                 << "space seperated for different sets, "
                 << "and new line to finish and move on.\n";
     std::cout << std::endl;
+}
+
+bool getUserYesNo(const std::string& question, const bool defVal) {
+    constexpr int8_t newline = '\n' ;
+    std::string usr_input;
+    std::cout << "Do you want to " << question << "? (y/n): ";
+    if( std::cin.peek() != newline && std::cin >> usr_input ) {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), newline );
+        auto first_char = usr_input.at(0);
+        auto to_check = (int8_t)std::tolower(first_char);
+        if (to_check == 'y') {
+            return true;
+        }
+        return false;
+    }
+    else {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), newline );
+        return defVal;
+    }
 }
