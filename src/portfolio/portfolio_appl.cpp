@@ -2,9 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include "cmd_common.hpp"
+#include "file_generator.hpp"
 #include "portfolio.hpp"
 #include "portfolio_appl.hpp"
-#include "file_generator.hpp"
+#include "portfolio_logger.hpp"
 
 namespace portfolio {
 

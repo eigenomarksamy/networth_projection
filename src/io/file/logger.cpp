@@ -12,10 +12,3 @@ Logger::~Logger() {
         m_logFile.close();
     }
 }
-
-/*
- * Sample logger usage:
- *
- * Logger logger("gen/logs/log_" + getUniqueTimeId() + ".log");
- *
- */
