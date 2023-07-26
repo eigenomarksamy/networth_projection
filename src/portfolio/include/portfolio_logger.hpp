@@ -22,7 +22,8 @@ public:
     }
 
     void log(const std::string& message) {
-        m_logger->Log(message);
+        m_logger->Log(getUniqueTimeId() + "_" + std::to_string(m_seq) + ": " + message);
+        ++m_seq;
     }
 
 private:
