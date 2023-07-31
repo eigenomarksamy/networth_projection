@@ -43,12 +43,14 @@ public:
     void setName(const std::string& name) { m_name = name; }
     std::string getName() const { return m_name; }
     std::vector<Investment> getInvestments() const { return m_investments; }
+    friend void displayPortfolio(const Portfolio& obj);
+
+private:
     void log(const std::string& msg) const {
         if (m_logger.get()) {
             m_logger->log(msg);
         }
     }
-    friend void displayPortfolio(const Portfolio& obj);
 };
 
 void displayPortfolio(const Portfolio& obj);
@@ -103,6 +105,7 @@ public:
         return *(m_portfolios[portfolio_idx]);
     }
 
+private:
     void log(const std::string& msg) const {
         if (m_logger.get()) {
             m_logger->log(msg);
