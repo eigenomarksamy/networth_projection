@@ -61,7 +61,7 @@ public:
 
     PortfolioManager(const std::vector<std::string>& portfolios_names) {
         for (const auto& portfolio_name : portfolios_names) {
-            m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name, log));
+            m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
         }
     }
 
