@@ -14,10 +14,11 @@ private:
     std::string m_name;
     std::vector<Investment> m_investments;
     std::shared_ptr<PortfolioLogger> m_logger;
+    bool m_setLogger;
 
 public:
     Portfolio() {}
-    Portfolio(const std::string& name) : m_name(name) {}
+    Portfolio(const std::string& name) : m_name(name), m_setLogger(false) {}
     Portfolio(const Portfolio& other) {
         m_name = other.m_name;
         m_investments = other.m_investments;
@@ -33,12 +34,15 @@ public:
     void setName(const std::string& name) { m_name = name; }
     std::string getName() const { return m_name; }
     std::vector<Investment> getInvestments() const { return m_investments; }
-    void setLoggerPtr(const std::shared_ptr<PortfolioLogger>& logger) { m_logger = logger; }
+    void setLoggerPtr(const std::shared_ptr<PortfolioLogger>& logger) {
+        m_logger = logger;
+        m_setLogger = true;
+    }
     friend void displayPortfolio(const Portfolio& obj);
 
 private:
     void log(const std::string& msg) const {
-        if (m_logger.get()) {
+        if (m_setLogger) {
             m_logger->log(msg);
         }
     }
@@ -50,16 +54,18 @@ class PortfolioManager {
 
     std::vector<std::unique_ptr<Portfolio>> m_portfolios;
     std::shared_ptr<PortfolioLogger> m_logger;
+    bool m_setLogger;
 
 public:
 
     PortfolioManager() {}
 
-    PortfolioManager(const std::string& portfolio_name) {
+    PortfolioManager(const std::string& portfolio_name) : m_setLogger(false) {
         m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
     }
 
-    PortfolioManager(const std::vector<std::string>& portfolios_names) {
+    PortfolioManager(const std::vector<std::string>& portfolios_names)
+      : m_setLogger(false) {
         for (const auto& portfolio_name : portfolios_names) {
             m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
         }
@@ -85,11 +91,14 @@ public:
         return *(m_portfolios[portfolio_idx]);
     }
 
-    void setLoggerPtr(const std::shared_ptr<PortfolioLogger>& logger) { m_logger = logger; }
+    void setLoggerPtr(const std::shared_ptr<PortfolioLogger>& logger) {
+        m_logger = logger;
+        m_setLogger = true;
+    }
 
 private:
     void log(const std::string& msg) const {
-        if (m_logger.get()) {
+        if (m_setLogger) {
             m_logger->log(msg);
         }
     }
