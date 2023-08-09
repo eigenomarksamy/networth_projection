@@ -342,6 +342,8 @@ void portfolio::setUpPortfolioManually(PortfolioMgrCfg& conf) {
     }
     getGenericInputParam(conf.auto_save,
                          std::string("auto save"));
+    getGenericInputParam(conf.auto_log,
+                         std::string("auto log"));
 }
 
 bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf) {
