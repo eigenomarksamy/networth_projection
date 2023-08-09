@@ -6,7 +6,7 @@ bool portfolio::Portfolio::addInvestment(const Investment& investment) {
     for (auto it = m_investments.begin(); it != m_investments.end(); ++it) {
         if (it->getTicker() == investment.getTicker()) {
             if (it->getName() != investment.getName()) {
-                log("[Portfolio]" + m_name + "Add Failure");
+                log("[Portfolio]" + m_name + ": Add - Failure");
                 return retVal;
             }
             it->setPurchasePrice(investment.getPurchasePrice());
@@ -19,7 +19,7 @@ bool portfolio::Portfolio::addInvestment(const Investment& investment) {
         m_investments.push_back(investment);
         retVal = true;
     }
-    log("[Portfolio]" + m_name + "Add Success");
+    log("[Portfolio]" + m_name + ": Add - Success");
     return retVal;
 }
 
@@ -32,7 +32,7 @@ bool portfolio::Portfolio::removeInvestment(const std::string& ticker) {
             break;
         }
     }
-    log("[Portfolio]" + m_name + "Remove Success");
+    log("[Portfolio]" + m_name + ": Remove - Success");
     return retVal;
 }
 
@@ -63,7 +63,7 @@ bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, dou
             break;
         }
     }
-    log("[Portfolio]" + m_name + "Update Success");
+    log("[Portfolio]" + m_name + ": Update - Success");
     return retVal;
 }
 
@@ -76,7 +76,7 @@ bool portfolio::Portfolio::updateInvestmentQuantity(const std::string& ticker, u
             break;
         }
     }
-    log("[Portfolio]" + m_name + "Update Success");
+    log("[Portfolio]" + m_name + ": Update - Success");
     return retVal;
 }
 
