@@ -82,6 +82,11 @@ bool portfolio::Portfolio::updateInvestmentQuantity(const std::string& ticker, u
 
 void portfolio::PortfolioManager::addPortfolio(Portfolio& portfolio) {
     m_portfolios.push_back(std::make_unique<Portfolio>(portfolio));
+    if (m_setLogger) {
+        for (const auto& portfolio : m_portfolios) {
+            portfolio->setLoggerPtr(m_logger);
+        }
+    }
 }
 
 bool portfolio::PortfolioManager::addPortfolio(const std::string& portfolio_name) {
@@ -91,6 +96,12 @@ bool portfolio::PortfolioManager::addPortfolio(const std::string& portfolio_name
         }
     }
     m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
+    if (m_setLogger) {
+        for (const auto& portfolio : m_portfolios) {
+            portfolio->setLoggerPtr(m_logger);
+        }
+    }
+    log("[PortfolioManager] Add - Success");
     return true;
 }
 
@@ -102,6 +113,12 @@ bool portfolio::PortfolioManager::removePortfolio(const std::string& portfolio_n
             retVal = true;
             break;
         }
+    }
+    if (retVal) {
+        log("[PortfolioManager] Remove - Success");
+    }
+    else {
+        log("[PortfolioManager] Remove - Failure");
     }
     return retVal;
 }

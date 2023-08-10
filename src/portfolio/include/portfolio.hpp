@@ -94,6 +94,9 @@ public:
     void setLoggerPtr(const std::shared_ptr<PortfolioLogger>& logger) {
         m_logger = logger;
         m_setLogger = true;
+        for (const auto& portfolio : m_portfolios) {
+            portfolio->setLoggerPtr(m_logger);
+        }
     }
 
 private:
