@@ -6,6 +6,7 @@ bool portfolio::Portfolio::addInvestment(const Investment& investment) {
     for (auto it = m_investments.begin(); it != m_investments.end(); ++it) {
         if (it->getTicker() == investment.getTicker()) {
             if (it->getName() != investment.getName()) {
+                log("[Portfolio]" + m_name + ": Add - Failure");
                 return retVal;
             }
             it->setPurchasePrice(investment.getPurchasePrice());
@@ -18,6 +19,7 @@ bool portfolio::Portfolio::addInvestment(const Investment& investment) {
         m_investments.push_back(investment);
         retVal = true;
     }
+    log("[Portfolio]" + m_name + ": Add - Success");
     return retVal;
 }
 
@@ -30,6 +32,7 @@ bool portfolio::Portfolio::removeInvestment(const std::string& ticker) {
             break;
         }
     }
+    log("[Portfolio]" + m_name + ": Remove - Success");
     return retVal;
 }
 
@@ -60,6 +63,7 @@ bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, dou
             break;
         }
     }
+    log("[Portfolio]" + m_name + ": Update - Success");
     return retVal;
 }
 
@@ -72,11 +76,17 @@ bool portfolio::Portfolio::updateInvestmentQuantity(const std::string& ticker, u
             break;
         }
     }
+    log("[Portfolio]" + m_name + ": Update - Success");
     return retVal;
 }
 
 void portfolio::PortfolioManager::addPortfolio(Portfolio& portfolio) {
     m_portfolios.push_back(std::make_unique<Portfolio>(portfolio));
+    if (m_setLogger) {
+        for (const auto& portfolio : m_portfolios) {
+            portfolio->setLoggerPtr(m_logger);
+        }
+    }
 }
 
 bool portfolio::PortfolioManager::addPortfolio(const std::string& portfolio_name) {
@@ -86,6 +96,12 @@ bool portfolio::PortfolioManager::addPortfolio(const std::string& portfolio_name
         }
     }
     m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
+    if (m_setLogger) {
+        for (const auto& portfolio : m_portfolios) {
+            portfolio->setLoggerPtr(m_logger);
+        }
+    }
+    log("[PortfolioManager] Add - Success");
     return true;
 }
 
@@ -97,6 +113,12 @@ bool portfolio::PortfolioManager::removePortfolio(const std::string& portfolio_n
             retVal = true;
             break;
         }
+    }
+    if (retVal) {
+        log("[PortfolioManager] Remove - Success");
+    }
+    else {
+        log("[PortfolioManager] Remove - Failure");
     }
     return retVal;
 }

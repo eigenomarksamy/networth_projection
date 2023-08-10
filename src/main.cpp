@@ -16,6 +16,7 @@
 #include "activation.hpp"
 #include "conf_resolver.hpp"
 #include "appl_conf_types.hpp"
+#include "logger.hpp"
 
 static void executePortfolioMgr();
 static void executeStaticAppl(const std::string& networth_projector_path_output,
@@ -30,6 +31,10 @@ static void executePortfolioMgr() {
     if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
     if (portfolioInput.is_multi_prtfolio) {
         portfolio::PortfolioManager portfolio_manager;
+        if (portfolioInput.auto_log) {
+            auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
+            portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
+        }
         bool valid = false;
         if (portfolioInput.is_new || getPortfolioFromFiles(portfolio_manager,
                                     portfolioInput.load_all_portfolios,
@@ -47,6 +52,10 @@ static void executePortfolioMgr() {
     }
     else {
         portfolio::Portfolio portfolio = portfolio::Portfolio(portfolioInput.name);
+        if (portfolioInput.auto_log) {
+            auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
+            portfolio.setLoggerPtr(portfolio_logger_ptr);
+        }
         bool valid = false;
         if (portfolioInput.is_new || getPortfolioFromFiles(portfolio,
                                                 portfolioInput.name,

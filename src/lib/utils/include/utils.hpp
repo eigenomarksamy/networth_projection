@@ -99,6 +99,8 @@ std::string getLocalDateTime(const char format[]);
 
 std::string getLocalDateTime();
 
+std::string getUniqueTimeId();
+
 inline std::size_t generateHashForString(const std::string& str) {
     std::hash<std::string> hasher;
     return hasher(str);

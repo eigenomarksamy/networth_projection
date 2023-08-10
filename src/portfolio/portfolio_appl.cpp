@@ -2,9 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include "cmd_common.hpp"
+#include "file_generator.hpp"
 #include "portfolio.hpp"
 #include "portfolio_appl.hpp"
-#include "file_generator.hpp"
+#include "portfolio_logger.hpp"
 
 namespace portfolio {
 
@@ -341,6 +342,8 @@ void portfolio::setUpPortfolioManually(PortfolioMgrCfg& conf) {
     }
     getGenericInputParam(conf.auto_save,
                          std::string("auto save"));
+    getGenericInputParam(conf.auto_log,
+                         std::string("auto log"));
 }
 
 bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf) {

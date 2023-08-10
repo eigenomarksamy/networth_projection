@@ -18,6 +18,10 @@ std::string getLocalDateTime() {
     return getLocalDateTime("%d-%m-%Y_%H-%M-%S");
 }
 
+std::string getUniqueTimeId() {
+    return getLocalDateTime("%d%m%Y%H%M%S");
+}
+
 uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target) {
     std::vector<uint64_t> vec = v;
     std::sort(vec.begin(), vec.end());
