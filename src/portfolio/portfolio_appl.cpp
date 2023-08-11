@@ -366,3 +366,17 @@ bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf) {
     }
     return true;
 }
+
+double_t portfolio::computeInvestmentPerformance(const Investment& investment) {
+    double_t currentPrice;
+    double_t returns = (currentPrice - investment.getPurchasePrice()) / investment.getPurchasePrice();
+    return returns * 100.;
+}
+
+double_t portfolio::computePortfolioPerformance(const Portfolio& portfolio) {
+    double_t total_investments = 0;
+    for (const auto& investment : portfolio.getInvestments()) {
+        total_investments += computeInvestmentPerformance(investment);
+    }
+    return (total_investments / portfolio.getInvestments().size());
+}

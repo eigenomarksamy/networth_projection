@@ -21,6 +21,10 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
                            const std::vector<std::string>& list_portfolios,
                            const std::string& directory);
 
+double_t computeInvestmentPerformance(const Investment& investment);
+
+double_t computePortfolioPerformance(const Portfolio& portfolio);
+
 PortfolioCfgInputSource setPortfolioInputSource();
 
 void setUpPortfolioManually(PortfolioMgrCfg& conf);
