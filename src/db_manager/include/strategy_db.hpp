@@ -2,6 +2,7 @@
 #define STRATEGY_DB
 
 #include <string>
+#include <unordered_map>
 #include <sqlite3.h>
 
 namespace db_manager {
@@ -15,7 +16,7 @@ struct DbData {
 
 class DatabaseStrategy {
 public:
-    enum class Operation { CONNECT, DISCONNECT, EXECUTE, OPEN, NONE };
+    enum class Operation { CONNECT, DISCONNECT, EXECUTE, TABULATE, OPEN, NONE };
 
     void handleError(const Operation& operation);
     Operation getError();
@@ -49,6 +50,9 @@ private:
 
 public:
     DatabaseORM(DatabaseStrategy* strategy) : strategy(strategy) {}
+
+    void createTable(const std::string& tableName,
+                     const std::string& columnDefinitions);
 
     void save(const std::string& tableName,
               const std::string& columnName,

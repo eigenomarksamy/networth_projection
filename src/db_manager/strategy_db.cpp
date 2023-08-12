@@ -30,10 +30,20 @@ void db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
     }
 }
 
+void db_manager::DatabaseORM::createTable(const std::string& tableName,
+                                          const std::string& columnDefinitions) {
+    std::string query = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
+                        "id INTEGER PRIMARY KEY," + columnDefinitions + ")";
+    strategy->connect();
+    strategy->executeQuery(query);
+    strategy->disconnect();
+}
+
 void db_manager::DatabaseORM::save(const std::string& tableName,
                                    const std::string& columnName,
                                    const std::string& data) {
-    std::string query = "INSERT INTO " + tableName + " (" + columnName + ") VALUES ('" + data + "')";
+    std::string query = "INSERT INTO " + tableName + " (" + columnName
+                        + ") VALUES ('" + data + "')";
     strategy->connect();
     strategy->executeQuery(query);
     strategy->disconnect();
