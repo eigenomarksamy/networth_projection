@@ -2,10 +2,15 @@
 #define STRATEGY_DB
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <sqlite3.h>
 
 namespace db_manager {
+
+typedef std::vector<std::string> columns_t;
+typedef std::vector<std::string> values_t;
+typedef std::unordered_map<std::string, std::string> columnDefinitions_t;
 
 struct DbData {
     std::string dbPath;
@@ -16,50 +21,41 @@ struct DbData {
 
 class DatabaseStrategy {
 public:
-    enum class Operation { CONNECT, DISCONNECT, EXECUTE, TABULATE, OPEN, NONE };
 
-    void handleError(const Operation& operation);
-    Operation getError();
-
-    virtual void connect() = 0;
+    virtual bool connect(const std::string& dbPath) = 0;
     virtual void disconnect() = 0;
-    virtual void executeQuery(const std::string& query) = 0;
-    virtual ~DatabaseStrategy() {}
-
-private:
-    Operation m_error = Operation::NONE;
+    virtual bool executeQuery(const std::string& query) = 0;
 };
 
 class SQLiteStrategy : public DatabaseStrategy {
 private:
-    sqlite3* db;
+    sqlite3* m_db;
 
 public:
-    SQLiteStrategy(const char* dbPath);
-    void connect() override {}
+    bool connect(const std::string& dbPath) override;
     void disconnect() override;
-    void executeQuery(const std::string& query) override;
-    ~SQLiteStrategy() {
-        sqlite3_close(db);
-    }
+    bool executeQuery(const std::string& query) override;
 };
 
 class DatabaseORM {
 private:
-    DatabaseStrategy* strategy;
+    DatabaseStrategy* m_strategy;
 
 public:
-    DatabaseORM(DatabaseStrategy* strategy) : strategy(strategy) {}
+    DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
 
     void createTable(const std::string& tableName,
                      const std::string& columnDefinitions);
 
-    void save(const std::string& tableName,
-              const std::string& columnName,
-              const std::string& data);
-};
+    bool save(const std::string& db,
+              const std::string& table,
+              const std::vector<std::string>& columns,
+              const std::vector<std::string>& values);
 
-bool executeDbSave(const DbData& toSave);
+    ~DatabaseORM() {
+        delete m_strategy;
+    }
+};
 
 } // namespace db_manager
 

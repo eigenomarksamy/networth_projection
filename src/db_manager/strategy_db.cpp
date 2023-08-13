@@ -1,81 +1,52 @@
 #include "strategy_db.hpp"
 #include <iostream>
 
-void db_manager::DatabaseStrategy::handleError(const Operation& operation) {
-    m_error = operation;
-}
-
-db_manager::DatabaseStrategy::Operation db_manager::DatabaseStrategy::getError() {
-    return m_error;
-}
-
-db_manager::SQLiteStrategy::SQLiteStrategy(const char* dbPath) {
-    if (sqlite3_open(dbPath, &db) != SQLITE_OK) {
-        handleError(Operation::OPEN);
-    }
+bool db_manager::SQLiteStrategy::connect(const std::string& dbPath) {
+    auto result = sqlite3_open(dbPath.c_str(), &m_db);
+    return result == SQLITE_OK;
 }
 
 void db_manager::SQLiteStrategy::disconnect() {
-    if (sqlite3_close(db) != SQLITE_OK) {
-        handleError(Operation::DISCONNECT);
-    }
+    sqlite3_close(m_db);
 }
 
-void db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
-    char* errMsg;
-    if (sqlite3_exec(db, query.c_str(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
-        std::cerr << "SQLite error: " << errMsg << std::endl;
-        handleError(Operation::EXECUTE);
-        sqlite3_free(errMsg);
+bool db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
+    char* errorMessage;
+    auto result = sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, &errorMessage);
+    if (result != SQLITE_OK) {
+        std::cerr << "SQLite error: " << errorMessage << std::endl;
+        sqlite3_free(errorMessage);
+        return false;
     }
+    return true;
 }
 
-void db_manager::DatabaseORM::createTable(const std::string& tableName,
-                                          const std::string& columnDefinitions) {
-    std::string query = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
-                        "id INTEGER PRIMARY KEY," + columnDefinitions + ")";
-    strategy->connect();
-    strategy->executeQuery(query);
-    strategy->disconnect();
-}
-
-void db_manager::DatabaseORM::save(const std::string& tableName,
-                                   const std::string& columnName,
-                                   const std::string& data) {
-    std::string query = "INSERT INTO " + tableName + " (" + columnName
-                        + ") VALUES ('" + data + "')";
-    strategy->connect();
-    strategy->executeQuery(query);
-    strategy->disconnect();
-}
-
-bool db_manager::executeDbSave(const DbData& toSave) {
-    bool retVal = false;
-    const char* db_path = toSave.dbPath.c_str();
-    auto strategy = new SQLiteStrategy(db_path);
-    DatabaseORM databaseORM(strategy);
-    databaseORM.save(toSave.dbTable, toSave.dbColumn, toSave.dbData);
-    if (strategy->getError() == DatabaseStrategy::Operation::NONE) {
-        retVal = true;
+bool db_manager::DatabaseORM::save(const std::string& db,
+                                   const std::string& table,
+                                   const std::vector<std::string>& columns,
+                                   const std::vector<std::string>& values) {
+    std::string column = "";
+    for (uint16_t c = 0; c < columns.size() - 1; ++c) {
+        column += columns[c] + ", ";
     }
-    else {
-        auto err = strategy->getError();
-        if (err == DatabaseStrategy::Operation::CONNECT) {
-            std::cout << "Connect\n";
-        }
-        else if (err == DatabaseStrategy::Operation::DISCONNECT) {
-            std::cout << "Disconnect\n";
-        }
-        else if (err == DatabaseStrategy::Operation::EXECUTE) {
-            std::cout << "Execute\n";
-        }
-        else if (err == DatabaseStrategy::Operation::OPEN) {
-            std::cout << "Open\n";
-        }
-        else {
-            std::cout << "WTF!\n";
-        }
+    column += columns[columns.size() - 1];
+    std::string value = "";
+    for (uint16_t v = 0; v < values.size() - 1; ++v) {
+        value += values[v] + ", ";
     }
-    delete strategy;
-    return retVal;
+    value += values[values.size() - 1];
+    std::string insertDataQuery = "INSERT INTO " + table + " (" + column + ") "
+                                  "VALUES (" + value + ")";
+    bool ret = m_strategy->connect(db);
+    if (!ret) {
+        std::cerr << "Error connecting\n";
+        return false;
+    }
+    ret = m_strategy->executeQuery(insertDataQuery);
+    if (!ret) {
+        std::cerr << "Error executing\n";
+        return false;
+    }
+    m_strategy->disconnect();
+    return true;
 }
