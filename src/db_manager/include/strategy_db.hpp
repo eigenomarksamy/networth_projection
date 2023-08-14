@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <sqlite3.h>
+#include "utils.hpp"
 
 namespace db_manager {
 
@@ -41,6 +42,13 @@ class DatabaseORM {
 private:
     DatabaseStrategy* m_strategy;
 
+    std::string convertValues2String(const values_t& values) {
+        return convertVectorToString(values);
+    }
+    std::string convertColumns2String(const columns_t& columns) {
+        return convertVectorToString(columns);
+    }
+
 public:
     DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
 
@@ -49,8 +57,8 @@ public:
 
     bool save(const std::string& db,
               const std::string& table,
-              const std::vector<std::string>& columns,
-              const std::vector<std::string>& values);
+              const columns_t& columns,
+              const values_t& values);
 
     ~DatabaseORM() {
         delete m_strategy;

@@ -23,20 +23,12 @@ bool db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
 
 bool db_manager::DatabaseORM::save(const std::string& db,
                                    const std::string& table,
-                                   const std::vector<std::string>& columns,
-                                   const std::vector<std::string>& values) {
-    std::string column = "";
-    for (uint16_t c = 0; c < columns.size() - 1; ++c) {
-        column += columns[c] + ", ";
-    }
-    column += columns[columns.size() - 1];
-    std::string value = "";
-    for (uint16_t v = 0; v < values.size() - 1; ++v) {
-        value += values[v] + ", ";
-    }
-    value += values[values.size() - 1];
-    std::string insertDataQuery = "INSERT INTO " + table + " (" + column + ") "
-                                  "VALUES (" + value + ")";
+                                   const columns_t& columns,
+                                   const values_t& values) {
+    auto column_str = convertColumns2String(columns);
+    auto value_str = convertValues2String(values);
+    std::string insertDataQuery = "INSERT INTO " + table + " (" + column_str + ") "
+                                  "VALUES (" + value_str + ")";
     bool ret = m_strategy->connect(db);
     if (!ret) {
         std::cerr << "Error connecting\n";
