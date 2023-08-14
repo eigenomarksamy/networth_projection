@@ -21,6 +21,26 @@ bool db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
     return true;
 }
 
+bool db_manager::DatabaseORM::createTable(const std::string& db,
+                                          const std::string& table,
+                                          const std::string& columnDefinitions) {
+    std::string createTableQuery = "CREATE TABLE IF NOT EXISTS " + table + " ("
+                                   "id INTEGER PRIMARY KEY,"
+                                   + columnDefinitions + ")";
+    bool ret = m_strategy->connect(db);
+    if (!ret) {
+        std::cerr << "Error connecting\n";
+        return false;
+    }
+    ret = m_strategy->executeQuery(createTableQuery);
+    if (!ret) {
+        std::cerr << "Error executing\n";
+        return false;
+    }
+    m_strategy->disconnect();
+    return true;
+}
+
 bool db_manager::DatabaseORM::save(const std::string& db,
                                    const std::string& table,
                                    const columns_t& columns,

@@ -52,7 +52,8 @@ private:
 public:
     DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
 
-    void createTable(const std::string& tableName,
+    bool createTable(const std::string& db,
+                     const std::string& table,
                      const std::string& columnDefinitions);
 
     bool save(const std::string& db,
