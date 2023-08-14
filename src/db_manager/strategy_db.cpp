@@ -21,12 +21,23 @@ bool db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
     return true;
 }
 
+std::string db_manager::DatabaseORM::convertColumnDefinitions2String(const std::vector<columnDefinition_t>& columnDefinitions) {
+    std::string str = "";
+    uint16_t i = 0;
+    for (i = 0; i < columnDefinitions.size() - 1; ++i) {
+        str += columnDefinitions[i].column + " " + columnDefinitions[i].definition + ",";
+    }
+    str += columnDefinitions[i].column + " " + columnDefinitions[i].definition;
+    return str;
+}
+
 bool db_manager::DatabaseORM::createTable(const std::string& db,
                                           const std::string& table,
-                                          const std::string& columnDefinitions) {
+                                          const std::vector<columnDefinition_t>& columnDefinitions) {
+    auto columnDefinitions_str = convertColumnDefinitions2String(columnDefinitions);
     std::string createTableQuery = "CREATE TABLE IF NOT EXISTS " + table + " ("
                                    "id INTEGER PRIMARY KEY,"
-                                   + columnDefinitions + ")";
+                                   + columnDefinitions_str + ")";
     bool ret = m_strategy->connect(db);
     if (!ret) {
         std::cerr << "Error connecting\n";

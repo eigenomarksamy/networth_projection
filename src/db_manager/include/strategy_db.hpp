@@ -11,7 +11,10 @@ namespace db_manager {
 
 typedef std::vector<std::string> columns_t;
 typedef std::vector<std::string> values_t;
-typedef std::unordered_map<std::string, std::string> columnDefinitions_t;
+typedef struct {
+    std::string column;
+    std::string definition;
+} columnDefinition_t;
 
 struct DbData {
     std::string dbPath;
@@ -42,19 +45,20 @@ class DatabaseORM {
 private:
     DatabaseStrategy* m_strategy;
 
-    std::string convertValues2String(const values_t& values) {
+    static std::string convertValues2String(const values_t& values) {
         return convertVectorToString(values);
     }
-    std::string convertColumns2String(const columns_t& columns) {
+    static std::string convertColumns2String(const columns_t& columns) {
         return convertVectorToString(columns);
     }
+    static std::string convertColumnDefinitions2String(const std::vector<columnDefinition_t>& columnDefinitions);
 
 public:
     DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
 
     bool createTable(const std::string& db,
                      const std::string& table,
-                     const std::string& columnDefinitions);
+                     const std::vector<columnDefinition_t>& columnDefinitions);
 
     bool save(const std::string& db,
               const std::string& table,
