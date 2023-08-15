@@ -33,19 +33,18 @@ std::string db_manager::DatabaseORM::convertColumnDefinitions2String(const std::
 
 bool db_manager::DatabaseORM::createTable(const std::string& db,
                                           const std::string& table,
-                                          const std::vector<columnDefinition_t>& columnDefinitions) {
+                                          const std::vector<columnDefinition_t>& columnDefinitions) const {
     auto columnDefinitions_str = convertColumnDefinitions2String(columnDefinitions);
-    std::string createTableQuery = "CREATE TABLE IF NOT EXISTS " + table + " ("
-                                   "id INTEGER PRIMARY KEY,"
-                                   + columnDefinitions_str + ")";
+    std::string query = "CREATE TABLE IF NOT EXISTS " + table + " ("
+                        + columnDefinitions_str + ")";
     bool ret = m_strategy->connect(db);
     if (!ret) {
-        std::cerr << "Error connecting\n";
+        std::cerr << "Error connecting (Create)\n";
         return false;
     }
-    ret = m_strategy->executeQuery(createTableQuery);
+    ret = m_strategy->executeQuery(query);
     if (!ret) {
-        std::cerr << "Error executing\n";
+        std::cerr << "Error executing (Create)\n";
         return false;
     }
     m_strategy->disconnect();
@@ -55,19 +54,60 @@ bool db_manager::DatabaseORM::createTable(const std::string& db,
 bool db_manager::DatabaseORM::save(const std::string& db,
                                    const std::string& table,
                                    const columns_t& columns,
-                                   const values_t& values) {
+                                   const values_t& values) const {
     auto column_str = convertColumns2String(columns);
     auto value_str = convertValues2String(values);
-    std::string insertDataQuery = "INSERT INTO " + table + " (" + column_str + ") "
-                                  "VALUES (" + value_str + ")";
+    std::string query = "INSERT INTO " + table + " (" + column_str + ") "
+                        "VALUES (" + value_str + ")";
     bool ret = m_strategy->connect(db);
     if (!ret) {
-        std::cerr << "Error connecting\n";
+        std::cerr << "Error connecting (Save)\n";
         return false;
     }
-    ret = m_strategy->executeQuery(insertDataQuery);
+    ret = m_strategy->executeQuery(query);
     if (!ret) {
-        std::cerr << "Error executing\n";
+        std::cerr << "Error executing (Save)\n";
+        return false;
+    }
+    m_strategy->disconnect();
+    return true;
+}
+
+bool db_manager::DatabaseORM::update(const std::string& db,
+                                     const std::string& table,
+                                     const std::string& keyValue,
+                                     const std::string& keyName,
+                                     const std::string& column,
+                                     const std::string& value) const {
+    std::string query = "UPDATE " + table + " SET " + column + " = " + value
+                        + " WHERE " + keyName + " = " + keyValue;
+    bool ret = m_strategy->connect(db);
+    if (!ret) {
+        std::cerr << "Error connecting (Update)\n";
+        return false;
+    }
+    ret = m_strategy->executeQuery(query);
+    if (!ret) {
+        std::cerr << "Error executing (Update)\n";
+        return false;
+    }
+    m_strategy->disconnect();
+    return true;
+}
+
+bool db_manager::DatabaseORM::remove(const std::string& db,
+                                     const std::string& table,
+                                     const std::string& keyValue,
+                                     const std::string& keyName) const {
+    std::string query = "DELETE FROM " + table + " WHERE " + keyName + " = " + keyValue;
+    bool ret = m_strategy->connect(db);
+    if (!ret) {
+        std::cerr << "Error connecting (Remove)\n";
+        return false;
+    }
+    ret = m_strategy->executeQuery(query);
+    if (!ret) {
+        std::cerr << "Error executing (Remove)\n";
         return false;
     }
     m_strategy->disconnect();

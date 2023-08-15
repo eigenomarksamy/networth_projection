@@ -58,12 +58,24 @@ public:
 
     bool createTable(const std::string& db,
                      const std::string& table,
-                     const std::vector<columnDefinition_t>& columnDefinitions);
+                     const std::vector<columnDefinition_t>& columnDefinitions) const;
 
     bool save(const std::string& db,
               const std::string& table,
               const columns_t& columns,
-              const values_t& values);
+              const values_t& values) const;
+
+    bool update(const std::string& db,
+                const std::string& table,
+                const std::string& keyValue,
+                const std::string& keyName,
+                const std::string& column,
+                const std::string& value) const;
+
+    bool remove(const std::string& db,
+                const std::string& table,
+                const std::string& keyValue,
+                const std::string& keyName) const;
 
     ~DatabaseORM() {
         delete m_strategy;
