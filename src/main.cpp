@@ -17,7 +17,6 @@
 #include "conf_resolver.hpp"
 #include "appl_conf_types.hpp"
 #include "logger.hpp"
-#include "strategy_db.hpp"
 
 static void executePortfolioMgr();
 static void executeStaticAppl(const std::string& networth_projector_path_output,
@@ -94,85 +93,36 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
     }
 }
 
-// int main() {
-    // std::string db_file = "db/portfolio.db";
-    // db_manager::DbData dbDataToCreate;
-    // dbDataToCreate.dbColumn = "name TEXT NOT NULL";
-    // dbDataToCreate.dbTable = "investments";
-    // if (db_manager::executeDbCreateTables(dbDataToCreate)) {
-    //     std::cout << "DB created successfully!\n";
-    // }
-    // db_manager::DbData dbDataToSave;
-    // dbDataToSave.dbPath = db_file;
-    // dbDataToSave.dbColumn = "name";
-    // dbDataToSave.dbTable = "investments";
-    // dbDataToSave.dbData = "some_data";
-    // if (db_manager::executeDbSave(dbDataToSave)) {
-    //     std::cout << "DB saved successfully!\n";
-    // }
-    // std::string dir_conf_file = "conf/directories.yml";
-    // std::string networth_conf_file = "conf/input/networth.yml";
-    // std::string mortgage_conf_file = "conf/input/mortgage.yml";
-    // DirectoriesValues dirs;
-    // NetworthValues nw_cfg_values;
-    // MortgageValues mortg_cfg_values;
-    // InputDataNetworthProjector input_data_nw_from_yml;
-    // InputDataMortgageCalculator input_data_mortg_from_yml;
-    // bool dirCfgRet = false;
-    // if (resolveCfg(dir_conf_file, dirs)) {
-    //     dirCfgRet = true;
-    // }
-    // bool netwCfgRet = false;
-    // if (resolveCfg(networth_conf_file, nw_cfg_values)) {
-    //     convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
-    //     netwCfgRet = true;
-    // }
-    // bool mortgCfgRet = false;
-    // if (resolveCfg(mortgage_conf_file, mortg_cfg_values)) {
-    //     convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
-    //     mortgCfgRet = true;
-    // }
-    // if (doesUserWantStaticProgram()) {
-    //     executeStaticAppl(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
-    //                       dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-    //                       input_data_nw_from_yml, input_data_mortg_from_yml);
-    // }
-    // if (getUserYesNo("portfolio manager mode")) {
-    //     executePortfolioMgr();
-    // }
-//     return 0;
-// }
-
 int main() {
-    std::string dbPath = "db/portfolio.db";
-
-    db_manager::DatabaseStrategy* strategy = new db_manager::SQLiteStrategy();
-    db_manager::DatabaseORM orm = db_manager::DatabaseORM(strategy);
-
-    std::string tableName = "investments";
-    std::vector<db_manager::columnDefinition_t> columnDefinitions;
-    columnDefinitions.push_back(db_manager::columnDefinition_t{"name", "TEXT NOT NULL"});
-    columnDefinitions.push_back(db_manager::columnDefinition_t{"ticker", "TEXT PRIMARY KEY"});
-    columnDefinitions.push_back(db_manager::columnDefinition_t{"purchase_price", "REAL NOT NULL"});
-    columnDefinitions.push_back(db_manager::columnDefinition_t{"quantity", "INTEGER NOT NULL"});
-    orm.createTable(dbPath, tableName, columnDefinitions);
-
-    db_manager::columns_t columns = {"name", "ticker", "purchase_price", "quantity"};
-    db_manager::values_t values1 = {"'Company A'", "'AAPL'", "150.0", "10"};
-    db_manager::values_t values2 = {"'Company A'", "'AAPL'", "150.0", "12"};
-    db_manager::values_t values3 = {"'Company B'", "'TSLA'", "250.0", "11"};
-    db_manager::values_t values4 = {"'Company C'", "'NVDA'", "100.0", "15"};
-    db_manager::values_t values5 = {"'Company D'", "'ETCC'", "100.0", "5"};
-
-    orm.save(dbPath, tableName, columns, values1);
-    orm.save(dbPath, tableName, columns, values2);
-    orm.save(dbPath, tableName, columns, values3);
-    orm.save(dbPath, tableName, columns, values4);
-    orm.save(dbPath, tableName, columns, values5);
-
-    orm.remove(dbPath, tableName, "'ETCC'", "ticker");
-
-    orm.update(dbPath, tableName, "'TSLA'", "ticker", "quantity", "12");
-
+    std::string dir_conf_file = "conf/directories.yml";
+    std::string networth_conf_file = "conf/input/networth.yml";
+    std::string mortgage_conf_file = "conf/input/mortgage.yml";
+    DirectoriesValues dirs;
+    NetworthValues nw_cfg_values;
+    MortgageValues mortg_cfg_values;
+    InputDataNetworthProjector input_data_nw_from_yml;
+    InputDataMortgageCalculator input_data_mortg_from_yml;
+    bool dirCfgRet = false;
+    if (resolveCfg(dir_conf_file, dirs)) {
+        dirCfgRet = true;
+    }
+    bool netwCfgRet = false;
+    if (resolveCfg(networth_conf_file, nw_cfg_values)) {
+        convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
+        netwCfgRet = true;
+    }
+    bool mortgCfgRet = false;
+    if (resolveCfg(mortgage_conf_file, mortg_cfg_values)) {
+        convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
+        mortgCfgRet = true;
+    }
+    if (doesUserWantStaticProgram()) {
+        executeStaticAppl(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+                          dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+                          input_data_nw_from_yml, input_data_mortg_from_yml);
+    }
+    if (getUserYesNo("portfolio manager mode")) {
+        executePortfolioMgr();
+    }
     return 0;
 }
