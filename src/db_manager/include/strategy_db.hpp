@@ -26,19 +26,39 @@ struct DbData {
 class DatabaseStrategy {
 public:
 
+    typedef std::vector<std::unordered_map<std::string, std::string>> QueryResult_t;
+
     virtual bool connect(const std::string& dbPath) = 0;
     virtual void disconnect() = 0;
     virtual bool executeQuery(const std::string& query) = 0;
+    virtual QueryResult_t getResults() const = 0;
 };
 
 class SQLiteStrategy : public DatabaseStrategy {
 private:
     sqlite3* m_db;
+    QueryResult_t m_queryResults;
 
 public:
     bool connect(const std::string& dbPath) override;
     void disconnect() override;
     bool executeQuery(const std::string& query) override;
+    QueryResult_t getResults() const override {
+        return m_queryResults;
+    }
+
+private:
+    static int callback(void* data, int argc, char** argv, char** azColName) {
+        SQLiteStrategy* instance = static_cast<SQLiteStrategy*>(data);
+        std::unordered_map<std::string, std::string> row;
+        for (int i = 0; i < argc; ++i) {
+            std::string colName = azColName[i];
+            std::string colValue = (argv[i]) ? argv[i] : "NULL";
+            row[colName] = colValue;
+        }
+        instance->m_queryResults.push_back(row);
+        return 0;
+    }
 };
 
 class DatabaseORM {
@@ -52,6 +72,8 @@ private:
         return convertVectorToString(columns);
     }
     static std::string convertColumnDefinitions2String(const std::vector<columnDefinition_t>& columnDefinitions);
+    static uint16_t getColumnIdxFromName(const columns_t& columns,
+                                         const std::string& columnName);
 
 public:
     DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
@@ -67,15 +89,22 @@ public:
 
     bool update(const std::string& db,
                 const std::string& table,
-                const std::string& keyValue,
                 const std::string& keyName,
+                const std::string& keyValue,
                 const std::string& column,
                 const std::string& value) const;
 
     bool remove(const std::string& db,
                 const std::string& table,
-                const std::string& keyValue,
-                const std::string& keyName) const;
+                const std::string& keyName,
+                const std::string& keyValue) const;
+
+    bool get(const std::string& db,
+             const std::string& table,
+             const columns_t& columns,
+             const std::string& columnName,
+             const std::string& keyName,
+             std::string& keyValue) const;
 
     ~DatabaseORM() {
         delete m_strategy;

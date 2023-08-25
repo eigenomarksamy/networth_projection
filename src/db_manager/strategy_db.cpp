@@ -12,7 +12,7 @@ void db_manager::SQLiteStrategy::disconnect() {
 
 bool db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
     char* errorMessage;
-    auto result = sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, &errorMessage);
+    auto result = sqlite3_exec(m_db, query.c_str(), callback, this, &errorMessage);
     if (result != SQLITE_OK) {
         std::cerr << "SQLite error: " << errorMessage << std::endl;
         sqlite3_free(errorMessage);
@@ -31,6 +31,18 @@ std::string db_manager::DatabaseORM::convertColumnDefinitions2String(const std::
     return str;
 }
 
+uint16_t db_manager::DatabaseORM::getColumnIdxFromName(const columns_t& columns,
+                                                      const std::string& columnName) {
+    uint16_t idx = 0;
+    for (const auto& col : columns) {
+        if (col == columnName) {
+            return idx;
+        }
+        ++idx;
+    }
+    return -1;
+}
+
 bool db_manager::DatabaseORM::createTable(const std::string& db,
                                           const std::string& table,
                                           const std::vector<columnDefinition_t>& columnDefinitions) const {
@@ -44,6 +56,7 @@ bool db_manager::DatabaseORM::createTable(const std::string& db,
     }
     ret = m_strategy->executeQuery(query);
     if (!ret) {
+        m_strategy->disconnect();
         std::cerr << "Error executing (Create)\n";
         return false;
     }
@@ -67,6 +80,7 @@ bool db_manager::DatabaseORM::save(const std::string& db,
     ret = m_strategy->executeQuery(query);
     if (!ret) {
         std::cerr << "Error executing (Save)\n";
+        m_strategy->disconnect();
         return false;
     }
     m_strategy->disconnect();
@@ -75,8 +89,8 @@ bool db_manager::DatabaseORM::save(const std::string& db,
 
 bool db_manager::DatabaseORM::update(const std::string& db,
                                      const std::string& table,
-                                     const std::string& keyValue,
                                      const std::string& keyName,
+                                     const std::string& keyValue,
                                      const std::string& column,
                                      const std::string& value) const {
     std::string query = "UPDATE " + table + " SET " + column + " = " + value
@@ -89,6 +103,7 @@ bool db_manager::DatabaseORM::update(const std::string& db,
     ret = m_strategy->executeQuery(query);
     if (!ret) {
         std::cerr << "Error executing (Update)\n";
+        m_strategy->disconnect();
         return false;
     }
     m_strategy->disconnect();
@@ -97,8 +112,8 @@ bool db_manager::DatabaseORM::update(const std::string& db,
 
 bool db_manager::DatabaseORM::remove(const std::string& db,
                                      const std::string& table,
-                                     const std::string& keyValue,
-                                     const std::string& keyName) const {
+                                     const std::string& keyName,
+                                     const std::string& keyValue) const {
     std::string query = "DELETE FROM " + table + " WHERE " + keyName + " = " + keyValue;
     bool ret = m_strategy->connect(db);
     if (!ret) {
@@ -108,7 +123,49 @@ bool db_manager::DatabaseORM::remove(const std::string& db,
     ret = m_strategy->executeQuery(query);
     if (!ret) {
         std::cerr << "Error executing (Remove)\n";
+        m_strategy->disconnect();
         return false;
+    }
+    m_strategy->disconnect();
+    return true;
+}
+
+bool db_manager::DatabaseORM::get(const std::string& db,
+                                  const std::string& table,
+                                  const columns_t& columns,
+                                  const std::string& columnName,
+                                  const std::string& keyName,
+                                  std::string& keyValue) const {
+    std::string query = "SELECT " + columnName + " FROM " + table
+                        + " WHERE " + columnName + " = " + keyName;
+    bool ret = m_strategy->connect(db);
+    if (!ret) {
+        std::cerr << "Error connecting (Get)\n";
+        return false;
+    }
+    ret = m_strategy->executeQuery(query);
+    if (!ret) {
+        std::cerr << "Error executing (Get)\n";
+        m_strategy->disconnect();
+        return false;
+    }
+    auto queryResult = m_strategy->getResults();
+    if (queryResult.empty()) {
+        std::cerr << "Error getting results (Get)\n";
+        m_strategy->disconnect();
+        return false;
+    }
+    else {
+        auto rowMap = queryResult[0];
+        auto it = rowMap.find(columnName);
+        if (it == rowMap.end())  {
+            std::cerr << "Column not found (Get)\n";
+            m_strategy->disconnect();
+            return false;
+        }
+        else {
+            keyValue = it->second;
+        }
     }
     m_strategy->disconnect();
     return true;
