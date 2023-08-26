@@ -101,10 +101,11 @@ public:
 
     bool get(const std::string& db,
              const std::string& table,
-             const columns_t& columns,
-             const std::string& columnName,
              const std::string& keyName,
-             std::string& keyValue) const;
+             const std::string& keyValue,
+             const std::string& outputName,
+             std::string& outputValue,
+             const bool surpressErr = false) const;
 
     ~DatabaseORM() {
         delete m_strategy;

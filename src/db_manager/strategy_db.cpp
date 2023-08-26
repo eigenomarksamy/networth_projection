@@ -2,12 +2,14 @@
 #include <iostream>
 
 bool db_manager::SQLiteStrategy::connect(const std::string& dbPath) {
-    auto result = sqlite3_open(dbPath.c_str(), &m_db);
+    auto result = sqlite3_initialize();
+    result |= sqlite3_open(dbPath.c_str(), &m_db);
     return result == SQLITE_OK;
 }
 
 void db_manager::SQLiteStrategy::disconnect() {
     sqlite3_close(m_db);
+    sqlite3_shutdown();
 }
 
 bool db_manager::SQLiteStrategy::executeQuery(const std::string& query) {
@@ -114,7 +116,8 @@ bool db_manager::DatabaseORM::remove(const std::string& db,
                                      const std::string& table,
                                      const std::string& keyName,
                                      const std::string& keyValue) const {
-    std::string query = "DELETE FROM " + table + " WHERE " + keyName + " = " + keyValue;
+    std::string query = "DELETE FROM " + table + " WHERE "
+                        + keyName + " = " + keyValue;
     bool ret = m_strategy->connect(db);
     if (!ret) {
         std::cerr << "Error connecting (Remove)\n";
@@ -132,12 +135,13 @@ bool db_manager::DatabaseORM::remove(const std::string& db,
 
 bool db_manager::DatabaseORM::get(const std::string& db,
                                   const std::string& table,
-                                  const columns_t& columns,
-                                  const std::string& columnName,
                                   const std::string& keyName,
-                                  std::string& keyValue) const {
-    std::string query = "SELECT " + columnName + " FROM " + table
-                        + " WHERE " + columnName + " = " + keyName;
+                                  const std::string& keyValue,
+                                  const std::string& outputName,
+                                  std::string& outputValue,
+                                  const bool surpressErr) const {
+    std::string query = "SELECT " + outputName + " FROM " + table
+                        + " WHERE " + keyName + " = " + keyValue;
     bool ret = m_strategy->connect(db);
     if (!ret) {
         std::cerr << "Error connecting (Get)\n";
@@ -151,20 +155,22 @@ bool db_manager::DatabaseORM::get(const std::string& db,
     }
     auto queryResult = m_strategy->getResults();
     if (queryResult.empty()) {
-        std::cerr << "Error getting results (Get)\n";
+        if (!surpressErr) {
+            std::cerr << "Error getting results (Get)\n";
+        }
         m_strategy->disconnect();
         return false;
     }
     else {
         auto rowMap = queryResult[0];
-        auto it = rowMap.find(columnName);
+        auto it = rowMap.find(outputName);
         if (it == rowMap.end())  {
             std::cerr << "Column not found (Get)\n";
             m_strategy->disconnect();
             return false;
         }
         else {
-            keyValue = it->second;
+            outputValue = it->second;
         }
     }
     m_strategy->disconnect();
