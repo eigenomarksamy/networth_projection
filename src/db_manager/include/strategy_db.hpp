@@ -75,8 +75,49 @@ private:
     static uint16_t getColumnIdxFromName(const columns_t& columns,
                                          const std::string& columnName);
 
+    static std::string getCreateTableQuery(const std::string& table,
+                               const std::string& columnDefinitions) {
+        return "CREATE TABLE IF NOT EXISTS " + table + " ("
+                            + columnDefinitions + ")";
+    }
+    static std::string getSaveQuery(const std::string& table,
+                                    const std::string& columns,
+                                    const std::string& values) {
+        return "INSERT INTO " + table + " (" + columns + ") "
+                        "VALUES (" + values + ")";
+    }
+    static std::string getUpdateQuery(const std::string& table,
+                                      const std::string& keyName,
+                                      const std::string& keyValue,
+                                      const std::string& column,
+                                      const std::string& value) {
+        return "UPDATE " + table + " SET " + column + " = " + value
+                        + " WHERE " + keyName + " = " + keyValue;
+    }
+    static std::string getRemoveQuery(const std::string& table,
+                                      const std::string& keyName,
+                                      const std::string& keyValue) {
+        return "DELETE FROM " + table + " WHERE "
+                        + keyName + " = " + keyValue;
+    }
+    static std::string getGetQuery(const std::string& table,
+                                   const std::string& keyName,
+                                   const std::string& keyValue,
+                                   const std::string& outputName) {
+        return "SELECT " + outputName + " FROM " + table
+                        + " WHERE " + keyName + " = " + keyValue;
+    }
+
 public:
     DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
+
+    bool operate(const std::string& db,
+                 const std::string& query,
+                 DatabaseStrategy::QueryResult_t* result) const;
+
+    bool extractResults(const DatabaseStrategy::QueryResult_t& qResults, 
+                        const std::string& outputName,
+                        std::string& outputValue) const;
 
     bool createTable(const std::string& db,
                      const std::string& table,
