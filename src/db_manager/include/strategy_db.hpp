@@ -145,8 +145,7 @@ public:
              const std::string& keyName,
              const std::string& keyValue,
              const std::string& outputName,
-             std::string& outputValue,
-             const bool surpressErr = false) const;
+             std::string& outputValue) const;
 
     ~DatabaseORM() {
         delete m_strategy;

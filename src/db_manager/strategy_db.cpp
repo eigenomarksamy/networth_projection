@@ -141,8 +141,7 @@ bool db_manager::DatabaseORM::get(const std::string& db,
                                   const std::string& keyName,
                                   const std::string& keyValue,
                                   const std::string& outputName,
-                                  std::string& outputValue,
-                                  const bool surpressErr) const {
+                                  std::string& outputValue) const {
     std::string query = getGetQuery(table, keyName, keyValue, outputName);
     DatabaseStrategy::QueryResult_t qResult;
     auto ret = operate(db, query, &qResult);
