@@ -6,6 +6,7 @@
 #include <memory>
 #include "investment.hpp"
 #include "portfolio_logger.hpp"
+#include "portfolio_db.hpp"
 
 namespace portfolio {
 
@@ -55,17 +56,20 @@ class PortfolioManager {
     std::vector<std::unique_ptr<Portfolio>> m_portfolios;
     std::shared_ptr<PortfolioLogger> m_logger;
     bool m_setLogger;
+    DatabaseInterface& m_dbInterface;
 
 public:
 
-    PortfolioManager() {}
+    PortfolioManager(DatabaseInterface& dbInterface) : m_dbInterface(dbInterface) {}
 
-    PortfolioManager(const std::string& portfolio_name) : m_setLogger(false) {
+    PortfolioManager(const std::string& portfolio_name, DatabaseInterface& dbInterface)
+      : m_setLogger(false), m_dbInterface(dbInterface) {
         m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
     }
 
-    PortfolioManager(const std::vector<std::string>& portfolios_names)
-      : m_setLogger(false) {
+    PortfolioManager(const std::vector<std::string>& portfolios_names,
+                     DatabaseInterface& dbInterface)
+      : m_setLogger(false), m_dbInterface(dbInterface) {
         for (const auto& portfolio_name : portfolios_names) {
             m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
         }

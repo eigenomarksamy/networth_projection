@@ -17,6 +17,7 @@
 #include "conf_resolver.hpp"
 #include "appl_conf_types.hpp"
 #include "logger.hpp"
+#include "strategy_db.hpp"
 
 static void executePortfolioMgr();
 static void executeStaticAppl(const std::string& networth_projector_path_output,
@@ -30,7 +31,11 @@ static void executePortfolioMgr() {
     portfolio::PortfolioMgrCfg portfolioInput;
     if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
     if (portfolioInput.is_multi_prtfolio) {
-        portfolio::PortfolioManager portfolio_manager;
+        std::string dbPath = "db/portfolios/portfolio.db";
+        db_manager::DatabaseStrategy* strategy = new db_manager::SQLiteStrategy();
+        db_manager::DatabaseORM orm = db_manager::DatabaseORM(strategy);
+        portfolio::DatabaseInterfaceImplementation db_interface(orm);
+        portfolio::PortfolioManager portfolio_manager(db_interface);
         if (portfolioInput.auto_log) {
             auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
             portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
