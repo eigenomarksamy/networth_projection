@@ -32,9 +32,10 @@ static void executePortfolioMgr() {
     if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
     if (portfolioInput.is_multi_prtfolio) {
         std::string dbPath = "db/portfolios/portfolio.db";
+        std::string tableName = "investments";
         db_manager::DatabaseStrategy* strategy = new db_manager::SQLiteStrategy();
         db_manager::DatabaseORM orm = db_manager::DatabaseORM(strategy);
-        portfolio::DatabaseInterfaceImplementation db_interface(orm);
+        portfolio::DatabaseInterfaceImplementation db_interface(orm, dbPath, tableName);
         portfolio::PortfolioManager portfolio_manager(db_interface);
         if (portfolioInput.auto_log) {
             auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();

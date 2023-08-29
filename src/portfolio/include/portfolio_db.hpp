@@ -13,22 +13,25 @@ public:
     virtual bool updateInvestmentQuantity(const std::string& ticker, const uint32_t quantity) = 0;
     virtual bool updateInvestmentPrice(const std::string& ticker, const double_t price) = 0;
     virtual bool removeInvestment(const std::string& ticker) = 0;
-    virtual uint32_t getInvestmentQuantity(const std::string& ticker) = 0;
-    virtual double_t getInvestmentPrice(const std::string& ticker) = 0;
+    virtual bool getInvestment(const std::string& ticker, Investment& investment) = 0;
     virtual ~DatabaseInterface() {}
 };
 
 class DatabaseInterfaceImplementation : public DatabaseInterface {
 private:
     db_manager::DatabaseORM m_db;
+    std::string m_dbPath;
+    std::string m_tableName;
+    db_manager::columns_t m_columns;
 public:
-    DatabaseInterfaceImplementation(db_manager::DatabaseORM& db) : m_db(db) {}
+    DatabaseInterfaceImplementation(db_manager::DatabaseORM& db,
+                                    const std::string& dbPath,
+                                    const std::string& tableName);
     bool saveInvestment(const Investment& investment) override;
     bool updateInvestmentQuantity(const std::string& ticker, const uint32_t quantity) override;
     bool updateInvestmentPrice(const std::string& ticker, const double_t price) override;
     bool removeInvestment(const std::string& ticker) override;
-    uint32_t getInvestmentQuantity(const std::string& ticker) override;
-    double_t getInvestmentPrice(const std::string& ticker) override;
+    bool getInvestment(const std::string& ticker, Investment& investment) override;
 };
 
 } // namespace portfolio
