@@ -3,3 +3,4 @@ build/*
 gen/*
 bin/*
 node/node_modules/*
+db/ignore/*
