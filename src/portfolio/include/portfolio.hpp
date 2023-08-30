@@ -103,6 +103,10 @@ public:
         }
     }
 
+    void setDbRef(DatabaseInterface& dbInterface) {
+        m_dbInterface = dbInterface;
+    }
+
 private:
     void log(const std::string& msg) const {
         if (m_setLogger) {

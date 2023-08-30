@@ -12,6 +12,8 @@ void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr
 
 bool loadPortfolio(Portfolio& portfolio, const std::string& filename);
 
+bool loadPortfolioDb(Portfolio& portfolio, const std::string& filename);
+
 bool getPortfolioFromFiles(portfolio::Portfolio& portfolio,
                            const std::string& name,
                            const std::string& directory);
@@ -20,6 +22,15 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
                            const bool load_all_portfolios,
                            const std::vector<std::string>& list_portfolios,
                            const std::string& directory);
+
+bool getPortfolioFromDb(portfolio::Portfolio& portfolio,
+                        const std::string& name,
+                        const std::string& directory);
+
+bool getPortfolioFromDb(portfolio::PortfolioManager& portfolio,
+                        const bool load_all_portfolios,
+                        const std::vector<std::string>& list_portfolios,
+                        const std::string& directory);
 
 PortfolioCfgInputSource setPortfolioInputSource();
 

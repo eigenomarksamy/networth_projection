@@ -30,51 +30,33 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
 static void executePortfolioMgr() {
     portfolio::PortfolioMgrCfg portfolioInput;
     if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
-    if (portfolioInput.is_multi_prtfolio) {
-        std::string dbPath = "db/portfolios/portfolio.db";
-        std::string tableName = "investments";
-        db_manager::DatabaseStrategy* strategy = new db_manager::SQLiteStrategy();
-        db_manager::DatabaseORM orm = db_manager::DatabaseORM(strategy);
-        portfolio::DatabaseInterfaceImplementation db_interface(orm, dbPath, tableName);
-        portfolio::PortfolioManager portfolio_manager(db_interface);
-        if (portfolioInput.auto_log) {
-            auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
-            portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
-        }
-        bool valid = false;
-        if (portfolioInput.is_new || getPortfolioFromFiles(portfolio_manager,
-                                    portfolioInput.load_all_portfolios,
-                                    portfolioInput.portfolio_list,
-                                    portfolioInput.gen_dir)) {
-            valid = true;
-        }
-        if (valid) {
-            portfolio::executeMultiPortfolioManagement(portfolio_manager);
-            generatePortfolioOverview(portfolio_manager,
-                                      portfolioInput.gen_dir,
-                                      portfolioInput.gen_dir + "../portfolio_overview.txt",
-                                      portfolioInput.auto_save);
-        }
+    auto db_interface = portfolio::setUpDb(portfolioInput.db_dir);
+    portfolio::PortfolioManager portfolio_manager(db_interface);
+    if (portfolioInput.auto_log) {
+        auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
+        portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
     }
-    else {
-        portfolio::Portfolio portfolio = portfolio::Portfolio(portfolioInput.name);
-        if (portfolioInput.auto_log) {
-            auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
-            portfolio.setLoggerPtr(portfolio_logger_ptr);
-        }
-        bool valid = false;
-        if (portfolioInput.is_new || getPortfolioFromFiles(portfolio,
-                                                portfolioInput.name,
-                                                portfolioInput.gen_dir)) {
+    bool valid = false;
+    if (portfolioInput.portfolio_src == "text"
+        && getPortfolioFromFiles(portfolio_manager,
+                                 portfolioInput.load_all_portfolios,
+                                 portfolioInput.portfolio_list,
+                                 portfolioInput.gen_dir)) {
+        valid = true;
+    }
+    else if (portfolioInput.portfolio_src == "db"
+             && getPortfolioFromDb(portfolio_manager,
+                                   portfolioInput.load_all_portfolios,
+                                   portfolioInput.portfolio_list,
+                                   portfolioInput.gen_dir)) {
             valid = true;
-        }
-        if (valid) {
-            portfolio::executePortfolioManagement(portfolio);
-            generatePortfolioOverview(portfolio,
-                                      portfolioInput.gen_dir,
-                                      portfolioInput.gen_dir + "/overview.txt",
-                                      portfolioInput.auto_save);
-        }
+    }
+    if (valid) {
+        portfolio::executeMultiPortfolioManagement(portfolio_manager);
+        generatePortfolioOverview(portfolio_manager,
+                                  portfolioInput.gen_dir,
+                                  portfolioInput.gen_dir + "../portfolio_overview.txt",
+                                  portfolioInput.auto_save);
     }
 }
 

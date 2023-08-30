@@ -34,6 +34,8 @@ public:
     bool getInvestment(const std::string& ticker, Investment& investment) override;
 };
 
+DatabaseInterfaceImplementation setUpDb(const std::string& dbDirPath);
+
 } // namespace portfolio
 
 #endif /* PORTFOLIO_DB_HPP_ */

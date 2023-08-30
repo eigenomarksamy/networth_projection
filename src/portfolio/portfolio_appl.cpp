@@ -43,6 +43,36 @@ bool portfolio::getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
     return status;
 }
 
+bool portfolio::getPortfolioFromDb(portfolio::Portfolio& portfolio,
+                                   const std::string& name,
+                                   const std::string& directory) {
+    return portfolio::loadPortfolioDb(portfolio, directory + name);
+}
+
+bool portfolio::getPortfolioFromDb(portfolio::PortfolioManager& portfolioMgr,
+                                   const bool load_all_portfolios,
+                                   const std::vector<std::string>& list_portfolios,
+                                   const std::string& directory) {
+    bool status = true;
+    std::string directoryPath = directory;
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
+    for (const auto& name : names) {
+        portfolio::Portfolio portfolio;
+        if (getPortfolioFromDb(portfolio, name, directory)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
+        }
+        else {
+            status = false;
+        }
+    }
+    return status;
+}
+
 void portfolio::displayPortfolio(const Portfolio& obj) {
     std::cout << "Portfolio: " << obj.m_name << std::endl;
     for (const auto& investment : obj.m_investments) {
@@ -284,6 +314,10 @@ bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename)
     return status;
 }
 
+bool portfolio::loadPortfolioDb(Portfolio& portfolio, const std::string& filename) {
+    return true;
+}
+
 portfolio::PortfolioCfgInputSource portfolio::setPortfolioInputSource() {
     PortfolioCfgInputSource selection;
     std::string usr_selection;
@@ -319,26 +353,12 @@ portfolio::PortfolioCfgInputSource portfolio::setPortfolioInputSource() {
 }
 
 void portfolio::setUpPortfolioManually(PortfolioMgrCfg& conf) {
-    getGenericInputParam(conf.is_multi_prtfolio,
-                         std::string("multiple portfolio mode"));
-    if (!conf.is_multi_prtfolio) {
-        getGenericInputParam(conf.is_new,
-                            std::string("create new portfolio"));
-        getGenericInputParam(conf.name,
-                             std::string("name of portfolio"));
-    }
-    else {
-        getGenericInputParam(conf.is_new,
-                            std::string("create new portfolios"));
-    }
-    if (!conf.is_new
-        && conf.is_multi_prtfolio) {
-        getGenericInputParam(conf.load_all_portfolios,
-                             std::string("load all portfolios"));
-        if (!conf.load_all_portfolios) {
-            getGenericInputParam(conf.portfolio_list,
-                                std::string("portfolios names"));
-        }
+    getGenericInputParam(conf.portfolio_src, std::string("portfolios source"));
+    getGenericInputParam(conf.load_all_portfolios,
+                            std::string("load all portfolios"));
+    if (!conf.load_all_portfolios) {
+        getGenericInputParam(conf.portfolio_list,
+                            std::string("portfolios names"));
     }
     getGenericInputParam(conf.auto_save,
                          std::string("auto save"));

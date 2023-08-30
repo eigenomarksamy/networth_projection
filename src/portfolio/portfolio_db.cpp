@@ -66,3 +66,12 @@ bool portfolio::DatabaseInterfaceImplementation::getInvestment(const std::string
         investment.setTicker(ticker);
     return retFlag;
 }
+
+portfolio::DatabaseInterfaceImplementation portfolio::setUpDb(const std::string& dbDirPath) {
+    std::string dbPath = dbDirPath + "portfolio.db";
+    std::string tableName = "investments";
+    db_manager::DatabaseStrategy* strategy = new db_manager::SQLiteStrategy();
+    db_manager::DatabaseORM orm = db_manager::DatabaseORM(strategy);
+    DatabaseInterfaceImplementation db_interface(orm, dbPath, tableName);
+    return db_interface;
+}
