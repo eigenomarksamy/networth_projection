@@ -12,6 +12,7 @@ private:
     uint32_t m_quantity;
 
 public:
+    Investment() = default;
     Investment(const std::string& name, const std::string& ticker,
                double_t purchasePrice, uint32_t quantity)
                : m_name(name), m_ticker(ticker),

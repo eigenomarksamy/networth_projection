@@ -51,6 +51,7 @@ bool db_manager::DatabaseORM::operate(const std::string& db,
     bool ret = m_strategy->connect(db);
     if (!ret) {
         std::cerr << "Error connecting\n";
+        m_strategy->disconnect();
         return false;
     }
     ret = m_strategy->executeQuery(query);
@@ -65,6 +66,7 @@ bool db_manager::DatabaseORM::operate(const std::string& db,
     m_strategy->disconnect();
     return true;
 }
+
 bool db_manager::DatabaseORM::extractResults(const DatabaseStrategy::QueryResult_t& qResults,
                                              const std::string& outputName,
                                              std::string& outputValue) const {
@@ -79,6 +81,23 @@ bool db_manager::DatabaseORM::extractResults(const DatabaseStrategy::QueryResult
         }
         else {
             outputValue = it->second;
+        }
+    }
+    return true;
+}
+
+bool db_manager::DatabaseORM::extractResults(const DatabaseStrategy::QueryResult_t& qResults,
+                                             const std::string& outputName,
+                                             std::vector<std::string>& outputValues) const {
+    if (qResults.empty()) {
+        return false;
+    }
+    else {
+        for (const auto& qR : qResults) {
+            auto it = qR.find(outputName);
+            if (it != qR.end()) {
+                outputValues.push_back(it->second);
+            }
         }
     }
     return true;
@@ -155,4 +174,20 @@ bool db_manager::DatabaseORM::get(const std::string& db,
         }
     }
     return ret;
+}
+
+bool db_manager::DatabaseORM::list(const std::string& db,
+                                   const std::string& table,
+                                   const std::string& keyName,
+                                   std::vector<std::string>& outputList) const {
+    std::string query = getListQuery(table, keyName);
+    DatabaseStrategy::QueryResult_t qResult;
+    auto ret = operate(db, query, &qResult);
+    if (!ret) {
+        std::cerr << "List\n";
+    }
+    else {
+        ret = extractResults(qResult, keyName, outputList);
+    }
+    return true;
 }

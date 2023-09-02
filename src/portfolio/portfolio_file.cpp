@@ -47,9 +47,9 @@ void portfolio::generatePortfolioFiles(const portfolio::Portfolio& portfolio,
 }
 
 void portfolio::generatePortfolioOverview(const portfolio::Portfolio& portfolio,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave) {
+                                          const std::string& directory,
+                                          const std::string& outputFile,
+                                          const bool autoSave) {
     auto portfolioTxt = portfolio::DataAdapter::generatePortfolioLines(portfolio);
     FileGenerator file(outputFile);
     file.generateTxt(portfolioTxt);
@@ -57,9 +57,9 @@ void portfolio::generatePortfolioOverview(const portfolio::Portfolio& portfolio,
 }
 
 void portfolio::generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave) {
+                                          const std::string& directory,
+                                          const std::string& outputFile,
+                                          const bool autoSave) {
     auto portfolioTxt = portfolio::DataAdapter::generatePortfolioLines(portfolioMgr);
     FileGenerator file(outputFile);
     file.generateTxt(portfolioTxt);
@@ -81,4 +81,101 @@ void portfolio::savePortfolio(const Portfolio& portfolio, const std::string& fil
         std::cout << "Unable to open file for saving portfolio." << std::endl;
     }
     file.close();
+}
+
+bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename) {
+    bool status = true;
+    std::ifstream file(filename);
+    portfolio.clearInvestments();
+    if (file.is_open()) {
+        std::string name, ticker, line;
+        double_t purchasePrice;
+        uint32_t quantity;
+        std::getline(file, name);
+        portfolio.setName(name);
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::getline(iss, name, ',');
+            std::getline(iss, ticker, ',');
+            iss >> purchasePrice;
+            iss.ignore();
+            iss >> quantity;
+            Investment investment(name, ticker, purchasePrice, quantity);
+            portfolio.addInvestment(investment);
+        }
+        std::cout << "Portfolio loaded from " << filename << std::endl;
+    }
+    else {
+        status = false;
+        std::cout << "Unable to open file for load portfolio.\n";
+    }
+    file.close();
+    return status;
+}
+
+bool portfolio::loadPortfolioDb(Portfolio& portfolio, const std::string& filename) {
+    // bool retVal;
+    // auto dbObj = setUpDb(filename);
+    // dbObj.getInvestment
+    return true;
+}
+
+bool portfolio::getPortfolioFromFiles(portfolio::Portfolio& portfolio,
+                           const std::string& name,
+                           const std::string& directory) {
+    return portfolio::loadPortfolio(portfolio, directory + name);
+}
+
+bool portfolio::getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios,
+                           const std::string& directory) {
+    bool status = true;
+    std::string directoryPath = directory;
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
+    for (const auto& name : names) {
+        portfolio::Portfolio portfolio;
+        if (getPortfolioFromFiles(portfolio, name, directory)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
+        }
+        else {
+            status = false;
+        }
+    }
+    return status;
+}
+
+bool portfolio::getPortfolioFromDb(portfolio::Portfolio& portfolio,
+                                   const std::string& name,
+                                   const std::string& directory) {
+    return portfolio::loadPortfolioDb(portfolio, directory + name);
+}
+
+bool portfolio::getPortfolioFromDb(portfolio::PortfolioManager& portfolioMgr,
+                                   const bool load_all_portfolios,
+                                   const std::vector<std::string>& list_portfolios,
+                                   const std::string& directory) {
+    bool status = true;
+    std::string directoryPath = directory;
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
+    for (const auto& name : names) {
+        portfolio::Portfolio portfolio;
+        if (getPortfolioFromDb(portfolio, name, directory)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
+        }
+        else {
+            status = false;
+        }
+    }
+    return status;
 }

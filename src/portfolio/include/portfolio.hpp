@@ -56,20 +56,19 @@ class PortfolioManager {
     std::vector<std::unique_ptr<Portfolio>> m_portfolios;
     std::shared_ptr<PortfolioLogger> m_logger;
     bool m_setLogger;
-    DatabaseInterface& m_dbInterface;
 
 public:
 
-    PortfolioManager(DatabaseInterface& dbInterface) : m_dbInterface(dbInterface) {}
+    PortfolioManager() = default;
 
     PortfolioManager(const std::string& portfolio_name, DatabaseInterface& dbInterface)
-      : m_setLogger(false), m_dbInterface(dbInterface) {
+      : m_setLogger(false) {
         m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
     }
 
     PortfolioManager(const std::vector<std::string>& portfolios_names,
                      DatabaseInterface& dbInterface)
-      : m_setLogger(false), m_dbInterface(dbInterface) {
+      : m_setLogger(false) {
         for (const auto& portfolio_name : portfolios_names) {
             m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
         }
@@ -101,10 +100,6 @@ public:
         for (const auto& portfolio : m_portfolios) {
             portfolio->setLoggerPtr(m_logger);
         }
-    }
-
-    void setDbRef(DatabaseInterface& dbInterface) {
-        m_dbInterface = dbInterface;
     }
 
 private:

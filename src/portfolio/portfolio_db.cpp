@@ -1,42 +1,46 @@
 #include "portfolio_db.hpp"
 
 portfolio::DatabaseInterfaceImplementation::DatabaseInterfaceImplementation(
-                                                db_manager::DatabaseORM& db,
+                                                db_manager::DatabaseStrategy* db_strategy,
                                                 const std::string& dbPath,
                                                 const std::string& tableName)
-  : m_db(db), m_dbPath(dbPath), m_tableName(tableName) {
+  : m_dbStrategy(db_strategy), m_dbPath(dbPath), m_tableName(tableName),
+    m_dbOrm(db_manager::DatabaseORM(m_dbStrategy)) {
+    m_columns = {"name", "ticker", "purchase_price", "quantity"};
+}
+
+bool portfolio::DatabaseInterfaceImplementation::createTable() {
     std::vector<db_manager::columnDefinition_t> columnDefinitions;
     columnDefinitions.push_back(db_manager::columnDefinition_t{"name", "TEXT NOT NULL"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"ticker", "TEXT PRIMARY KEY"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"purchase_price", "REAL NOT NULL"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"quantity", "INTEGER NOT NULL"});
-    m_columns = {"name", "ticker", "purchase_price", "quantity"};
-    db.createTable(m_dbPath, m_tableName, columnDefinitions);
+    return m_dbOrm.createTable(m_dbPath, m_tableName, columnDefinitions);
 }
 
 bool portfolio::DatabaseInterfaceImplementation::saveInvestment(const Investment& investment) {
     db_manager::values_t values {investment.getName(), investment.getTicker(),
                                  std::to_string(investment.getPurchasePrice()),
                                  std::to_string(investment.getQuantity())};
-    if (m_db.save(m_dbPath, m_tableName, m_columns, values))
+    if (m_dbOrm.save(m_dbPath, m_tableName, m_columns, values))
         return true;
     return false;
 }
 
 bool portfolio::DatabaseInterfaceImplementation::updateInvestmentQuantity(const std::string& ticker, const uint32_t quantity) {
-    if (m_db.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "quantity", std::to_string(quantity)))
+    if (m_dbOrm.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "quantity", std::to_string(quantity)))
         return true;
     return false;
 }
 
 bool portfolio::DatabaseInterfaceImplementation::updateInvestmentPrice(const std::string& ticker, const double_t price) {
-    if (m_db.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "purchase_price", std::to_string(price)))
+    if (m_dbOrm.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "purchase_price", std::to_string(price)))
         return true;
     return false;
 }
 
 bool portfolio::DatabaseInterfaceImplementation::removeInvestment(const std::string& ticker) {
-    if (m_db.remove(m_dbPath, m_tableName, "'" + ticker + "'", "ticker"))
+    if (m_dbOrm.remove(m_dbPath, m_tableName, "'" + ticker + "'", "ticker"))
         return true;
     return false;
 }
@@ -48,7 +52,7 @@ bool portfolio::DatabaseInterfaceImplementation::getInvestment(const std::string
     for (const auto& column : m_columns) {
         std::string retVal;
         if ("ticker" != column) {
-            retFlag &= m_db.get(m_dbPath, m_tableName, "ticker", "'" + ticker + "'", column, retVal);
+            retFlag &= m_dbOrm.get(m_dbPath, m_tableName, "ticker", "'" + ticker + "'", column, retVal);
         }
         if ("quantity" == column && retFlag) {
             auto retValI = std::stoi(retVal);
@@ -67,11 +71,16 @@ bool portfolio::DatabaseInterfaceImplementation::getInvestment(const std::string
     return retFlag;
 }
 
-portfolio::DatabaseInterfaceImplementation portfolio::setUpDb(const std::string& dbDirPath) {
-    std::string dbPath = dbDirPath + "portfolio.db";
-    std::string tableName = "investments";
-    db_manager::DatabaseStrategy* strategy = new db_manager::SQLiteStrategy();
-    db_manager::DatabaseORM orm = db_manager::DatabaseORM(strategy);
-    DatabaseInterfaceImplementation db_interface(orm, dbPath, tableName);
-    return db_interface;
+bool portfolio::DatabaseInterfaceImplementation::listInvestments(std::vector<Investment>& investments) {
+    bool retFlag;
+    std::vector<std::string> output;
+    retFlag = m_dbOrm.list(m_dbPath, m_tableName, "ticker", output);
+    if (retFlag) {
+        for (const auto& out : output) {
+            Investment tmpInvestment;
+            retFlag = getInvestment(out, tmpInvestment);
+            investments.push_back(tmpInvestment);
+        }
+    }
+    return retFlag;
 }

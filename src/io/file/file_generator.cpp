@@ -5,12 +5,12 @@
 #include "file_generator.hpp"
 
 
-bool FileGenerator::checkFileExtension(std::string expExt) {
-    if (m_fileName.size() < 3) {
+bool FileGenerator::checkFileExtension(std::string expExt, uint8_t extSize) {
+    if (m_fileName.size() < extSize) {
         return false;
     }
     std::string act_ext;
-    std::copy_n(m_fileName.end() - 3, 3, std::back_inserter(act_ext));
+    std::copy_n(m_fileName.end() - extSize, extSize, std::back_inserter(act_ext));
     return (act_ext == expExt);
 }
 

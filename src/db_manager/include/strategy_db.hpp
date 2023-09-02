@@ -46,6 +46,11 @@ public:
     QueryResult_t getResults() const override {
         return m_queryResults;
     }
+    ~SQLiteStrategy() {
+        if (m_db) {
+            sqlite3_close(m_db);
+        }
+    }
 
 private:
     static int callback(void* data, int argc, char** argv, char** azColName) {
@@ -107,6 +112,10 @@ private:
         return "SELECT " + outputName + " FROM " + table
                         + " WHERE " + keyName + " = " + keyValue;
     }
+    static std::string getListQuery(const std::string& table,
+                                    const std::string& keyName) {
+        return "SELECT " + keyName + " FROM " + table;
+    }
 
 public:
     DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
@@ -118,6 +127,10 @@ public:
     bool extractResults(const DatabaseStrategy::QueryResult_t& qResults, 
                         const std::string& outputName,
                         std::string& outputValue) const;
+
+    bool extractResults(const DatabaseStrategy::QueryResult_t& qResults,
+                        const std::string& outputName,
+                        std::vector<std::string>& outputValues) const;
 
     bool createTable(const std::string& db,
                      const std::string& table,
@@ -147,8 +160,15 @@ public:
              const std::string& outputName,
              std::string& outputValue) const;
 
+    bool list(const std::string& db,
+              const std::string& table,
+              const std::string& keyName,
+              std::vector<std::string>& outputList) const;
+
     ~DatabaseORM() {
-        delete m_strategy;
+        if (m_strategy) {
+            delete m_strategy;
+        }
     }
 };
 
