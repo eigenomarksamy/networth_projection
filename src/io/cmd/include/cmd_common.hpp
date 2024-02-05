@@ -63,7 +63,8 @@ void getGenericInputParam(T& input, const T defVal, std::string dispTxt) {
     constexpr int8_t newline = '\n' ;
     std::cout << "Enter parameter '" << dispTxt << "', input mode: '"
               << GenericInputMode::SingleValueSingleData
-              << "' (you can leave blank to use default): " ;
+              << "' (you can leave blank to use default --> "
+              << defVal << "): " ;
     if( std::cin.peek() != newline && std::cin >> input ) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), newline );
         return;
