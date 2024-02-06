@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <filesystem>
 #include "utils.hpp"
 #include "networth.hpp"
 #include "mortgage.hpp"
@@ -30,8 +31,9 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
 static void executePortfolioMgr() {
     portfolio::PortfolioMgrCfg portfolioInput;
     if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
-    auto db_interface = portfolio::setUpDb(portfolioInput.db_dir);
-    portfolio::PortfolioManager portfolio_manager(db_interface);
+    std::string tableName = "investments";
+    auto dbStrategy = std::make_shared<db_manager::SQLiteStrategy>();
+    portfolio::PortfolioManager portfolio_manager;
     if (portfolioInput.auto_log) {
         auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
         portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
@@ -48,15 +50,22 @@ static void executePortfolioMgr() {
              && getPortfolioFromDb(portfolio_manager,
                                    portfolioInput.load_all_portfolios,
                                    portfolioInput.portfolio_list,
-                                   portfolioInput.gen_dir)) {
+                                   portfolioInput.db_dir,
+                                   tableName,
+                                   dbStrategy)) {
             valid = true;
     }
     if (valid) {
         portfolio::executeMultiPortfolioManagement(portfolio_manager);
-        generatePortfolioOverview(portfolio_manager,
-                                  portfolioInput.gen_dir,
-                                  portfolioInput.gen_dir + "../portfolio_overview.txt",
-                                  portfolioInput.auto_save);
+        if (portfolioInput.portfolio_src == "text") {
+            generatePortfolioOverview(portfolio_manager,
+                                      portfolioInput.gen_dir,
+                                      portfolioInput.gen_dir + "../portfolio_overview.txt",
+                                      portfolioInput.auto_save);
+        }
+        else if (portfolioInput.portfolio_src == "db") {
+            // auto db_interface = portfolio::setUpDb(portfolioInput.db_dir);
+        }
     }
 }
 
