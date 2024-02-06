@@ -113,13 +113,6 @@ bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename)
     return status;
 }
 
-bool portfolio::loadPortfolioDb(Portfolio& portfolio, const std::string& filename) {
-    // bool retVal;
-    // auto dbObj = setUpDb(filename);
-    // dbObj.getInvestment
-    return true;
-}
-
 bool portfolio::getPortfolioFromFiles(portfolio::Portfolio& portfolio,
                            const std::string& name,
                            const std::string& directory) {
@@ -150,26 +143,54 @@ bool portfolio::getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
     return status;
 }
 
+bool portfolio::loadPortfolioDb(Portfolio& portfolio,
+                                const std::string& filename,
+                                const std::string tableName,
+                                const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    bool retVal;
+    auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, filename, tableName);
+    std::vector<Investment> investments;
+    retVal = dbInterface.listInvestments(investments);
+    if (retVal && !investments.empty()) {
+        portfolio.clearInvestments();
+        portfolio.addInvestments(investments);
+    }
+    return retVal;
+}
+
 bool portfolio::getPortfolioFromDb(portfolio::Portfolio& portfolio,
                                    const std::string& name,
-                                   const std::string& directory) {
-    return portfolio::loadPortfolioDb(portfolio, directory + name);
+                                   const std::string& directory,
+                                   const std::string& tableName,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    if (portfolio::loadPortfolioDb(portfolio, directory + name, tableName, dbStrategy)) {
+        auto pos = name.find(".");
+        auto act_name = name.substr(0, pos);
+        portfolio.setName(act_name);
+        return true;
+    }
+    return false;
 }
 
 bool portfolio::getPortfolioFromDb(portfolio::PortfolioManager& portfolioMgr,
                                    const bool load_all_portfolios,
                                    const std::vector<std::string>& list_portfolios,
-                                   const std::string& directory) {
+                                   const std::string& directory,
+                                   const std::string& tableName,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
     bool status = true;
     std::string directoryPath = directory;
     std::vector<std::string> names;
     if (load_all_portfolios)
         names = getFileNames(directoryPath);
-    else
-        names = list_portfolios;
+    else {
+        for (const auto& lp : list_portfolios) {
+            names.push_back(lp + ".db");
+        }
+    }
     for (const auto& name : names) {
         portfolio::Portfolio portfolio;
-        if (getPortfolioFromDb(portfolio, name, directory)) {
+        if (getPortfolioFromDb(portfolio, name, directory, tableName, dbStrategy)) {
             portfolioMgr.addPortfolio(portfolio);
             status &= true;
         }

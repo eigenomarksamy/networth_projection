@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "portfolio.hpp"
+#include "portfolio_db.hpp"
 
 namespace portfolio {
 
@@ -61,16 +63,23 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
                            const std::vector<std::string>& list_portfolios,
                            const std::string& directory);
 
-bool loadPortfolioDb(Portfolio& portfolio, const std::string& filename);
+bool loadPortfolioDb(Portfolio& portfolio,
+                     const std::string& filename,
+                     const std::string tableName,
+                     const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
 
 bool getPortfolioFromDb(portfolio::Portfolio& portfolio,
                         const std::string& name,
-                        const std::string& directory);
+                        const std::string& directory,
+                        const std::string& tableName,
+                        const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
 
 bool getPortfolioFromDb(portfolio::PortfolioManager& portfolio,
                         const bool load_all_portfolios,
                         const std::vector<std::string>& list_portfolios,
-                        const std::string& directory);
+                        const std::string& directory,
+                        const std::string& tableName,
+                        const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
 
 } // namespace portfolio
 

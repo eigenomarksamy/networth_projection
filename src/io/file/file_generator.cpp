@@ -40,9 +40,11 @@ void FileGenerator::generateTxt(std::vector<std::string>& lines) {
 
 std::vector<std::string> getFileNames(const std::string& directoryPath) {
     std::vector<std::string> fileNames;
-    for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
-        if (entry.is_regular_file()) {
-            fileNames.push_back(entry.path().filename().string());
+    if (std::filesystem::exists(directoryPath) && std::filesystem::is_directory(directoryPath)) {
+        for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
+            if (entry.is_regular_file()) {
+                fileNames.push_back(entry.path().filename().string());
+            }
         }
     }
     return fileNames;

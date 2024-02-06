@@ -1,7 +1,7 @@
 #include "portfolio_db.hpp"
 
 portfolio::DatabaseInterfaceImplementation::DatabaseInterfaceImplementation(
-                                                db_manager::DatabaseStrategy* db_strategy,
+                                                const std::shared_ptr<db_manager::DatabaseStrategy>& db_strategy,
                                                 const std::string& dbPath,
                                                 const std::string& tableName)
   : m_dbStrategy(db_strategy), m_dbPath(dbPath), m_tableName(tableName),

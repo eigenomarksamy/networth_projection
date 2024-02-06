@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 #include <sqlite3.h>
 #include "utils.hpp"
 
@@ -68,7 +69,7 @@ private:
 
 class DatabaseORM {
 private:
-    DatabaseStrategy* m_strategy;
+    std::shared_ptr<DatabaseStrategy> m_strategy;
 
     static std::string convertValues2String(const values_t& values) {
         return convertVectorToString(values);
@@ -116,9 +117,12 @@ private:
                                     const std::string& keyName) {
         return "SELECT " + keyName + " FROM " + table;
     }
+    static std::string getListQuery(const std::string& table) {
+        return "SELECT * FROM " + table;
+    }
 
 public:
-    DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
+    DatabaseORM(std::shared_ptr<DatabaseStrategy> strategy) : m_strategy(strategy) {}
 
     bool operate(const std::string& db,
                  const std::string& query,
@@ -131,6 +135,9 @@ public:
     bool extractResults(const DatabaseStrategy::QueryResult_t& qResults,
                         const std::string& outputName,
                         std::vector<std::string>& outputValues) const;
+
+    bool extractResults(const DatabaseStrategy::QueryResult_t& qResults,
+                        std::vector<std::unordered_map<std::string, std::string>>& outputValues) const;
 
     bool createTable(const std::string& db,
                      const std::string& table,
@@ -165,11 +172,11 @@ public:
               const std::string& keyName,
               std::vector<std::string>& outputList) const;
 
-    ~DatabaseORM() {
-        if (m_strategy) {
-            delete m_strategy;
-        }
-    }
+    bool list(const std::string& db,
+              const std::string& table,
+              std::vector<std::unordered_map<std::string, std::string>>& outputMap) const;
+
+    ~DatabaseORM() { }
 };
 
 } // namespace db_manager

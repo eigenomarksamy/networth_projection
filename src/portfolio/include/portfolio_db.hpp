@@ -21,13 +21,13 @@ public:
 
 class DatabaseInterfaceImplementation : public DatabaseInterface {
 private:
-    db_manager::DatabaseStrategy* m_dbStrategy;
+    std::shared_ptr<db_manager::DatabaseStrategy> m_dbStrategy;
     db_manager::DatabaseORM m_dbOrm;
     std::string m_dbPath;
     std::string m_tableName;
     db_manager::columns_t m_columns;
 public:
-    DatabaseInterfaceImplementation(db_manager::DatabaseStrategy* db_strategy,
+    DatabaseInterfaceImplementation(const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy ,
                                     const std::string& dbPath,
                                     const std::string& tableName);
     bool createTable() override;

@@ -27,6 +27,10 @@ public:
     ~Portfolio() {}
 
     bool addInvestment(const Investment& investment);
+    bool addInvestments(const std::vector<Investment>& investments) {
+        m_investments = investments;
+        return true;
+    }
     bool removeInvestment(const std::string& ticker);
     bool updatedInvestmentValue(const std::string& ticker, double_t newValue);
     bool updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant);
