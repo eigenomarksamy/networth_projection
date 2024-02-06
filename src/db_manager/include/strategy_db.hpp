@@ -33,6 +33,7 @@ public:
     virtual void disconnect() = 0;
     virtual bool executeQuery(const std::string& query) = 0;
     virtual QueryResult_t getResults() const = 0;
+    virtual void clearResults() = 0;
 };
 
 class SQLiteStrategy : public DatabaseStrategy {
@@ -46,6 +47,9 @@ public:
     bool executeQuery(const std::string& query) override;
     QueryResult_t getResults() const override {
         return m_queryResults;
+    }
+    void clearResults() override {
+        m_queryResults.clear();
     }
     ~SQLiteStrategy() {
         if (m_db) {

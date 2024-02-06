@@ -190,6 +190,7 @@ bool portfolio::getPortfolioFromDb(portfolio::PortfolioManager& portfolioMgr,
     }
     for (const auto& name : names) {
         portfolio::Portfolio portfolio;
+        dbStrategy->clearResults();
         if (getPortfolioFromDb(portfolio, name, directory, tableName, dbStrategy)) {
             portfolioMgr.addPortfolio(portfolio);
             status &= true;
