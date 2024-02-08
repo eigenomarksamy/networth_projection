@@ -27,8 +27,8 @@ std::vector<std::string> portfolio::DataAdapter::generatePortfolioLines(const po
 }
 
 void portfolio::generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
-                            const std::string& directory,
-                            const bool autoSave) {
+                                       const std::string& directory,
+                                       const bool autoSave) {
     for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
         auto portfolio = portfolioMgr.getPortfolio(i);
         std::string question = "save portfolio " + portfolio.getName();
@@ -39,8 +39,8 @@ void portfolio::generatePortfolioFiles(const portfolio::PortfolioManager& portfo
 }
 
 void portfolio::generatePortfolioFiles(const portfolio::Portfolio& portfolio,
-                            const std::string& directory,
-                            const bool autoSave) {
+                                       const std::string& directory,
+                                       const bool autoSave) {
     if (autoSave || getUserYesNo("save portfolio " + portfolio.getName())) {
         portfolio::savePortfolio(portfolio, directory + portfolio.getName());
     }
@@ -81,6 +81,45 @@ void portfolio::savePortfolio(const Portfolio& portfolio, const std::string& fil
         std::cout << "Unable to open file for saving portfolio." << std::endl;
     }
     file.close();
+}
+
+bool portfolio::savePortfolioDb(const std::string& fileName,
+                                const std::string& tableName,
+                                const Portfolio& portfolio,
+                                const bool is_new,
+                                const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    bool retVal = true;
+    auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fileName, tableName);
+    if (is_new) {
+        retVal &= dbInterface.createTable();
+    }
+    if (!retVal) return false;
+    for (const auto& investment : portfolio.getInvestments()) {
+        retVal &= dbInterface.saveInvestment(investment);
+    }
+    return retVal;
+}
+
+bool portfolio::updatePortfoliosDb(const PortfolioManager& portfolioMgr,
+                                   const std::string& directory,
+                                   const std::string& tableName,
+                                   const bool autoSave,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy) {
+    bool retVal = true;
+    auto filesInDir = getFileNames(directory);
+    for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
+        auto portfolio = portfolioMgr.getPortfolio(i);
+        std::string question = "save portfolio " + portfolio.getName();
+        if (autoSave || getUserYesNo(question)) {
+            std::string fileName = directory + portfolio.getName() + ".db";
+            bool isNew = true;
+            if (std::find(filesInDir.begin(), filesInDir.end(), fileName) != filesInDir.end()) {
+                isNew = false;
+            }
+            retVal &= portfolio::savePortfolioDb(fileName, tableName, portfolio, isNew, dbStrategy);
+        }
+    }
+    return retVal;
 }
 
 bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename) {
@@ -145,7 +184,7 @@ bool portfolio::getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
 
 bool portfolio::loadPortfolioDb(Portfolio& portfolio,
                                 const std::string& filename,
-                                const std::string tableName,
+                                const std::string& tableName,
                                 const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
     bool retVal;
     auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, filename, tableName);

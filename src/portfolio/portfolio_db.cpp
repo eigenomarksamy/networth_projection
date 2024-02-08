@@ -19,7 +19,8 @@ bool portfolio::DatabaseInterfaceImplementation::createTable() {
 }
 
 bool portfolio::DatabaseInterfaceImplementation::saveInvestment(const Investment& investment) {
-    db_manager::values_t values {investment.getName(), investment.getTicker(),
+    db_manager::values_t values {"'" + investment.getName() + "'",
+                                 "'" + investment.getTicker() + "'",
                                  std::to_string(investment.getPurchasePrice()),
                                  std::to_string(investment.getQuantity())};
     if (m_dbOrm.save(m_dbPath, m_tableName, m_columns, values))

@@ -42,15 +42,17 @@ void generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
 
 void savePortfolio(const Portfolio& portfolio, const std::string& filename);
 
-void savePortfolioDb(const Portfolio& portfolio, const std::string& filename);
+bool savePortfolioDb(const std::string& fileName,
+                     const std::string& tableName,
+                     const Portfolio& portfolio,
+                     const bool is_new,
+                     const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
 
-void generatePortfolioDb(const portfolio::Portfolio& portfolioMgr,
-                         const std::string& directory,
-                         const bool autoSave);
-
-void generatePortfolioDb(const portfolio::PortfolioManager& portfolioMgr,
-                         const std::string& directory,
-                         const bool autoSave);
+bool updatePortfoliosDb(const PortfolioManager& portfolioMgr,
+                        const std::string& directory,
+                        const std::string& tableName,
+                        const bool autoSave,
+                        const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy);
 
 bool loadPortfolio(Portfolio& portfolio, const std::string& filename);
 
@@ -65,7 +67,7 @@ bool getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
 
 bool loadPortfolioDb(Portfolio& portfolio,
                      const std::string& filename,
-                     const std::string tableName,
+                     const std::string& tableName,
                      const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
 
 bool getPortfolioFromDb(portfolio::Portfolio& portfolio,
