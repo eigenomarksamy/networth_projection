@@ -15,7 +15,7 @@ struct PortfolioMgrCfg {
     bool auto_log = true;
     std::string portfolio_src = "db";
     std::string gen_dir = "gen/portfolios/";
-    std::string db_dir = "db/portfolios/";
+    std::string db_dir = "db/test/portfolios/";
     std::vector<std::string> portfolio_list;
 };
 
