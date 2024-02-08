@@ -34,10 +34,6 @@ static void executePortfolioMgr() {
     std::string tableName = "investments";
     auto dbStrategy = std::make_shared<db_manager::SQLiteStrategy>();
     portfolio::PortfolioManager portfolio_manager;
-    if (portfolioInput.auto_log) {
-        auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
-        portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
-    }
     bool valid = false;
     if (portfolioInput.portfolio_src == "text"
         && getPortfolioFromFiles(portfolio_manager,
@@ -56,6 +52,10 @@ static void executePortfolioMgr() {
             valid = true;
     }
     if (valid) {
+        if (portfolioInput.auto_log) {
+            auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
+            portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
+        }
         portfolio::executeMultiPortfolioManagement(portfolio_manager);
         if (portfolioInput.portfolio_src == "text") {
             generatePortfolioOverview(portfolio_manager,
@@ -64,7 +64,8 @@ static void executePortfolioMgr() {
                                       portfolioInput.auto_save);
         }
         else if (portfolioInput.portfolio_src == "db") {
-            // auto db_interface = portfolio::setUpDb(portfolioInput.db_dir);
+            valid = portfolio::updatePortfoliosDb(portfolio_manager, portfolioInput.db_dir,
+                                                  tableName, portfolioInput.auto_save, dbStrategy);
         }
     }
 }

@@ -15,7 +15,7 @@ private:
     std::string m_name;
     std::vector<Investment> m_investments;
     std::shared_ptr<PortfolioLogger> m_logger;
-    bool m_setLogger;
+    bool m_setLogger = false;
 
 public:
     Portfolio() {}

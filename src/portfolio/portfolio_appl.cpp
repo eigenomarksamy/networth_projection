@@ -81,6 +81,7 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
                     continue;
                 }
                 Investment newInvestment(name, ticker, purchasePrice, quantity);
+                std::cout << "Validation Complete!\n";
                 if (portfolio.addInvestment(newInvestment)) {
                     std::cout << "Investment of '" << newInvestment.getTicker()
                               << "' was added successfully.\n";
@@ -126,6 +127,7 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
                 if (!validateInputType(newValue)) {
                     continue;
                 }
+                std::cout << "Validation Complete!\n";
                 if(portfolio.updatedInvestmentValue(ticker, newValue)) {
                     std::cout << "Investment value was updated.\n";
                 }
@@ -136,14 +138,15 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
             }
             case 6: {
                 std::string ticker;
-                uint32_t newQantity;
+                uint32_t newQuantity;
                 std::cout << "Enter the ticker of the investment to be updated: ";
                 std::cin >> ticker;
                 std::cout << "Enter the new quantity: ";
-                if (!validateInputType(newQantity)) {
+                if (!validateInputType(newQuantity)) {
                     continue;
                 }
-                if(portfolio.updateInvestmentQuantity(ticker, newQantity)) {
+                std::cout << "Validation Complete!\n";
+                if(portfolio.updateInvestmentQuantity(ticker, newQuantity)) {
                     std::cout << "Investment value was updated.\n";
                 }
                 else {

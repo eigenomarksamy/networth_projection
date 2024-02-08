@@ -89,13 +89,35 @@ bool portfolio::savePortfolioDb(const std::string& fileName,
                                 const bool is_new,
                                 const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
     bool retVal = true;
+    std::vector<Investment> existingInvestments;
+    std::vector<std::string> existingInvestmentsTickers;
     auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fileName, tableName);
     if (is_new) {
         retVal &= dbInterface.createTable();
+        if (!retVal) return false;
+        for (const auto& investment : portfolio.getInvestments()) {
+            retVal &= dbInterface.saveInvestment(investment);
+        }
     }
-    if (!retVal) return false;
-    for (const auto& investment : portfolio.getInvestments()) {
-        retVal &= dbInterface.saveInvestment(investment);
+    else {
+        retVal &= dbInterface.listInvestments(existingInvestments);
+        for (const auto& investment : existingInvestments) {
+            existingInvestmentsTickers.push_back(investment.getTicker());
+        }
+        std::cout << std::endl;
+        for (const auto& investment : portfolio.getInvestments()) {
+            if (std::find(existingInvestmentsTickers.begin(),
+                        existingInvestmentsTickers.end(),
+                        investment.getTicker()) != existingInvestmentsTickers.end()) {
+                retVal &= dbInterface.updateInvestmentPrice(investment.getTicker(),
+                                                            investment.getPurchasePrice());
+                retVal &= dbInterface.updateInvestmentQuantity(investment.getTicker(),
+                                                            investment.getQuantity());
+            }
+            else {
+                retVal &= dbInterface.saveInvestment(investment);
+            }
+        }
     }
     return retVal;
 }
@@ -111,12 +133,13 @@ bool portfolio::updatePortfoliosDb(const PortfolioManager& portfolioMgr,
         auto portfolio = portfolioMgr.getPortfolio(i);
         std::string question = "save portfolio " + portfolio.getName();
         if (autoSave || getUserYesNo(question)) {
-            std::string fileName = directory + portfolio.getName() + ".db";
+            std::string fileName = portfolio.getName() + ".db";
+            std::string fullFileName = directory + fileName;
             bool isNew = true;
             if (std::find(filesInDir.begin(), filesInDir.end(), fileName) != filesInDir.end()) {
                 isNew = false;
             }
-            retVal &= portfolio::savePortfolioDb(fileName, tableName, portfolio, isNew, dbStrategy);
+            retVal &= portfolio::savePortfolioDb(fullFileName, tableName, portfolio, isNew, dbStrategy);
         }
     }
     return retVal;

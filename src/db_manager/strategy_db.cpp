@@ -137,7 +137,7 @@ bool db_manager::DatabaseORM::save(const std::string& db,
     std::string query = getSaveQuery(table, column_str, value_str);
     auto ret = operate(db, query, nullptr);
     if (!ret) {
-        std::cerr << "Save\n";
+        std::cerr << "Save Error! Query: " << query << std::endl;
     }
     return ret;
 }
