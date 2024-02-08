@@ -27,8 +27,8 @@ std::vector<std::string> portfolio::DataAdapter::generatePortfolioLines(const po
 }
 
 void portfolio::generatePortfolioFiles(const portfolio::PortfolioManager& portfolioMgr,
-                            const std::string& directory,
-                            const bool autoSave) {
+                                       const std::string& directory,
+                                       const bool autoSave) {
     for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
         auto portfolio = portfolioMgr.getPortfolio(i);
         std::string question = "save portfolio " + portfolio.getName();
@@ -39,17 +39,17 @@ void portfolio::generatePortfolioFiles(const portfolio::PortfolioManager& portfo
 }
 
 void portfolio::generatePortfolioFiles(const portfolio::Portfolio& portfolio,
-                            const std::string& directory,
-                            const bool autoSave) {
+                                       const std::string& directory,
+                                       const bool autoSave) {
     if (autoSave || getUserYesNo("save portfolio " + portfolio.getName())) {
         portfolio::savePortfolio(portfolio, directory + portfolio.getName());
     }
 }
 
 void portfolio::generatePortfolioOverview(const portfolio::Portfolio& portfolio,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave) {
+                                          const std::string& directory,
+                                          const std::string& outputFile,
+                                          const bool autoSave) {
     auto portfolioTxt = portfolio::DataAdapter::generatePortfolioLines(portfolio);
     FileGenerator file(outputFile);
     file.generateTxt(portfolioTxt);
@@ -57,9 +57,9 @@ void portfolio::generatePortfolioOverview(const portfolio::Portfolio& portfolio,
 }
 
 void portfolio::generatePortfolioOverview(const portfolio::PortfolioManager& portfolioMgr,
-                               const std::string& directory,
-                               const std::string& outputFile,
-                               const bool autoSave) {
+                                          const std::string& directory,
+                                          const std::string& outputFile,
+                                          const bool autoSave) {
     auto portfolioTxt = portfolio::DataAdapter::generatePortfolioLines(portfolioMgr);
     FileGenerator file(outputFile);
     file.generateTxt(portfolioTxt);
@@ -81,4 +81,185 @@ void portfolio::savePortfolio(const Portfolio& portfolio, const std::string& fil
         std::cout << "Unable to open file for saving portfolio." << std::endl;
     }
     file.close();
+}
+
+bool portfolio::savePortfolioDb(const std::string& fileName,
+                                const std::string& tableName,
+                                const Portfolio& portfolio,
+                                const bool is_new,
+                                const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    bool retVal = true;
+    std::vector<Investment> existingInvestments;
+    std::vector<std::string> existingInvestmentsTickers;
+    auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fileName, tableName);
+    if (is_new) {
+        retVal &= dbInterface.createTable();
+        if (!retVal) return false;
+        for (const auto& investment : portfolio.getInvestments()) {
+            retVal &= dbInterface.saveInvestment(investment);
+        }
+    }
+    else {
+        retVal &= dbInterface.listInvestments(existingInvestments);
+        for (const auto& investment : existingInvestments) {
+            existingInvestmentsTickers.push_back(investment.getTicker());
+        }
+        std::cout << std::endl;
+        for (const auto& investment : portfolio.getInvestments()) {
+            if (std::find(existingInvestmentsTickers.begin(),
+                        existingInvestmentsTickers.end(),
+                        investment.getTicker()) != existingInvestmentsTickers.end()) {
+                retVal &= dbInterface.updateInvestmentPrice(investment.getTicker(),
+                                                            investment.getPurchasePrice());
+                retVal &= dbInterface.updateInvestmentQuantity(investment.getTicker(),
+                                                            investment.getQuantity());
+            }
+            else {
+                retVal &= dbInterface.saveInvestment(investment);
+            }
+        }
+    }
+    return retVal;
+}
+
+bool portfolio::updatePortfoliosDb(const PortfolioManager& portfolioMgr,
+                                   const std::string& directory,
+                                   const std::string& tableName,
+                                   const bool autoSave,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy) {
+    bool retVal = true;
+    auto filesInDir = getFileNames(directory);
+    for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
+        auto portfolio = portfolioMgr.getPortfolio(i);
+        std::string question = "save portfolio " + portfolio.getName();
+        if (autoSave || getUserYesNo(question)) {
+            std::string fileName = portfolio.getName() + ".db";
+            std::string fullFileName = directory + fileName;
+            bool isNew = true;
+            if (std::find(filesInDir.begin(), filesInDir.end(), fileName) != filesInDir.end()) {
+                isNew = false;
+            }
+            retVal &= portfolio::savePortfolioDb(fullFileName, tableName, portfolio, isNew, dbStrategy);
+        }
+    }
+    return retVal;
+}
+
+bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename) {
+    bool status = true;
+    std::ifstream file(filename);
+    portfolio.clearInvestments();
+    if (file.is_open()) {
+        std::string name, ticker, line;
+        double_t purchasePrice;
+        uint32_t quantity;
+        std::getline(file, name);
+        portfolio.setName(name);
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::getline(iss, name, ',');
+            std::getline(iss, ticker, ',');
+            iss >> purchasePrice;
+            iss.ignore();
+            iss >> quantity;
+            Investment investment(name, ticker, purchasePrice, quantity);
+            portfolio.addInvestment(investment);
+        }
+        std::cout << "Portfolio loaded from " << filename << std::endl;
+    }
+    else {
+        status = false;
+        std::cout << "Unable to open file for load portfolio.\n";
+    }
+    file.close();
+    return status;
+}
+
+bool portfolio::getPortfolioFromFiles(portfolio::Portfolio& portfolio,
+                           const std::string& name,
+                           const std::string& directory) {
+    return portfolio::loadPortfolio(portfolio, directory + name);
+}
+
+bool portfolio::getPortfolioFromFiles(portfolio::PortfolioManager& portfolioMgr,
+                           const bool load_all_portfolios,
+                           const std::vector<std::string>& list_portfolios,
+                           const std::string& directory) {
+    bool status = true;
+    std::string directoryPath = directory;
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else
+        names = list_portfolios;
+    for (const auto& name : names) {
+        portfolio::Portfolio portfolio;
+        if (getPortfolioFromFiles(portfolio, name, directory)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
+        }
+        else {
+            status = false;
+        }
+    }
+    return status;
+}
+
+bool portfolio::loadPortfolioDb(Portfolio& portfolio,
+                                const std::string& filename,
+                                const std::string& tableName,
+                                const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    bool retVal;
+    auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, filename, tableName);
+    std::vector<Investment> investments;
+    retVal = dbInterface.listInvestments(investments);
+    if (retVal && !investments.empty()) {
+        portfolio.clearInvestments();
+        portfolio.addInvestments(investments);
+    }
+    return retVal;
+}
+
+bool portfolio::getPortfolioFromDb(portfolio::Portfolio& portfolio,
+                                   const std::string& name,
+                                   const std::string& directory,
+                                   const std::string& tableName,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    if (portfolio::loadPortfolioDb(portfolio, directory + name, tableName, dbStrategy)) {
+        auto pos = name.find(".");
+        auto act_name = name.substr(0, pos);
+        portfolio.setName(act_name);
+        return true;
+    }
+    return false;
+}
+
+bool portfolio::getPortfolioFromDb(portfolio::PortfolioManager& portfolioMgr,
+                                   const bool load_all_portfolios,
+                                   const std::vector<std::string>& list_portfolios,
+                                   const std::string& directory,
+                                   const std::string& tableName,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    bool status = true;
+    std::string directoryPath = directory;
+    std::vector<std::string> names;
+    if (load_all_portfolios)
+        names = getFileNames(directoryPath);
+    else {
+        for (const auto& lp : list_portfolios) {
+            names.push_back(lp + ".db");
+        }
+    }
+    for (const auto& name : names) {
+        portfolio::Portfolio portfolio;
+        dbStrategy->clearResults();
+        if (getPortfolioFromDb(portfolio, name, directory, tableName, dbStrategy)) {
+            portfolioMgr.addPortfolio(portfolio);
+            status &= true;
+        }
+        else {
+            status = false;
+        }
+    }
+    return status;
 }

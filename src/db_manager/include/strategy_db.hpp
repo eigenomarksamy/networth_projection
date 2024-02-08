@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 #include <sqlite3.h>
 #include "utils.hpp"
 
@@ -32,6 +33,7 @@ public:
     virtual void disconnect() = 0;
     virtual bool executeQuery(const std::string& query) = 0;
     virtual QueryResult_t getResults() const = 0;
+    virtual void clearResults() = 0;
 };
 
 class SQLiteStrategy : public DatabaseStrategy {
@@ -45,6 +47,14 @@ public:
     bool executeQuery(const std::string& query) override;
     QueryResult_t getResults() const override {
         return m_queryResults;
+    }
+    void clearResults() override {
+        m_queryResults.clear();
+    }
+    ~SQLiteStrategy() {
+        if (m_db) {
+            sqlite3_close(m_db);
+        }
     }
 
 private:
@@ -63,7 +73,7 @@ private:
 
 class DatabaseORM {
 private:
-    DatabaseStrategy* m_strategy;
+    std::shared_ptr<DatabaseStrategy> m_strategy;
 
     static std::string convertValues2String(const values_t& values) {
         return convertVectorToString(values);
@@ -107,9 +117,16 @@ private:
         return "SELECT " + outputName + " FROM " + table
                         + " WHERE " + keyName + " = " + keyValue;
     }
+    static std::string getListQuery(const std::string& table,
+                                    const std::string& keyName) {
+        return "SELECT " + keyName + " FROM " + table;
+    }
+    static std::string getListQuery(const std::string& table) {
+        return "SELECT * FROM " + table;
+    }
 
 public:
-    DatabaseORM(DatabaseStrategy* strategy) : m_strategy(strategy) {}
+    DatabaseORM(std::shared_ptr<DatabaseStrategy> strategy) : m_strategy(strategy) {}
 
     bool operate(const std::string& db,
                  const std::string& query,
@@ -118,6 +135,13 @@ public:
     bool extractResults(const DatabaseStrategy::QueryResult_t& qResults, 
                         const std::string& outputName,
                         std::string& outputValue) const;
+
+    bool extractResults(const DatabaseStrategy::QueryResult_t& qResults,
+                        const std::string& outputName,
+                        std::vector<std::string>& outputValues) const;
+
+    bool extractResults(const DatabaseStrategy::QueryResult_t& qResults,
+                        std::vector<std::unordered_map<std::string, std::string>>& outputValues) const;
 
     bool createTable(const std::string& db,
                      const std::string& table,
@@ -147,9 +171,16 @@ public:
              const std::string& outputName,
              std::string& outputValue) const;
 
-    ~DatabaseORM() {
-        delete m_strategy;
-    }
+    bool list(const std::string& db,
+              const std::string& table,
+              const std::string& keyName,
+              std::vector<std::string>& outputList) const;
+
+    bool list(const std::string& db,
+              const std::string& table,
+              std::vector<std::unordered_map<std::string, std::string>>& outputMap) const;
+
+    ~DatabaseORM() { }
 };
 
 } // namespace db_manager

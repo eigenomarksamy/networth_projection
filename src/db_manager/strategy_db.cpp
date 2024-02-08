@@ -48,9 +48,10 @@ uint16_t db_manager::DatabaseORM::getColumnIdxFromName(const columns_t& columns,
 bool db_manager::DatabaseORM::operate(const std::string& db,
                                       const std::string& query,
                                       DatabaseStrategy::QueryResult_t* result) const {
-    bool ret = m_strategy->connect(db);
+    bool ret = m_strategy.get()->connect(db);
     if (!ret) {
         std::cerr << "Error connecting\n";
+        m_strategy->disconnect();
         return false;
     }
     ret = m_strategy->executeQuery(query);
@@ -65,6 +66,7 @@ bool db_manager::DatabaseORM::operate(const std::string& db,
     m_strategy->disconnect();
     return true;
 }
+
 bool db_manager::DatabaseORM::extractResults(const DatabaseStrategy::QueryResult_t& qResults,
                                              const std::string& outputName,
                                              std::string& outputValue) const {
@@ -79,6 +81,36 @@ bool db_manager::DatabaseORM::extractResults(const DatabaseStrategy::QueryResult
         }
         else {
             outputValue = it->second;
+        }
+    }
+    return true;
+}
+
+bool db_manager::DatabaseORM::extractResults(const DatabaseStrategy::QueryResult_t& qResults,
+                                             const std::string& outputName,
+                                             std::vector<std::string>& outputValues) const {
+    if (qResults.empty()) {
+        return false;
+    }
+    else {
+        for (const auto& qR : qResults) {
+            auto it = qR.find(outputName);
+            if (it != qR.end()) {
+                outputValues.push_back(it->second);
+            }
+        }
+    }
+    return true;
+}
+
+bool db_manager::DatabaseORM::extractResults(const DatabaseStrategy::QueryResult_t& qResults,
+                        std::vector<std::unordered_map<std::string, std::string>>& outputValues) const {
+    if (qResults.empty()) {
+        return false;
+    }
+    else {
+        for (const auto& qR : qResults) {
+            outputValues.push_back(qR);
         }
     }
     return true;
@@ -105,7 +137,7 @@ bool db_manager::DatabaseORM::save(const std::string& db,
     std::string query = getSaveQuery(table, column_str, value_str);
     auto ret = operate(db, query, nullptr);
     if (!ret) {
-        std::cerr << "Save\n";
+        std::cerr << "Save Error! Query: " << query << std::endl;
     }
     return ret;
 }
@@ -153,6 +185,37 @@ bool db_manager::DatabaseORM::get(const std::string& db,
         if (!ret) {
             std::cerr << "Extract\n";
         }
+    }
+    return ret;
+}
+
+bool db_manager::DatabaseORM::list(const std::string& db,
+                                   const std::string& table,
+                                   const std::string& keyName,
+                                   std::vector<std::string>& outputList) const {
+    std::string query = getListQuery(table, keyName);
+    DatabaseStrategy::QueryResult_t qResult;
+    auto ret = operate(db, query, &qResult);
+    if (!ret) {
+        std::cerr << "List\n";
+    }
+    else {
+        ret = extractResults(qResult, keyName, outputList);
+    }
+    return ret;
+}
+
+bool db_manager::DatabaseORM::list(const std::string& db,
+                                   const std::string& table,
+                                   std::vector<std::unordered_map<std::string, std::string>>& outputMap) const {
+    std::string query(table);
+    DatabaseStrategy::QueryResult_t qResult;
+    auto ret = operate(db, query, &qResult);
+    if (!ret) {
+        std::cerr << "List\n";
+    }
+    else {
+        ret = extractResults(qResult, outputMap);
     }
     return ret;
 }
