@@ -7,7 +7,7 @@
 
 class FileGenerator {
 
-    bool checkFileExtension(std::string expExt);
+    bool checkFileExtension(std::string expExt, uint8_t extSize = 3);
 
     std::string m_fileName;
     std::ofstream m_file;

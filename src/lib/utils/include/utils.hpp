@@ -111,4 +111,7 @@ uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target);
 void splitStr(const std::string& str, const char separator,
               std::vector<std::string>& strings);
 
+std::string convertVectorToString(const std::vector<std::string>& vec,
+                                  const std::string& separator=", ");
+
 #endif /* UTILS_HPP_ */

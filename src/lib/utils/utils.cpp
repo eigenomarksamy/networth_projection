@@ -50,3 +50,13 @@ void splitStr(const std::string& str, const char separator,
         }
     }
 }
+
+std::string convertVectorToString(const std::vector<std::string>& vec,
+                                  const std::string& separator) {
+    std::string str = "";
+    for (uint16_t v = 0; v < vec.size() - 1; ++v) {
+        str += vec[v] + separator;
+    }
+    str += vec[vec.size() - 1];
+    return str;
+}

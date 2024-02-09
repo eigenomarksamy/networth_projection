@@ -2,6 +2,7 @@ set(SOURCES
     portfolio.cpp
     portfolio_appl.cpp
     portfolio_file.cpp
+    portfolio_db.cpp
 )
 
 add_library(portfoliomanager STATIC ${SOURCES})
@@ -14,6 +15,7 @@ target_link_libraries(
     utils
     cmdio
     fileio
+    db_manager
 )
 
 install(TARGETS portfoliomanager
