@@ -60,3 +60,21 @@ std::string convertVectorToString(const std::vector<std::string>& vec,
     str += vec[vec.size() - 1];
     return str;
 }
+
+bool convertStrToBool(const std::string& str) {
+    return convertStrToBool(str, false);
+}
+
+bool convertStrToBool(const std::string& str, const bool defaultValue) {
+    std::string s;
+    for (auto& c : s) {
+        c = tolower(c);
+    }
+    if (s == "false") {
+        return false;
+    }
+    else if (s == "true") {
+        return true;
+    }
+    return defaultValue;
+}

@@ -95,6 +95,10 @@ T convertToNumeric(const std::string& str, const T& defaultValue) {
     return result;
 }
 
+bool convertStrToBool(const std::string& str);
+
+bool convertStrToBool(const std::string& str, const bool defaultValue);
+
 std::string getLocalDateTime(const char format[]);
 
 std::string getLocalDateTime();

@@ -5,3 +5,9 @@ generation:
   mortgage-calculator:
     output: gen/mortgage_out.csv
     input: gen/mortgage_in.txt
+portfolio-manager:
+  generation: gen/
+  database: gen/db/
+  logs: gen/logs/
+  text: gen/portfolios/
+  configuration: conf/input/defaults.yml

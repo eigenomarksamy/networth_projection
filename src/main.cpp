@@ -23,7 +23,7 @@
 static void executePortfolioMgr();
 static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& networth_projector_path_input,
-                              const std::string& mortgage_caculator_path_output,
+                              const std::string& mortgage_calculator_path_output,
                               const std::string& mortgage_calculator_path_input,
                               const InputDataNetworthProjector& confInputNetw,
                               const InputDataMortgageCalculator& confInputMrtg);
@@ -31,7 +31,6 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
 static void executePortfolioMgr() {
     portfolio::PortfolioMgrCfg portfolioInput;
     if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
-    std::string tableName = "investments";
     auto dbStrategy = std::make_shared<db_manager::SQLiteStrategy>();
     portfolio::PortfolioManager portfolio_manager;
     bool valid = false;
@@ -47,7 +46,7 @@ static void executePortfolioMgr() {
                                    portfolioInput.load_all_portfolios,
                                    portfolioInput.portfolio_list,
                                    portfolioInput.db_dir,
-                                   tableName,
+                                   portfolioInput.table_name,
                                    dbStrategy)) {
             valid = true;
     }
@@ -64,15 +63,18 @@ static void executePortfolioMgr() {
                                       portfolioInput.auto_save);
         }
         else if (portfolioInput.portfolio_src == "db") {
-            valid = portfolio::updatePortfoliosDb(portfolio_manager, portfolioInput.db_dir,
-                                                  tableName, portfolioInput.auto_save, dbStrategy);
+            valid = portfolio::updatePortfoliosDb(portfolio_manager,
+                                                  portfolioInput.db_dir,
+                                                  portfolioInput.table_name,
+                                                  portfolioInput.auto_save,
+                                                  dbStrategy);
         }
     }
 }
 
 static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& networth_projector_path_input,
-                              const std::string& mortgage_caculator_path_output,
+                              const std::string& mortgage_calculator_path_output,
                               const std::string& mortgage_calculator_path_input,
                               const InputDataNetworthProjector& confInputNetw,
                               const InputDataMortgageCalculator& confInputMrtg) {
@@ -86,7 +88,7 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
         executeStaticComputation(user_input,
                                 networth_projector_path_output,
                                 networth_projector_path_input,
-                                mortgage_caculator_path_output,
+                                mortgage_calculator_path_output,
                                 mortgage_calculator_path_input);
     }
 }
