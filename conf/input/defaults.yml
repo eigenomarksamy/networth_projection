@@ -1,0 +1,6 @@
+portfolio-manager:
+  table-name: investments
+  source: db                    #options: [db, text]
+  auto-save: true
+  auto-log: false
+  auto-load: false

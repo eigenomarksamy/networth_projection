@@ -14,6 +14,8 @@ PortfolioCfgInputSource setPortfolioInputSource();
 
 void setUpPortfolioManually(PortfolioMgrCfg& conf);
 
+void setUpPortfolioConfigurationFile(PortfolioMgrCfg& conf);
+
 bool setUpPortfolioCfg(PortfolioMgrCfg& conf);
 
 } // namespace portfolio

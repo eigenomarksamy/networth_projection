@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "utils.hpp"
+#include "conf_resolver.hpp"
 
 namespace portfolio {
 
@@ -16,8 +17,32 @@ struct PortfolioMgrCfg {
     std::string portfolio_src = "db";
     std::string gen_dir = "gen/portfolios/";
     std::string db_dir = "db/test/portfolios/";
+    std::string table_name = "investments";
     std::vector<std::string> portfolio_list;
 };
+
+struct PortfolioMgrYmlDirs {
+    std::shared_ptr<config_elm_t> generation;
+    std::shared_ptr<config_elm_t> database;
+    std::shared_ptr<config_elm_t> logs;
+    std::shared_ptr<config_elm_t> text;
+    std::shared_ptr<config_elm_t> configuration;
+};
+
+struct PortfolioMgrYmlVals {
+    std::shared_ptr<config_elm_t> auto_save;
+    std::shared_ptr<config_elm_t> auto_log;
+    std::shared_ptr<config_elm_t> auto_load;
+    std::shared_ptr<config_elm_t> source;
+    std::shared_ptr<config_elm_t> table_name;
+};
+
+bool resolveCfg(const std::string& confPath, PortfolioMgrYmlDirs& dirs);
+
+bool resolveCfg(const std::string& confPath, PortfolioMgrYmlVals& vals);
+
+void convertYmlData(PortfolioMgrCfg& inputs,
+                    const PortfolioMgrYmlDirs& dirs);
 
 enum class PortfolioCfgInputSource { NONE, DEFAULT, MANUAL_CMD, CONF_FILE, WEB_UI, APP_UI };
 
