@@ -3,8 +3,6 @@
 #include <sstream>
 #include <filesystem>
 #include "utils.hpp"
-#include "networth.hpp"
-#include "mortgage.hpp"
 #include "file_generator.hpp"
 #include "portfolio_file.hpp"
 #include "portfolio_appl.hpp"
@@ -14,19 +12,11 @@
 #include "kafka.hpp"
 #include "input_factory.hpp"
 #include "yml_prsr.hpp"
-#include "activation.hpp"
 #include "conf_resolver.hpp"
-#include "appl_conf_types.hpp"
 #include "logger.hpp"
 #include "strategy_db.hpp"
 
 static void executePortfolioMgr(const std::string& confFile);
-static void executeStaticAppl(const std::string& networth_projector_path_output,
-                              const std::string& networth_projector_path_input,
-                              const std::string& mortgage_calculator_path_output,
-                              const std::string& mortgage_calculator_path_input,
-                              const InputDataNetworthProjector& confInputNetw,
-                              const InputDataMortgageCalculator& confInputMrtg);
 
 static void executePortfolioMgr(const std::string& confFile) {
     portfolio::PortfolioMgrCfg portfolioInput;
@@ -69,27 +59,6 @@ static void executePortfolioMgr(const std::string& confFile) {
                                                   portfolioInput.auto_save,
                                                   dbStrategy);
         }
-    }
-}
-
-static void executeStaticAppl(const std::string& networth_projector_path_output,
-                              const std::string& networth_projector_path_input,
-                              const std::string& mortgage_calculator_path_output,
-                              const std::string& mortgage_calculator_path_input,
-                              const InputDataNetworthProjector& confInputNetw,
-                              const InputDataMortgageCalculator& confInputMrtg) {
-    InputDataContainer user_input;
-    InputDataContainer confInput;
-    confInput.mortgage_calculator = confInputMrtg;
-    confInput.networth_projector = confInputNetw;
-    getProgramSelector(user_input, confInput);
-    if (user_input.specifier == InputDataContainer::Specifier::NETWORTH_INPUT
-        || user_input.specifier == InputDataContainer::Specifier::MORTGAGE_INPUT) {
-        executeStaticComputation(user_input,
-                                networth_projector_path_output,
-                                networth_projector_path_input,
-                                mortgage_calculator_path_output,
-                                mortgage_calculator_path_input);
     }
 }
 

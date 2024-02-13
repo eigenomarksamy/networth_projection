@@ -1,6 +1,5 @@
 set(SOURCES
     conf_resolver.cpp
-    appl_type_converter.cpp
 )
 
 add_library(commonio STATIC ${SOURCES})
@@ -12,8 +11,6 @@ target_link_libraries(
     PRIVATE
     utils
     fileio
-    networthprojector
-    mortgagecalculator
 )
 
 install(TARGETS commonio

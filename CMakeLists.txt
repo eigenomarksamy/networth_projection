@@ -10,10 +10,7 @@ include_directories(lib/include)
 
 add_subdirectory(src/lib)
 add_subdirectory(src/adapter)
-add_subdirectory(src/interfaces)
 add_subdirectory(src/db_manager)
-add_subdirectory(src/networth)
-add_subdirectory(src/mortgage)
 add_subdirectory(src/portfolio)
 add_subdirectory(src/io)
 
@@ -24,12 +21,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     utils
     adapter
     db_manager
-    interfaces
     fileio
     cmdio
     commonio
-    networthprojector
-    mortgagecalculator
     portfoliomanager
     kafka
 )
