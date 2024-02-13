@@ -14,9 +14,9 @@ PortfolioCfgInputSource setPortfolioInputSource();
 
 void setUpPortfolioManually(PortfolioMgrCfg& conf);
 
-void setUpPortfolioConfigurationFile(PortfolioMgrCfg& conf);
+void setUpPortfolioConfigurationFile(PortfolioMgrCfg& conf, const std::string& dirFile);
 
-bool setUpPortfolioCfg(PortfolioMgrCfg& conf);
+bool setUpPortfolioCfg(PortfolioMgrCfg& conf, const std::string& dirFile);
 
 } // namespace portfolio
 

@@ -276,15 +276,14 @@ void portfolio::setUpPortfolioManually(PortfolioMgrCfg& conf) {
                          std::string("auto log"));
 }
 
-void portfolio::setUpPortfolioConfigurationFile(PortfolioMgrCfg& conf) {
-    std::string dir_file = "conf/directories.yml";
+void portfolio::setUpPortfolioConfigurationFile(PortfolioMgrCfg& conf, const std::string& dirFile) {
     PortfolioMgrYmlDirs yml_cfg_dirs;
-    if (resolveCfg(dir_file, yml_cfg_dirs)) {
+    if (resolveCfg(dirFile, yml_cfg_dirs)) {
         convertYmlData(conf, yml_cfg_dirs);
     }
 }
 
-bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf) {
+bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf, const std::string& dirFile) {
     auto selection = setPortfolioInputSource();
     if (PortfolioCfgInputSource::MANUAL_CMD == selection) {
         setUpPortfolioManually(conf);
@@ -296,7 +295,7 @@ bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf) {
         std::cout << "Feature not implemented yet!" << std::endl;
     }
     else if (PortfolioCfgInputSource::CONF_FILE == selection) {
-        setUpPortfolioConfigurationFile(conf);
+        setUpPortfolioConfigurationFile(conf, dirFile);
     }
     else if (PortfolioCfgInputSource::NONE == selection) {
         std::cout << "Failed to set up!" << std::endl;
