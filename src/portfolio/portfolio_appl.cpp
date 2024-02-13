@@ -80,7 +80,7 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
                 if (!validateInputType(quantity)) {
                     continue;
                 }
-                Investment newInvestment(name, ticker, purchasePrice, quantity);
+                Investment newInvestment(name, ticker, purchasePrice, purchasePrice, quantity);
                 std::cout << "Validation Complete!\n";
                 if (portfolio.addInvestment(newInvestment)) {
                     std::cout << "Investment of '" << newInvestment.getTicker()
