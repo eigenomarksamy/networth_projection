@@ -20,7 +20,7 @@
 #include "logger.hpp"
 #include "strategy_db.hpp"
 
-static void executePortfolioMgr();
+static void executePortfolioMgr(const std::string& confFile);
 static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& networth_projector_path_input,
                               const std::string& mortgage_calculator_path_output,
@@ -28,9 +28,9 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const InputDataNetworthProjector& confInputNetw,
                               const InputDataMortgageCalculator& confInputMrtg);
 
-static void executePortfolioMgr() {
+static void executePortfolioMgr(const std::string& confFile) {
     portfolio::PortfolioMgrCfg portfolioInput;
-    if (!portfolio::setUpPortfolioCfg(portfolioInput)) return;
+    if (!portfolio::setUpPortfolioCfg(portfolioInput, confFile)) return;
     auto dbStrategy = std::make_shared<db_manager::SQLiteStrategy>();
     portfolio::PortfolioManager portfolio_manager;
     bool valid = false;
@@ -122,7 +122,7 @@ int main() {
                           input_data_nw_from_yml, input_data_mortg_from_yml);
     }
     if (getUserYesNo("portfolio manager mode")) {
-        executePortfolioMgr();
+        executePortfolioMgr(dir_conf_file);
     }
     return 0;
 }

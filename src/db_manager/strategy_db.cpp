@@ -123,7 +123,11 @@ bool db_manager::DatabaseORM::createTable(const std::string& db,
     std::string query = getCreateTableQuery(table, columnDefinitions_str);
     auto ret = operate(db, query, nullptr);
     if (!ret) {
-        std::cerr << "Create Table\n";
+        std::cerr << "Error: Create Table"
+                  << "\n\tDB: " << db
+                  << "\n\tTable: " << table
+                  << "\n\tQuery: " << query
+                  << std::endl;
     }
     return ret;
 }
@@ -137,7 +141,11 @@ bool db_manager::DatabaseORM::save(const std::string& db,
     std::string query = getSaveQuery(table, column_str, value_str);
     auto ret = operate(db, query, nullptr);
     if (!ret) {
-        std::cerr << "Save Error! Query: " << query << std::endl;
+        std::cerr << "Error: Save"
+                  << "\n\tDB: " << db
+                  << "\n\tTable: " << table
+                  << "\n\tQuery: " << query
+                  << std::endl;
     }
     return ret;
 }
@@ -151,7 +159,11 @@ bool db_manager::DatabaseORM::update(const std::string& db,
     std::string query = getUpdateQuery(table, keyName, keyValue, column, value);
     auto ret = operate(db, query, nullptr);
     if (!ret) {
-        std::cerr << "Update\n";
+        std::cerr << "Error: Update"
+                  << "\n\tDB: " << db
+                  << "\n\tTable: " << table
+                  << "\n\tQuery: " << query
+                  << std::endl;
     }
     return ret;
 }
@@ -163,7 +175,11 @@ bool db_manager::DatabaseORM::remove(const std::string& db,
     std::string query = getRemoveQuery(table, keyName, keyValue);
     auto ret = operate(db, query, nullptr);
     if (!ret) {
-        std::cerr << "Remove\n";
+        std::cerr << "Error: Remove"
+                  << "\n\tDB: " << db
+                  << "\n\tTable: " << table
+                  << "\n\tQuery: " << query
+                  << std::endl;
     }
     return ret;
 }
@@ -178,12 +194,16 @@ bool db_manager::DatabaseORM::get(const std::string& db,
     DatabaseStrategy::QueryResult_t qResult;
     auto ret = operate(db, query, &qResult);
     if (!ret) {
-        std::cerr << "Get\n";
+        std::cerr << "Error: Get"
+                  << "\n\tDB: " << db
+                  << "\n\tTable: " << table
+                  << "\n\tQuery: " << query
+                  << std::endl;
     }
     else {
         ret = extractResults(qResult, outputName, outputValue);
         if (!ret) {
-            std::cerr << "Extract\n";
+            std::cerr << "For output " << outputName << ", no results found!\n";
         }
     }
     return ret;
@@ -197,10 +217,17 @@ bool db_manager::DatabaseORM::list(const std::string& db,
     DatabaseStrategy::QueryResult_t qResult;
     auto ret = operate(db, query, &qResult);
     if (!ret) {
-        std::cerr << "List\n";
+        std::cerr << "Error: List"
+                  << "\n\tDB: " << db
+                  << "\n\tTable: " << table
+                  << "\n\tQuery: " << query
+                  << std::endl;
     }
     else {
         ret = extractResults(qResult, keyName, outputList);
+        if (!ret) {
+            std::cerr << "For key " << keyName << ", no results found!\n";
+        }
     }
     return ret;
 }
@@ -212,10 +239,17 @@ bool db_manager::DatabaseORM::list(const std::string& db,
     DatabaseStrategy::QueryResult_t qResult;
     auto ret = operate(db, query, &qResult);
     if (!ret) {
-        std::cerr << "List\n";
+        std::cerr << "Error: List"
+                  << "\n\tDB: " << db
+                  << "\n\tTable: " << table
+                  << "\n\tQuery: " << query
+                  << std::endl;
     }
     else {
         ret = extractResults(qResult, outputMap);
+        if (!ret) {
+            std::cerr << "For list, no results found!\n";
+        }
     }
     return ret;
 }
