@@ -95,34 +95,6 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
 
 int main() {
     std::string dir_conf_file = "conf/directories.yml";
-    std::string networth_conf_file = "conf/input/networth.yml";
-    std::string mortgage_conf_file = "conf/input/mortgage.yml";
-    DirectoriesValues dirs;
-    NetworthValues nw_cfg_values;
-    MortgageValues mortg_cfg_values;
-    InputDataNetworthProjector input_data_nw_from_yml;
-    InputDataMortgageCalculator input_data_mortg_from_yml;
-    bool dirCfgRet = false;
-    if (resolveCfg(dir_conf_file, dirs)) {
-        dirCfgRet = true;
-    }
-    bool netwCfgRet = false;
-    if (resolveCfg(networth_conf_file, nw_cfg_values)) {
-        convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
-        netwCfgRet = true;
-    }
-    bool mortgCfgRet = false;
-    if (resolveCfg(mortgage_conf_file, mortg_cfg_values)) {
-        convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
-        mortgCfgRet = true;
-    }
-    if (doesUserWantStaticProgram()) {
-        executeStaticAppl(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
-                          dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-                          input_data_nw_from_yml, input_data_mortg_from_yml);
-    }
-    if (getUserYesNo("portfolio manager mode")) {
-        executePortfolioMgr(dir_conf_file);
-    }
+    executePortfolioMgr(dir_conf_file);
     return 0;
 }
