@@ -58,7 +58,7 @@ bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, dou
     bool retVal = false;
     for (auto& investment : m_investments) {
         if (investment.getTicker() == ticker) {
-            investment.setPurchasePrice(newValue);
+            investment.setCurrentPrice(newValue);
             retVal = true;
             break;
         }

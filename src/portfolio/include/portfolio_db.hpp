@@ -13,7 +13,8 @@ public:
     virtual bool createTable() = 0;
     virtual bool saveInvestment(const Investment& investment) = 0;
     virtual bool updateInvestmentQuantity(const std::string& ticker, const uint32_t quantity) = 0;
-    virtual bool updateInvestmentPrice(const std::string& ticker, const double_t price) = 0;
+    virtual bool updateInvestmentPurchasePrice(const std::string& ticker, const double_t price) = 0;
+    virtual bool updateInvestmentCurrentPrice(const std::string& ticker, const double_t price) = 0;
     virtual bool removeInvestment(const std::string& ticker) = 0;
     virtual bool getInvestment(const std::string& ticker, Investment& investment) = 0;
     virtual bool listInvestments(std::vector<Investment>& investments) = 0;
@@ -33,7 +34,8 @@ public:
     bool createTable() override;
     bool saveInvestment(const Investment& investment) override;
     bool updateInvestmentQuantity(const std::string& ticker, const uint32_t quantity) override;
-    bool updateInvestmentPrice(const std::string& ticker, const double_t price) override;
+    bool updateInvestmentPurchasePrice(const std::string& ticker, const double_t price) override;
+    bool updateInvestmentCurrentPrice(const std::string& ticker, const double_t price) override;
     bool removeInvestment(const std::string& ticker) override;
     bool getInvestment(const std::string& ticker, Investment& investment) override;
     bool listInvestments(std::vector<Investment>& investments) override;

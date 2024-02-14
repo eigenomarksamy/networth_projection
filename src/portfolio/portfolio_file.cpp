@@ -115,8 +115,12 @@ bool portfolio::savePortfolioDb(const std::string& fileName,
                                                                    investment.getQuantity());
                 }
                 if (existingInvestment.getPurchasePrice() != investment.getPurchasePrice()) {
-                    retVal &= dbInterface.updateInvestmentPrice(investment.getTicker(),
-                                                                investment.getPurchasePrice());
+                    retVal &= dbInterface.updateInvestmentPurchasePrice(investment.getTicker(),
+                                                                        investment.getPurchasePrice());
+                }
+                if (existingInvestment.getCurrentPrice() != investment.getCurrentPrice()) {
+                    retVal &= dbInterface.updateInvestmentCurrentPrice(investment.getTicker(),
+                                                                       investment.getCurrentPrice());
                 }
             }
             else {

@@ -34,7 +34,13 @@ bool portfolio::DatabaseInterfaceImplementation::updateInvestmentQuantity(const 
     return false;
 }
 
-bool portfolio::DatabaseInterfaceImplementation::updateInvestmentPrice(const std::string& ticker, const double_t price) {
+bool portfolio::DatabaseInterfaceImplementation::updateInvestmentPurchasePrice(const std::string& ticker, const double_t price) {
+    if (m_dbOrm.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "purchase_price", std::to_string(price)))
+        return true;
+    return false;
+}
+
+bool portfolio::DatabaseInterfaceImplementation::updateInvestmentCurrentPrice(const std::string& ticker, const double_t price) {
     if (m_dbOrm.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "purchase_price", std::to_string(price)))
         return true;
     return false;
