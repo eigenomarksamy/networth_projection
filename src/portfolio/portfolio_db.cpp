@@ -6,7 +6,7 @@ portfolio::DatabaseInterfaceImplementation::DatabaseInterfaceImplementation(
                                                 const std::string& tableName)
   : m_dbStrategy(db_strategy), m_dbPath(dbPath), m_tableName(tableName),
     m_dbOrm(db_manager::DatabaseORM(m_dbStrategy)) {
-    m_columns = {"name", "ticker", "purchase_price", "quantity"};
+    m_columns = {"name", "ticker", "purchase_price", "quantity", "current_price"};
 }
 
 bool portfolio::DatabaseInterfaceImplementation::createTable() {
@@ -15,6 +15,7 @@ bool portfolio::DatabaseInterfaceImplementation::createTable() {
     columnDefinitions.push_back(db_manager::columnDefinition_t{"ticker", "TEXT PRIMARY KEY"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"purchase_price", "REAL NOT NULL"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"quantity", "INTEGER NOT NULL"});
+    columnDefinitions.push_back(db_manager::columnDefinition_t{"current_price", "REAL NOT NULL DEFAULT 0.0"});
     return m_dbOrm.createTable(m_dbPath, m_tableName, columnDefinitions);
 }
 
@@ -22,7 +23,8 @@ bool portfolio::DatabaseInterfaceImplementation::saveInvestment(const Investment
     db_manager::values_t values {"'" + investment.getName() + "'",
                                  "'" + investment.getTicker() + "'",
                                  std::to_string(investment.getPurchasePrice()),
-                                 std::to_string(investment.getQuantity())};
+                                 std::to_string(investment.getQuantity()),
+                                 std::to_string(investment.getCurrentPrice())};
     if (m_dbOrm.save(m_dbPath, m_tableName, m_columns, values))
         return true;
     return false;
@@ -41,7 +43,7 @@ bool portfolio::DatabaseInterfaceImplementation::updateInvestmentPurchasePrice(c
 }
 
 bool portfolio::DatabaseInterfaceImplementation::updateInvestmentCurrentPrice(const std::string& ticker, const double_t price) {
-    if (m_dbOrm.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "purchase_price", std::to_string(price)))
+    if (m_dbOrm.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "current_price", std::to_string(price)))
         return true;
     return false;
 }
@@ -71,6 +73,10 @@ bool portfolio::DatabaseInterfaceImplementation::getInvestment(const std::string
         }
         else if ("name" == column && retFlag) {
             investment.setName(retVal);
+        }
+        else if ("current_price" == column && retFlag) {
+            auto retValD = std::stod(retVal);
+            investment.setCurrentPrice(retValD);
         }
     }
     if (retFlag)

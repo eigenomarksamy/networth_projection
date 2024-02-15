@@ -95,7 +95,8 @@ bool portfolio::savePortfolioDb(const std::string& fileName,
     if (is_new) {
         retVal &= dbInterface.createTable();
         if (!retVal) return false;
-        for (const auto& investment : portfolio.getInvestments()) {
+        auto cachedInvestments = portfolio.getInvestments();
+        for (const auto& investment : cachedInvestments) {
             retVal &= dbInterface.saveInvestment(investment);
         }
     }

@@ -49,7 +49,7 @@ void portfolio::Portfolio::clearInvestments() {
 double_t portfolio::Portfolio::calculateTotalValue() const {
     double_t totalValue = 0.0;
     for (const auto& investment : m_investments) {
-        totalValue += investment.getPurchasePrice() * investment.getQuantity();
+        totalValue += investment.getCurrentPrice() * investment.getQuantity();
     }
     return totalValue;
 }
