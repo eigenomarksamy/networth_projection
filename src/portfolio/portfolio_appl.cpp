@@ -48,7 +48,7 @@ static int16_t portfolio::selectPortfolio(const portfolio::PortfolioManager& por
 
 void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
     int32_t choice = 0;
-    while (choice != 7) {
+    while (choice != 8) {
         std::cout << "---------------------------" << std::endl;
         std::cout << "         MENU              " << std::endl;
         std::cout << "---------------------------" << std::endl;
@@ -56,10 +56,11 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
         std::cout << "2. Remove Investment" << std::endl;
         std::cout << "3. Display Portfolio" << std::endl;
         std::cout << "4. Calculate Total Value" << std::endl;
-        std::cout << "5. Update Investment Value" << std::endl;
-        std::cout << "6. Update Investment Quantity" << std::endl;
-        std::cout << "7. Return to portfolio menu" << std::endl;
-        std::cout << "Enter your choice (1-7): ";
+        std::cout << "5. Calculate Total Gain" << std::endl;
+        std::cout << "6. Update Investment Value" << std::endl;
+        std::cout << "7. Update Investment Quantity" << std::endl;
+        std::cout << "8. Return to portfolio menu" << std::endl;
+        std::cout << "Enter your choice (1-8): ";
         if (!validateInputType(choice)) {
             continue;
         }
@@ -120,6 +121,11 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
                 break;
             }
             case 5: {
+                auto totalGain = portfolio.calculateTotalGain();
+                std::cout << "Portfolio's total gain: " << totalGain << std::endl;
+                break;
+            }
+            case 6: {
                 std::string ticker;
                 double_t newValue;
                 std::cout << "Enter the ticker of the investment to be updated: ";
@@ -137,7 +143,7 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
                 }
                 break;
             }
-            case 6: {
+            case 7: {
                 std::string ticker;
                 uint32_t newQuantity;
                 std::cout << "Enter the ticker of the investment to be updated: ";
@@ -155,7 +161,7 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
                 }
                 break;
             }
-            case 7: {
+            case 8: {
                 std::cout << "Returning..\n";
                 break;
             }

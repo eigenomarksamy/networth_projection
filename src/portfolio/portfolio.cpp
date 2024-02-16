@@ -54,6 +54,14 @@ double_t portfolio::Portfolio::calculateTotalValue() const {
     return totalValue;
 }
 
+double_t portfolio::Portfolio::calculateTotalGain() const {
+    double_t totalGain = 0.0;
+    for (const auto& investment : m_investments) {
+        totalGain += (investment.getCurrentPrice() - investment.getPurchasePrice()) * investment.getQuantity();
+    }
+    return totalGain;
+}
+
 bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newValue) {
     bool retVal = false;
     for (auto& investment : m_investments) {
