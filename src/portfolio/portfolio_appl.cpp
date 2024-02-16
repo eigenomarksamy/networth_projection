@@ -20,7 +20,8 @@ void portfolio::displayPortfolio(const Portfolio& obj) {
         std::cout << "Name: " << investment.getName() << ", Ticker: "
                   << investment.getTicker() << ", Quantity: "
                   << investment.getQuantity() << ", Purchase price: "
-                  << investment.getPurchasePrice()
+                  << investment.getPurchasePrice() << ", Current price: "
+                  << investment.getCurrentPrice()
                   << std::endl;
     }
 }
