@@ -35,6 +35,7 @@ public:
     bool updatedInvestmentValue(const std::string& ticker, double_t newValue);
     bool updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant);
     double_t calculateTotalValue() const;
+    double_t calculateTotalGain() const;
     void clearInvestments();
     void setName(const std::string& name) { m_name = name; }
     std::string getName() const { return m_name; }

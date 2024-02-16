@@ -95,7 +95,8 @@ bool portfolio::savePortfolioDb(const std::string& fileName,
     if (is_new) {
         retVal &= dbInterface.createTable();
         if (!retVal) return false;
-        for (const auto& investment : portfolio.getInvestments()) {
+        auto cachedInvestments = portfolio.getInvestments();
+        for (const auto& investment : cachedInvestments) {
             retVal &= dbInterface.saveInvestment(investment);
         }
     }
@@ -104,15 +105,24 @@ bool portfolio::savePortfolioDb(const std::string& fileName,
         for (const auto& investment : existingInvestments) {
             existingInvestmentsTickers.push_back(investment.getTicker());
         }
-        std::cout << std::endl;
         for (const auto& investment : portfolio.getInvestments()) {
             if (std::find(existingInvestmentsTickers.begin(),
                         existingInvestmentsTickers.end(),
                         investment.getTicker()) != existingInvestmentsTickers.end()) {
-                retVal &= dbInterface.updateInvestmentPrice(investment.getTicker(),
-                                                            investment.getPurchasePrice());
-                retVal &= dbInterface.updateInvestmentQuantity(investment.getTicker(),
-                                                            investment.getQuantity());
+                Investment existingInvestment;
+                retVal &= dbInterface.getInvestment(investment.getTicker(), existingInvestment);
+                if (existingInvestment.getQuantity() != investment.getQuantity()) {
+                    retVal &= dbInterface.updateInvestmentQuantity(investment.getTicker(),
+                                                                   investment.getQuantity());
+                }
+                if (existingInvestment.getPurchasePrice() != investment.getPurchasePrice()) {
+                    retVal &= dbInterface.updateInvestmentPurchasePrice(investment.getTicker(),
+                                                                        investment.getPurchasePrice());
+                }
+                if (existingInvestment.getCurrentPrice() != investment.getCurrentPrice()) {
+                    retVal &= dbInterface.updateInvestmentCurrentPrice(investment.getTicker(),
+                                                                       investment.getCurrentPrice());
+                }
             }
             else {
                 retVal &= dbInterface.saveInvestment(investment);
@@ -152,6 +162,7 @@ bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename)
     if (file.is_open()) {
         std::string name, ticker, line;
         double_t purchasePrice;
+        double_t currentPrice = 0;
         uint32_t quantity;
         std::getline(file, name);
         portfolio.setName(name);
@@ -162,7 +173,7 @@ bool portfolio::loadPortfolio(Portfolio& portfolio, const std::string& filename)
             iss >> purchasePrice;
             iss.ignore();
             iss >> quantity;
-            Investment investment(name, ticker, purchasePrice, quantity);
+            Investment investment(name, ticker, purchasePrice, currentPrice, quantity);
             portfolio.addInvestment(investment);
         }
         std::cout << "Portfolio loaded from " << filename << std::endl;
