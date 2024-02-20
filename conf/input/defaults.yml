@@ -3,4 +3,4 @@ portfolio-manager:
   source: db                    #options: [db, text]
   auto-save: true
   auto-log: false
-  auto-load: false
+  auto-load: true

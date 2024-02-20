@@ -66,7 +66,7 @@ bool convertStrToBool(const std::string& str) {
 }
 
 bool convertStrToBool(const std::string& str, const bool defaultValue) {
-    std::string s;
+    std::string s = str;
     for (auto& c : s) {
         c = tolower(c);
     }
