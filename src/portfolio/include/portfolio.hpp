@@ -47,7 +47,10 @@ public:
     friend void displayPortfolio(const Portfolio& obj);
 
 private:
-    void log(const std::string& msg) const {
+    void log(const std::string& name, const std::string& operation,
+             const bool status) const {
+        std::string strStatus = (status) ? "Success" : "Failure";
+        std::string msg = "[Portfolio] " + name + ": " + operation + " - " + strStatus;
         if (m_setLogger) {
             m_logger->log(msg);
         }
@@ -108,7 +111,9 @@ public:
     }
 
 private:
-    void log(const std::string& msg) const {
+    void log(const std::string& operation, const bool status) const {
+        std::string strStatus = (status) ? "Success" : "Failure";
+        std::string msg = "[PortfolioManager]: " + operation + " - " + strStatus;
         if (m_setLogger) {
             m_logger->log(msg);
         }
