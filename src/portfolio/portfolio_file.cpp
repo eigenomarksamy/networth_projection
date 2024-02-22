@@ -1,6 +1,16 @@
+#include <filesystem>
 #include "cmd_common.hpp"
 #include "file_generator.hpp"
 #include "portfolio_file.hpp"
+
+namespace portfolio {
+static bool updatePortfoliosDbLowLatency(const PortfolioManager& portfolioMgrOg,
+                                         const PortfolioManager& portfolioMgr,
+                                         const std::string& directory,
+                                         const std::string& tableName,
+                                         const bool autoSave,
+                                         const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy);
+}
 
 std::vector<std::string> portfolio::DataAdapter::generatePortfolioLines(const portfolio::Portfolio& portfolioObj) {
     std::vector<std::string> outLines;
@@ -132,24 +142,123 @@ bool portfolio::savePortfolioDb(const std::string& fileName,
     return retVal;
 }
 
-bool portfolio::updatePortfoliosDb(const PortfolioManager& portfolioMgr,
+static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& portfolioMgrOg,
+                                                    const PortfolioManager& portfolioMgr,
+                                                    const std::string& directory,
+                                                    const std::string& tableName,
+                                                    const bool autoSave,
+                                                    const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy) {
+    bool retVal = true;
+    auto modified_num_portfolios = portfolioMgr.getNumPortfolios();
+    auto original_num_portfolios = portfolioMgrOg.getNumPortfolios();
+    std::vector<bool> matched(false, original_num_portfolios);
+    bool foundModifiedMatch = false;
+    for (auto i = 0; i < modified_num_portfolios; ++i) {
+        for (auto j = 0; j < original_num_portfolios; ++j) {
+            auto original_name = portfolioMgrOg.getPortfolio(j).getName();
+            auto modified_name = portfolioMgr.getPortfolio(i).getName();
+            if (original_name == modified_name) {
+                foundModifiedMatch = true;
+                matched.at(j) = true;
+                auto existing_portfolio = portfolioMgrOg.getPortfolio(j);
+                auto cached_portfolio = portfolioMgr.getPortfolio(i);
+                if (cached_portfolio != existing_portfolio) {
+                    auto cached_investments = cached_portfolio.getInvestments();
+                    auto existing_investments = existing_portfolio.getInvestments();
+                    std::string fileName = portfolioMgr.getPortfolio(i).getName() + ".db";
+                    std::string fullFileName = directory + fileName;
+                    auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fileName, tableName);
+                    std::vector<Investment> investmentsToRemove;
+                    std::copy_if(existing_investments.begin(), existing_investments.end(),
+                                std::back_inserter(investmentsToRemove),
+                                [&](const Investment& existing_investment) {
+                                    return std::find(cached_investments.begin(), cached_investments.end(),
+                                                    existing_investment) == cached_investments.end();
+                                });
+                    for (const auto& investmentToRemove : investmentsToRemove) {
+                        retVal &= dbInterface.removeInvestment(investmentToRemove.getTicker());
+                    }
+                    for (const auto& cached_investment : cached_investments) {
+                        auto it = std::find_if(existing_investments.begin(), existing_investments.end(),
+                                               [&](const auto& existing_investment) {
+                                                   return existing_investment.getTicker() == cached_investment.getTicker();
+                                               });
+                        if (it != existing_investments.end()) {
+                            if (it->getQuantity() != cached_investment.getQuantity()) {
+                                dbInterface.updateInvestmentQuantity(it->getTicker(), cached_investment.getQuantity());
+                            }
+                            if (it->getPurchasePrice() != cached_investment.getPurchasePrice()) {
+                                dbInterface.updateInvestmentPurchasePrice(it->getTicker(), cached_investment.getPurchasePrice());
+                            }
+                            if (it->getCurrentPrice() != cached_investment.getCurrentPrice()) {
+                                dbInterface.updateInvestmentCurrentPrice(it->getTicker(), cached_investment.getCurrentPrice());
+                            }
+                        }
+                        else {
+                            retVal &= dbInterface.saveInvestment(cached_investment);
+                        }
+                    }
+                }
+            }
+            else {
+                break;
+            }
+        }
+        if (!foundModifiedMatch) {
+            std::string fileName = portfolioMgr.getPortfolio(i).getName() + ".db";
+            std::string fullFileName = directory + fileName;
+            auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fileName, tableName);
+            retVal &= dbInterface.createTable();
+            if (!retVal) return false;
+            auto cachedInvestments = portfolioMgr.getPortfolio(i).getInvestments();
+            for (const auto& investment : cachedInvestments) {
+                retVal &= dbInterface.saveInvestment(investment);
+            }
+        }
+        foundModifiedMatch = false;
+    }
+    for (auto i = 0; i < original_num_portfolios; ++i) {
+        if (!matched.at(i)) {
+            std::string searchFileName = portfolioMgrOg.getPortfolio(i).getName() + ".db";
+            try {
+                if (std::filesystem::remove(searchFileName)) retVal &= true;
+                else retVal = false;
+            }
+            catch(const std::filesystem::filesystem_error& err) {
+                std::cerr << "FileSystem Error: " << err.what() << std::endl;
+            }
+        }
+    }
+    return true;
+}
+
+bool portfolio::updatePortfoliosDb(const PortfolioManager& portfolioMgrOg,
+                                   const PortfolioManager& portfolioMgr,
                                    const std::string& directory,
                                    const std::string& tableName,
                                    const bool autoSave,
                                    const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy) {
     bool retVal = true;
-    auto filesInDir = getFileNames(directory);
-    for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
-        auto portfolio = portfolioMgr.getPortfolio(i);
-        std::string question = "save portfolio " + portfolio.getName();
-        if (autoSave || getUserYesNo(question)) {
-            std::string fileName = portfolio.getName() + ".db";
-            std::string fullFileName = directory + fileName;
-            bool isNew = true;
-            if (std::find(filesInDir.begin(), filesInDir.end(), fileName) != filesInDir.end()) {
-                isNew = false;
+    if (portfolioMgr.getNumPortfolios() > DatabaseInterfaceImplementation::getMaxLengthLowLoad()
+        || portfolioMgrOg.getNumPortfolios() > DatabaseInterfaceImplementation::getMaxLengthLowLoad()) {
+        retVal &= updatePortfoliosDbLowLatency(portfolioMgrOg, portfolioMgr,
+                                               directory, tableName,
+                                               autoSave, dbStrategy);
+    }
+    else {
+        auto filesInDir = getFileNames(directory);
+        for (auto i = 0; i < portfolioMgr.getNumPortfolios(); ++i) {
+            auto portfolio = portfolioMgr.getPortfolio(i);
+            std::string question = "save portfolio " + portfolio.getName();
+            if (autoSave || getUserYesNo(question)) {
+                std::string fileName = portfolio.getName() + ".db";
+                std::string fullFileName = directory + fileName;
+                bool isNew = true;
+                if (std::find(filesInDir.begin(), filesInDir.end(), fileName) != filesInDir.end()) {
+                    isNew = false;
+                }
+                retVal &= portfolio::savePortfolioDb(fullFileName, tableName, portfolio, isNew, dbStrategy);
             }
-            retVal &= portfolio::savePortfolioDb(fullFileName, tableName, portfolio, isNew, dbStrategy);
         }
     }
     return retVal;

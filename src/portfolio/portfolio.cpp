@@ -6,7 +6,7 @@ bool portfolio::Portfolio::addInvestment(const Investment& investment) {
     for (auto it = m_investments.begin(); it != m_investments.end(); ++it) {
         if (it->getTicker() == investment.getTicker()) {
             if (it->getName() != investment.getName()) {
-                log(m_name, "Add", retVal);
+                // log(m_name, "Add", retVal);
                 return retVal;
             }
             it->setPurchasePrice(investment.getPurchasePrice());
@@ -19,7 +19,7 @@ bool portfolio::Portfolio::addInvestment(const Investment& investment) {
         m_investments.push_back(investment);
         retVal = true;
     }
-    log(m_name, "Add", retVal);
+    // log(m_name, "Add", retVal);
     return retVal;
 }
 
@@ -32,7 +32,7 @@ bool portfolio::Portfolio::removeInvestment(const std::string& ticker) {
             break;
         }
     }
-    log(m_name, "Remove", retVal);
+    // log(m_name, "Remove", retVal);
     return retVal;
 }
 
@@ -71,7 +71,7 @@ bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, dou
             break;
         }
     }
-    log(m_name, "Update", retVal);
+    // log(m_name, "Update", retVal);
     return retVal;
 }
 
@@ -84,7 +84,7 @@ bool portfolio::Portfolio::updateInvestmentQuantity(const std::string& ticker, u
             break;
         }
     }
-    log(m_name, "Update", retVal);
+    // log(m_name, "Update", retVal);
     return retVal;
 }
 
@@ -100,7 +100,7 @@ void portfolio::PortfolioManager::addPortfolio(Portfolio& portfolio) {
 bool portfolio::PortfolioManager::addPortfolio(const std::string& portfolio_name) {
     for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
         if (it->get()->getName() == portfolio_name) {
-            log("Add", false);
+            // log("Add", false);
             return false;
         }
     }
@@ -110,7 +110,7 @@ bool portfolio::PortfolioManager::addPortfolio(const std::string& portfolio_name
             portfolio->setLoggerPtr(m_logger);
         }
     }
-    log("Add", true);
+    // log("Add", true);
     return true;
 }
 
@@ -123,6 +123,6 @@ bool portfolio::PortfolioManager::removePortfolio(const std::string& portfolio_n
             break;
         }
     }
-    log("Remove", retVal);
+    // log("Remove", retVal);
     return retVal;
 }

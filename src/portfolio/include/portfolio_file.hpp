@@ -48,7 +48,8 @@ bool savePortfolioDb(const std::string& fileName,
                      const bool is_new,
                      const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
 
-bool updatePortfoliosDb(const PortfolioManager& portfolioMgr,
+bool updatePortfoliosDb(const PortfolioManager& portfolioMgrOg,
+                        const PortfolioManager& portfolioMgr,
                         const std::string& directory,
                         const std::string& tableName,
                         const bool autoSave,

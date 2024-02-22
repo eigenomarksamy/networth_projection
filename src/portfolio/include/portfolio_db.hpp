@@ -27,6 +27,7 @@ private:
     std::string m_dbPath;
     std::string m_tableName;
     db_manager::columns_t m_columns;
+    static constexpr uint8_t max_size_for_low_load = 10;
 public:
     DatabaseInterfaceImplementation(const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy ,
                                     const std::string& dbPath,
@@ -39,6 +40,7 @@ public:
     bool removeInvestment(const std::string& ticker) override;
     bool getInvestment(const std::string& ticker, Investment& investment) override;
     bool listInvestments(std::vector<Investment>& investments) override;
+    static uint8_t getMaxLengthLowLoad() { return max_size_for_low_load; }
 };
 
 } // namespace portfolio

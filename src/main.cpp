@@ -55,6 +55,7 @@ static void executePortfolioMgr(const std::string& confFile) {
             auto portfolio_logger_ptr = std::make_shared<portfolio::PortfolioLogger>();
             portfolio_manager.setLoggerPtr(portfolio_logger_ptr);
         }
+        auto portfolio_manager_og = portfolio_manager;
         portfolio::executeMultiPortfolioManagement(portfolio_manager);
         if (portfolioInput.portfolio_src == "text") {
             generatePortfolioOverview(portfolio_manager,
@@ -63,7 +64,8 @@ static void executePortfolioMgr(const std::string& confFile) {
                                       portfolioInput.auto_save);
         }
         else if (portfolioInput.portfolio_src == "db") {
-            valid = portfolio::updatePortfoliosDb(portfolio_manager,
+            valid = portfolio::updatePortfoliosDb(portfolio_manager_og,
+                                                  portfolio_manager,
                                                   portfolioInput.db_dir,
                                                   portfolioInput.table_name,
                                                   portfolioInput.auto_save,
