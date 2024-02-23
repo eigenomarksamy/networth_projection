@@ -186,13 +186,13 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
                                                });
                         if (it != existing_investments.end()) {
                             if (it->getQuantity() != cached_investment.getQuantity()) {
-                                dbInterface.updateInvestmentQuantity(it->getTicker(), cached_investment.getQuantity());
+                                retVal &= dbInterface.updateInvestmentQuantity(it->getTicker(), cached_investment.getQuantity());
                             }
                             if (it->getPurchasePrice() != cached_investment.getPurchasePrice()) {
-                                dbInterface.updateInvestmentPurchasePrice(it->getTicker(), cached_investment.getPurchasePrice());
+                                retVal &= dbInterface.updateInvestmentPurchasePrice(it->getTicker(), cached_investment.getPurchasePrice());
                             }
                             if (it->getCurrentPrice() != cached_investment.getCurrentPrice()) {
-                                dbInterface.updateInvestmentCurrentPrice(it->getTicker(), cached_investment.getCurrentPrice());
+                                retVal &= dbInterface.updateInvestmentCurrentPrice(it->getTicker(), cached_investment.getCurrentPrice());
                             }
                         }
                         else {
@@ -230,7 +230,7 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
             }
         }
     }
-    return true;
+    return retVal;
 }
 
 bool portfolio::updatePortfoliosDb(const PortfolioManager& portfolioMgrOg,
