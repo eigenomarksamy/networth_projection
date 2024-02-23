@@ -151,7 +151,8 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
     bool retVal = true;
     auto modified_num_portfolios = portfolioMgr.getNumPortfolios();
     auto original_num_portfolios = portfolioMgrOg.getNumPortfolios();
-    std::vector<bool> matched(false, original_num_portfolios);
+    std::vector<bool> matched(original_num_portfolios);
+    for (auto&& m : matched) m = false;
     bool foundModifiedMatch = false;
     for (auto i = 0; i < modified_num_portfolios; ++i) {
         for (auto j = 0; j < original_num_portfolios; ++j) {
@@ -237,10 +238,11 @@ bool portfolio::updatePortfoliosDb(const PortfolioManager& portfolioMgrOg,
                                    const std::string& directory,
                                    const std::string& tableName,
                                    const bool autoSave,
+                                   const uint8_t low_latency_threshold,
                                    const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy) {
     bool retVal = true;
-    if (portfolioMgr.getNumPortfolios() > DatabaseInterfaceImplementation::getMaxLengthLowLoad()
-        || portfolioMgrOg.getNumPortfolios() > DatabaseInterfaceImplementation::getMaxLengthLowLoad()) {
+    if (portfolioMgr.getNumPortfolios() > low_latency_threshold
+        || portfolioMgrOg.getNumPortfolios() > low_latency_threshold) {
         retVal &= updatePortfoliosDbLowLatency(portfolioMgrOg, portfolioMgr,
                                                directory, tableName,
                                                autoSave, dbStrategy);

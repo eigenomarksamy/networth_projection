@@ -69,6 +69,7 @@ static void executePortfolioMgr(const std::string& confFile) {
                                                   portfolioInput.db_dir,
                                                   portfolioInput.table_name,
                                                   portfolioInput.auto_save,
+                                                  portfolioInput.low_latency_db_threshold,
                                                   dbStrategy);
         }
     }

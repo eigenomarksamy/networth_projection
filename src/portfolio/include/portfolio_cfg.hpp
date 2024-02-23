@@ -18,6 +18,7 @@ struct PortfolioMgrCfg {
     std::string gen_dir = "gen/portfolios/";
     std::string db_dir = "db/test/portfolios/";
     std::string table_name = "investments";
+    uint8_t low_latency_db_threshold = 10;
     std::vector<std::string> portfolio_list;
 };
 
@@ -35,6 +36,7 @@ struct PortfolioMgrYmlVals {
     std::shared_ptr<config_elm_t> auto_load;
     std::shared_ptr<config_elm_t> source;
     std::shared_ptr<config_elm_t> table_name;
+    std::shared_ptr<config_elm_t> low_latency_db_threshold;
 };
 
 bool resolveCfg(const std::string& confPath, PortfolioMgrYmlDirs& dirs);

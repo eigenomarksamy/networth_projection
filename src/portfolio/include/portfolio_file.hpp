@@ -53,6 +53,7 @@ bool updatePortfoliosDb(const PortfolioManager& portfolioMgrOg,
                         const std::string& directory,
                         const std::string& tableName,
                         const bool autoSave,
+                        const uint8_t low_latency_threshold,
                         const std::shared_ptr<db_manager::DatabaseStrategy> &dbStrategy);
 
 bool loadPortfolio(Portfolio& portfolio, const std::string& filename);
