@@ -227,6 +227,7 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
             }
             catch(const std::filesystem::filesystem_error& err) {
                 std::cerr << "FileSystem Error: " << err.what() << std::endl;
+                retVal = false;
             }
         }
     }
