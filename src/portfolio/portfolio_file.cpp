@@ -169,15 +169,23 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
                     std::string fileName = portfolioMgr.getPortfolio(i).getName() + ".db";
                     std::string fullFileName = directory + fileName;
                     auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fullFileName, tableName);
-                    std::vector<Investment> investmentsToRemove;
-                    std::copy_if(existing_investments.begin(), existing_investments.end(),
-                                std::back_inserter(investmentsToRemove),
-                                [&](const Investment& existing_investment) {
-                                    return std::find(cached_investments.begin(), cached_investments.end(),
-                                                    existing_investment) == cached_investments.end();
+                    std::vector<std::string> investments_to_remove;
+                    std::vector<std::string> cached_tickers;
+                    std::vector<std::string> existing_tickers;
+                    for (const auto& cached_investment : cached_investments) {
+                        cached_tickers.push_back(cached_investment.getTicker());
+                    }
+                    for (const auto& existing_investment : existing_investments) {
+                        existing_tickers.push_back(existing_investment.getTicker());
+                    }
+                    std::copy_if(existing_tickers.begin(), existing_tickers.end(),
+                                std::back_inserter(investments_to_remove),
+                                [&](const std::string& existing_investment) {
+                                    return std::find(cached_tickers.begin(), cached_tickers.end(),
+                                                    existing_investment) == cached_tickers.end();
                                 });
-                    for (const auto& investmentToRemove : investmentsToRemove) {
-                        retVal &= dbInterface.removeInvestment(investmentToRemove.getTicker());
+                    for (const auto& investment_to_remove : investments_to_remove) {
+                        retVal &= dbInterface.removeInvestment(investment_to_remove);
                     }
                     for (const auto& cached_investment : cached_investments) {
                         auto it = std::find_if(existing_investments.begin(), existing_investments.end(),
