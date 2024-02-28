@@ -20,9 +20,20 @@ private:
 public:
     Portfolio() {}
     Portfolio(const std::string& name) : m_name(name), m_setLogger(false) {}
-    Portfolio(const Portfolio& other) {
-        m_name = other.m_name;
-        m_investments = other.m_investments;
+    Portfolio(const Portfolio& other)
+      : m_name(other.m_name), m_investments(other.m_investments), m_setLogger(other.m_setLogger) {
+        if (m_setLogger)
+            m_logger = other.m_logger;
+    }
+    bool operator==(const Portfolio& other) const {
+        bool retVal = (((m_setLogger) && (m_setLogger == other.m_setLogger && m_logger == other.m_logger))
+                      || ((!m_setLogger) && (m_setLogger == other.m_setLogger)));
+        retVal &= (m_name == other.m_name) &&
+                  (m_investments == other.m_investments);
+        return retVal;
+    }
+    bool operator!=(const Portfolio& other) const {
+        return !(*this == other);
     }
     ~Portfolio() {}
 
@@ -80,6 +91,26 @@ public:
         for (const auto& portfolio_name : portfolios_names) {
             m_portfolios.push_back(std::make_unique<Portfolio>(portfolio_name));
         }
+    }
+
+    PortfolioManager(const PortfolioManager& other)
+        : m_setLogger(other.m_setLogger) {
+        for (const auto& portfolio : other.m_portfolios) {
+            m_portfolios.push_back(std::make_unique<Portfolio>(*portfolio));
+        }
+        if (m_setLogger)
+            m_logger = other.m_logger;
+    }
+
+    bool operator==(const PortfolioManager& other) const {
+        bool retVal = (((m_setLogger) && (m_setLogger == other.m_setLogger && m_logger == other.m_logger))
+                      || ((!m_setLogger) && (m_setLogger == other.m_setLogger)));
+        retVal &= (m_portfolios == other.m_portfolios);
+        return retVal;
+    }
+
+    bool operator!=(const PortfolioManager& other) const {
+        return !(*this == other);
     }
 
     ~PortfolioManager() {

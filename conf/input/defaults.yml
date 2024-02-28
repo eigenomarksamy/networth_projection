@@ -4,3 +4,4 @@ portfolio-manager:
   auto-save: true
   auto-log: false
   auto-load: true
+  low-latency-db-threshold: 25
