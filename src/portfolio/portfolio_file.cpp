@@ -230,7 +230,7 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
     }
     for (auto i = 0; i < original_num_portfolios; ++i) {
         if (!matched.at(i)) {
-            std::string searchFileName = portfolioMgrOg.getPortfolio(i).getName() + ".db";
+            std::string searchFileName = directory + portfolioMgrOg.getPortfolio(i).getName() + ".db";
             try {
                 if (std::filesystem::remove(searchFileName)) retVal &= true;
                 else retVal = false;
