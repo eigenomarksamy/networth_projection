@@ -155,7 +155,7 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
     for (auto&& m : matched) m = false;
     bool foundModifiedMatch = false;
     for (auto i = 0; i < modified_num_portfolios; ++i) {
-        for (auto j = 0; j < original_num_portfolios; ++j) {
+        for (auto j = i; j < original_num_portfolios; ++j) {
             auto original_name = portfolioMgrOg.getPortfolio(j).getName();
             auto modified_name = portfolioMgr.getPortfolio(i).getName();
             if (original_name == modified_name) {
@@ -168,7 +168,7 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
                     auto existing_investments = existing_portfolio.getInvestments();
                     std::string fileName = portfolioMgr.getPortfolio(i).getName() + ".db";
                     std::string fullFileName = directory + fileName;
-                    auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fileName, tableName);
+                    auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fullFileName, tableName);
                     std::vector<Investment> investmentsToRemove;
                     std::copy_if(existing_investments.begin(), existing_investments.end(),
                                 std::back_inserter(investmentsToRemove),
@@ -208,12 +208,14 @@ static bool portfolio::updatePortfoliosDbLowLatency(const PortfolioManager& port
         if (!foundModifiedMatch) {
             std::string fileName = portfolioMgr.getPortfolio(i).getName() + ".db";
             std::string fullFileName = directory + fileName;
-            auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fileName, tableName);
-            retVal &= dbInterface.createTable();
-            if (!retVal) return false;
-            auto cachedInvestments = portfolioMgr.getPortfolio(i).getInvestments();
-            for (const auto& investment : cachedInvestments) {
-                retVal &= dbInterface.saveInvestment(investment);
+            if (!std::filesystem::exists(fullFileName)) {
+                auto dbInterface = DatabaseInterfaceImplementation(dbStrategy, fullFileName, tableName);
+                retVal &= dbInterface.createTable();
+                if (!retVal) return false;
+                auto cachedInvestments = portfolioMgr.getPortfolio(i).getInvestments();
+                for (const auto& investment : cachedInvestments) {
+                    retVal &= dbInterface.saveInvestment(investment);
+                }
             }
         }
         foundModifiedMatch = false;
