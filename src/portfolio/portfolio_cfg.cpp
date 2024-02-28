@@ -31,6 +31,8 @@ bool portfolio::resolveCfg(const std::string& confPath, PortfolioMgrYmlVals& val
     val_cfg.addConfigElement(vals.source);
     vals.table_name = YmlCfg::createConfigElm("portfolio-manager.table-name");
     val_cfg.addConfigElement(vals.table_name);
+    vals.low_latency_db_threshold = YmlCfg::createConfigElm("portfolio-manager.low-latency-db-threshold");
+    val_cfg.addConfigElement(vals.low_latency_db_threshold);
     if (val_cfg.readCfg(false, false)) {
         return true;
     }
@@ -50,5 +52,7 @@ void portfolio::convertYmlData(PortfolioMgrCfg& inputs,
                                                       inputs.load_all_portfolios);
         inputs.auto_log = convertStrToBool(vals.auto_log->value, inputs.auto_log);
         inputs.auto_save = convertStrToBool(vals.auto_save->value, inputs.auto_save);
+        inputs.low_latency_db_threshold = convertToNumeric(
+            vals.low_latency_db_threshold->value, inputs.low_latency_db_threshold);
     }
 }

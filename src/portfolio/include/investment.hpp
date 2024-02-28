@@ -20,6 +20,16 @@ public:
                  m_purchase_price(purchasePrice),
                  m_current_price(currentPrice),
                  m_quantity(quantity) { }
+    bool operator==(const Investment& other) const {
+        return ((m_name == other.m_name) &&
+                (m_ticker == other.m_ticker) &&
+                (m_purchase_price == other.m_purchase_price) &&
+                (m_current_price == other.m_current_price) &&
+                (m_quantity == other.m_quantity));
+    }
+    bool operator!=(const Investment& other) const {
+        return !(*this == other);
+    }
 
     std::string getName() const { return this->m_name; }
     void setName(const std::string& name) { m_name = name; }
