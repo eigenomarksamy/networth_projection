@@ -126,3 +126,147 @@ bool portfolio::PortfolioManager::removePortfolio(const std::string& portfolio_n
     // log("Remove", retVal);
     return retVal;
 }
+
+ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(const Investment& investment, const double_t fees) {
+    ComplexInvestment complex_investment;
+    complex_investment.setInvestment(investment);
+    Transaction transaction;
+    Date date = getDateTime();
+    transaction.m_date = date;
+    transaction.m_fees = fees;
+    complex_investment.setTransaction(transaction);
+    complex_investment.setId(std::to_string(generateHashForString(investment.getName() + investment.getTicker() + std::to_string(investment.getPurchasePrice()) + getUniqueTimeId())));
+    return complex_investment;
+}
+
+bool portfolio::TransactionalPortfolio::addInvestments(const std::vector<ComplexInvestment>& investments) {
+    bool retVal = true;
+    for (const auto& investment : investments) {
+        if (std::find(m_investments.begin(), m_investments.end(), investment) == m_investments.end()) {
+            m_investments.push_back(investment);
+            retVal &= true;
+        }
+        else {
+            retVal = false;
+        }
+    }
+    return retVal;
+}
+
+bool portfolio::TransactionalPortfolio::removeInvestments(const std::vector<std::string>& investmentIds) {
+    bool retVal = true;
+    for (const auto& investmentId : investmentIds) {
+        auto it = std::find_if(m_investments.begin(), m_investments.end(),
+                                [&](const auto& stored_investment) {
+                                    return stored_investment.getId() == investmentId;
+                                });
+        if (it != m_investments.end()) {
+            m_investments.erase(it);
+            retVal &= true;
+        }
+        else {
+            retVal = false;
+        }
+    }
+    return retVal;
+}
+
+bool portfolio::TransactionalPortfolio::updateInvestments(const std::map<std::string, std::pair<double_t, InvestmentParameters>>& mapOfUpdate) {
+    bool retVal = true;
+    for (auto it = mapOfUpdate.begin(); it != mapOfUpdate.end(); ++it) {
+        auto id = it->first;
+        auto value = it->second.first;
+        auto param = it->second.second;
+        auto check_it = std::find_if(m_investments.begin(), m_investments.end(),
+                                        [&](const auto& stored_investment) {
+                                        return stored_investment.getId() == id;
+                                        });
+        if (param == InvestmentParameters::PurchasePrice) {
+            if (check_it != m_investments.end()) {
+                check_it->setInvestment(Investment(check_it->getInvestment().getName(),
+                                                   check_it->getInvestment().getTicker(),
+                                                   value,
+                                                   check_it->getInvestment().getCurrentPrice(),
+                                                   check_it->getInvestment().getQuantity()));
+            }
+            else {
+                retVal = false;
+            }
+        }
+        else if (param == InvestmentParameters::CurrentPrice) {
+            if (check_it != m_investments.end()) {
+                check_it->setInvestment(Investment(check_it->getInvestment().getName(),
+                                                   check_it->getInvestment().getTicker(),
+                                                   check_it->getInvestment().getPurchasePrice(),
+                                                   value,
+                                                   check_it->getInvestment().getQuantity()));
+            }
+            else {
+                retVal = false;
+            }
+        }
+        else {
+            if (check_it != m_investments.end()) {
+                check_it->setInvestment(Investment(check_it->getInvestment().getName(),
+                                                   check_it->getInvestment().getTicker(),
+                                                   check_it->getInvestment().getPurchasePrice(),
+                                                   check_it->getInvestment().getCurrentPrice(),
+                                                   static_cast<uint32_t>(value)));
+            }
+            else {
+                retVal = false;
+            }
+        }
+    }
+    return retVal;
+}
+
+double_t portfolio::TransactionalPortfolio::calculateTotalPurchases() const {
+    double_t retVal = 0.0;
+    for (const auto& investment : m_investments) {
+        retVal += (investment.getInvestment().getQuantity() * investment.getInvestment().getPurchasePrice());
+    }
+    return retVal;
+}
+
+double_t portfolio::TransactionalPortfolio::calculateTotalValue() const {
+    double_t retVal = 0.0;
+    for (const auto& investment : m_investments) {
+        retVal += (investment.getInvestment().getQuantity() * investment.getInvestment().getCurrentPrice());
+    }
+    return retVal;
+}
+
+double_t portfolio::TransactionalPortfolio::calculateTotalGain() const {
+    double_t retVal = calculateTotalValue() - calculateTotalPurchases();
+    for (const auto& investment : m_investments) {
+        retVal -= investment.getTransaction().m_fees;
+    }
+    return retVal;
+}
+
+void portfolio::TransactionalPortfolioManager::addPortfolio(TransactionalPortfolio& portfolio) {
+    m_portfolios.push_back(std::make_unique<TransactionalPortfolio>(portfolio));
+}
+
+bool portfolio::TransactionalPortfolioManager::addPortfolio(const std::string& portfolio_name) {
+    for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
+        if (it->get()->getName() == portfolio_name) {
+            return false;
+        }
+    }
+    m_portfolios.push_back(std::make_unique<TransactionalPortfolio>(portfolio_name));
+    return true;
+}
+
+bool portfolio::TransactionalPortfolioManager::removePortfolio(const std::string& portfolio_name) {
+    bool retVal = false;
+    for (auto it = m_portfolios.begin(); it != m_portfolios.end(); ++it) {
+        if (it->get()->getName() == portfolio_name) {
+            m_portfolios.erase(it);
+            retVal = true;
+            break;
+        }
+    }
+    return retVal;
+}

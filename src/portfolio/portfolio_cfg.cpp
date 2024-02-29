@@ -33,6 +33,8 @@ bool portfolio::resolveCfg(const std::string& confPath, PortfolioMgrYmlVals& val
     val_cfg.addConfigElement(vals.table_name);
     vals.low_latency_db_threshold = YmlCfg::createConfigElm("portfolio-manager.low-latency-db-threshold");
     val_cfg.addConfigElement(vals.low_latency_db_threshold);
+    vals.is_complex_investment = YmlCfg::createConfigElm("portfolio-manager.complex-investment");
+    val_cfg.addConfigElement(vals.is_complex_investment);
     if (val_cfg.readCfg(false, false)) {
         return true;
     }
@@ -54,5 +56,7 @@ void portfolio::convertYmlData(PortfolioMgrCfg& inputs,
         inputs.auto_save = convertStrToBool(vals.auto_save->value, inputs.auto_save);
         inputs.low_latency_db_threshold = convertToNumeric(
             vals.low_latency_db_threshold->value, inputs.low_latency_db_threshold);
+        inputs.is_complex_investment = convertStrToBool(vals.is_complex_investment->value,
+                                                        inputs.is_complex_investment);
     }
 }

@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <string>
+#include "utils.hpp"
 
 class Investment {
 private:
@@ -43,5 +44,35 @@ public:
     void setQuantity(const uint32_t quantity) { m_quantity = quantity; }
 };
 
+
+struct Transaction {
+    Date m_date;
+    double_t m_fees;
+    bool operator==(const Transaction& other) const {
+        return ((m_date == other.m_date) && (m_fees == other.m_fees));
+    }
+};
+
+class ComplexInvestment {
+
+private:
+    Investment m_investment;
+    Transaction m_transaction;
+    std::string m_id;
+
+public:
+    ComplexInvestment() = default;
+    bool operator==(const ComplexInvestment& other) const {
+        return ((m_investment == other.m_investment) &&
+                (m_transaction == other.m_transaction) &&
+                (m_id == other.m_id));
+    }
+    Investment getInvestment() const { return m_investment; }
+    Transaction getTransaction() const { return m_transaction; }
+    std::string getId() const { return m_id; }
+    void setInvestment(const Investment& investment) { m_investment = investment; }
+    void setTransaction(const Transaction& transaction) { m_transaction = transaction; }
+    void setId(const std::string& id) { m_id = id; }
+};
 
 #endif /* INVESTMENT_HPP_ */
