@@ -26,6 +26,32 @@ void portfolio::displayPortfolio(const Portfolio& obj) {
     }
 }
 
+void portfolio::displayPortfolio(const TransactionalPortfolio& obj) {
+    std::cout << "Portfolio: " << obj.m_name << std::endl;
+    for (const auto& investment : obj.m_investments) {
+        auto date_str = std::to_string(investment.getTransaction().m_date.m_hour) + ":"
+                        + std::to_string(investment.getTransaction().m_date.m_minute) + ":"
+                        + std::to_string(investment.getTransaction().m_date.m_second) + " - "
+                        + std::to_string(investment.getTransaction().m_date.m_day) + "/"
+                        + std::to_string(investment.getTransaction().m_date.m_month) + "/"
+                        + std::to_string(investment.getTransaction().m_date.m_year);
+        auto currency_str = (investment.getTransaction().m_currency == Transaction::Currency::EUR) ? "EUR" : "USD";
+        std::cout << "ID: " << investment.getId()
+                  << ", Sequence: " << investment.getSequencer()
+                  << ", Date (hh:mm:ss - dd/mm/yyyy): " << date_str
+                  << ", Name: " << investment.getInvestment().getName()
+                  << ", Ticker: " << investment.getInvestment().getTicker()
+                  << ", Quantity: " << investment.getInvestment().getQuantity()
+                  << ", Purchase price: " << investment.getInvestment().getPurchasePrice()
+                  << ", Current price: " << investment.getInvestment().getCurrentPrice()
+                  << ", Currency: " << currency_str
+                  << ", Fees: " << investment.getTransaction().m_fees
+                  << ", Currency Conversion Fees: " << investment.getTransaction().m_conversion_fees
+                  << ", Currency Conversion Rate: " << investment.getCurrencyConversionRate()
+                  << std::endl;
+    }
+}
+
 static int16_t portfolio::selectPortfolio(const portfolio::PortfolioManager& portfolio_manager) {
     uint16_t choice = 0;
     std::cout << "There are " << portfolio_manager.getNumPortfolios() << " portfolios" << std::endl;
@@ -46,7 +72,7 @@ static int16_t portfolio::selectPortfolio(const portfolio::PortfolioManager& por
     return choice - 1;
 }
 
-void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
+void portfolio::executePortfolioManagement(Portfolio& portfolio) {
     int32_t choice = 0;
     while (choice != 8) {
         std::cout << "---------------------------" << std::endl;
@@ -173,7 +199,7 @@ void portfolio::executePortfolioManagement(portfolio::Portfolio& portfolio) {
     }
 }
 
-void portfolio::executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr) {
+void portfolio::executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr) {
     int32_t choice = 0;
     while (choice != 4) {
         std::cout << "---------------------------" << std::endl;
@@ -232,6 +258,187 @@ void portfolio::executeMultiPortfolioManagement(portfolio::PortfolioManager& por
                 break;
             }
         }
+    }
+}
+
+void portfolio::executeTransactionalPortfolioManagement(TransactionalPortfolio& portfolio) {
+    int32_t choice = INT32_MAX;
+    while (choice != 0) {
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "         MENU              " << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "1. Add Investment" << std::endl;
+        std::cout << "2. Remove Investment" << std::endl;
+        std::cout << "11. Display Portfolio" << std::endl;
+        std::cout << "12. Display Transactions of Symbols" << std::endl;
+        std::cout << "13. Display Transactions of Dates" << std::endl;
+        std::cout << "21. Calculate Total Value" << std::endl;
+        std::cout << "22. Calculate Total Gain" << std::endl;
+        std::cout << "23. Calculate Total Spending" << std::endl;
+        std::cout << "24. Calculate Value of Symbols" << std::endl;
+        std::cout << "25. Calculate Gain of Symbols" << std::endl;
+        std::cout << "26. Calculate Spending of Symbols" << std::endl;
+        std::cout << "27. Calculate Value of Date" << std::endl;
+        std::cout << "28. Calculate Gain of Date" << std::endl;
+        std::cout << "29. Calculate Spending of Date" << std::endl;
+        std::cout << "31. Update Investment Purchase Value" << std::endl;
+        std::cout << "32. Update Investment Current Value" << std::endl;
+        std::cout << "33. Update Investment Quantity" << std::endl;
+        std::cout << "0. Return to portfolio menu" << std::endl;
+        std::cout << "Enter your choice: ";
+        if (!validateInputType(choice)) {
+            continue;
+        }
+        switch (choice) {
+            case 0: {
+                std::cout << "Returning..\n";
+                break;
+            }
+            case 1: {
+                std::cout << "Enter investment details:\n";
+                std::string name, ticker;
+                std::cout << "Name: ";
+                std::cin >> name;
+                std::cout << "Ticker: ";
+                std::cin >> ticker;
+                double_t purchasePrice;
+                std::cout << "Purchase price: ";
+                if (!validateInputType(purchasePrice)) {
+                    continue;
+                }
+                uint32_t quantity;
+                std::cout << "Quantity: ";
+                if (!validateInputType(quantity)) {
+                    continue;
+                }
+                Investment investment(name, ticker, purchasePrice, purchasePrice, quantity);
+                double_t fees;
+                std::cout << "Fees: ";
+                if (!validateInputType(fees)) {
+                    continue;
+                }
+                Date date;
+                date.now();
+                // std::cout << "Date (leave blank to use now):\n";
+                // getGenericInputParam(date.m_hour, std::string("hour"));
+                // getGenericInputParam(date.m_day, std::string("day"));
+                // getGenericInputParam(date.m_month, std::string("month"));
+                // getGenericInputParam(date.m_year, std::string("year"));
+                std::string currency;
+                std::cout << "Currency (USD or EUR): ";
+                std::cin >> currency;
+                convertStrToLowerCase(currency);
+                Transaction::Currency tCurrency = (currency == "usd") ? Transaction::Currency::USD : Transaction::Currency::EUR;
+                uint32_t sequencer = portfolio.getInvestments().size();
+                double_t currency_conv_fees;
+                std::cout << "Currency conversion fees: ";
+                if (!validateInputType(currency_conv_fees)) {
+                    continue;
+                }
+                double_t currency_conv_rate;
+                std::cout << "Currency conversion rate: ";
+                if (!validateInputType(currency_conv_rate)) {
+                    continue;
+                }
+                auto complex_investment = TransactionalPortfolio::createComplexInvestment(investment,
+                                            date, fees, tCurrency, sequencer,
+                                            currency_conv_rate, currency_conv_fees);
+                if (portfolio.addInvestments({complex_investment})) {
+                    std::cout << "Investment was added successfully.\n";
+                }
+                else {
+                    std::cout << "Investment already exists, failed to add\n";
+                    continue;
+                }
+                break;
+            }
+            case 2: {
+                std::string id;
+                std::cout << "Enter the id of the investment to be removed: ";
+                std::cin >> id;
+                if (portfolio.removeInvestments({id})) {
+                    std::cout << "Investment removed from portfolio.\n";
+                    portfolio.updateSequence();
+                }
+                else {
+                    std::cout << "Investment not found, "
+                              << "can't remove what's not there.\n";
+                    continue;
+                }
+                break;
+            }
+            case 11: {
+                displayPortfolio(portfolio);
+                break;
+            }
+            case 12: {
+                break;
+            }
+            case 13: {
+                break;
+            }
+            case 21: {
+                break;
+            }
+            case 22: {
+                break;
+            }
+            case 23: {
+                break;
+            }
+            case 24: {
+                break;
+            }
+            case 25: {
+                break;
+            }
+            case 26: {
+                break;
+            }
+            case 27: {
+                break;
+            }
+            case 28: {
+                break;
+            }
+            case 29: {
+                break;
+            }
+            case 31: {
+                break;
+            }
+            case 32: {
+                break;
+            }
+            case 33: {
+                break;
+            }
+            default: {
+                std::cout << "Invalid choice. Please try again.\n";
+                break;
+            }
+        }
+    }
+    auto investments = portfolio.getInvestments();
+    for (const auto& investment : investments) {
+        auto curr = (investment.getTransaction().m_currency == Transaction::Currency::USD) ? "USD" : "EUR";
+        std::cout << investment.getCurrencyConversionRate() << " "
+                  << investment.getId() << " "
+                  << investment.getSequencer() << " "
+                  << investment.getTransaction().m_conversion_fees << " "
+                  << curr << " "
+                  << investment.getTransaction().m_date.m_day << " "
+                  << investment.getTransaction().m_date.m_hour << " "
+                  << investment.getTransaction().m_date.m_minute << " "
+                  << investment.getTransaction().m_date.m_month << " "
+                  << investment.getTransaction().m_date.m_second << " "
+                  << investment.getTransaction().m_date.m_year << " "
+                  << investment.getTransaction().m_fees << " "
+                  << investment.getInvestment().getCurrentPrice() << " "
+                  << investment.getInvestment().getName() << " "
+                  << investment.getInvestment().getPurchasePrice() << " "
+                  << investment.getInvestment().getQuantity() << " "
+                  << investment.getInvestment().getTicker() << std::endl;
     }
 }
 

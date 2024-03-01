@@ -156,6 +156,7 @@ class TransactionalPortfolio {
 
     std::string m_name;
     std::vector<ComplexInvestment> m_investments;
+    Transaction::Currency m_pref_currency;
 
 public:
     enum class InvestmentParameters { Quantity, PurchasePrice, CurrentPrice };
@@ -163,12 +164,22 @@ public:
     TransactionalPortfolio(const std::string& name) : m_name(name) {}
     bool operator==(const TransactionalPortfolio& other) const {
         return ((m_name == other.m_name) &&
-                (m_investments == other.m_investments));
+                (m_investments == other.m_investments) &&
+                (m_pref_currency == other.m_pref_currency));
     }
     bool operator!=(const TransactionalPortfolio& other) const {
         return !(*this == other);
     }
-    static ComplexInvestment createComplexInvestment(const Investment& investment, const double_t fees);
+    static ComplexInvestment createComplexInvestment(const Investment& investment,
+                                                     const double_t fees);
+    static ComplexInvestment createComplexInvestment(const Investment& investment,
+                                                     const Date& date,
+                                                     const double_t fees,
+                                                     const Transaction::Currency currency,
+                                                     const uint32_t sequencer,
+                                                     const double_t currency_conv_rate,
+                                                     const double_t currency_conv_fees);
+    void updateSequence();
     bool addInvestments(const std::vector<ComplexInvestment>& investments);
     bool removeInvestments(const std::vector<std::string>& investmentIds);
     bool updateInvestments(const std::map<std::string, std::pair<double_t, InvestmentParameters>>& mapOfUpdate);
@@ -177,8 +188,14 @@ public:
     double_t calculateTotalGain() const;
     void setName(const std::string& name) { m_name = name; }
     std::string getName() const { return m_name; }
+    void setPrefCurrency(const Transaction::Currency pref_currency) { m_pref_currency = pref_currency; }
+    Transaction::Currency getPrefCurrency() const { return m_pref_currency; }
     std::vector<ComplexInvestment> getInvestments() const { return m_investments; }
+
+    friend void displayPortfolio(const TransactionalPortfolio& obj);
 };
+
+void displayPortfolio(const TransactionalPortfolio& obj);
 
 class TransactionalPortfolioManager {
 

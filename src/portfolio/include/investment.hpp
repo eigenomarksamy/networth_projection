@@ -46,10 +46,19 @@ public:
 
 
 struct Transaction {
+    enum class Currency {USD, EUR};
     Date m_date;
     double_t m_fees;
+    double_t m_conversion_fees;
+    Currency m_currency;
     bool operator==(const Transaction& other) const {
-        return ((m_date == other.m_date) && (m_fees == other.m_fees));
+        return ((m_date == other.m_date) &&
+                (m_fees == other.m_fees) &&
+                (m_conversion_fees == other.m_conversion_fees) &&
+                (m_currency == other.m_currency));
+    }
+    bool operator!=(const Transaction& other) const {
+        return !(*this == other);
     }
 };
 
@@ -59,20 +68,33 @@ private:
     Investment m_investment;
     Transaction m_transaction;
     std::string m_id;
+    uint32_t m_sequencer;
+    double_t m_currency_conversion_rate;
 
 public:
     ComplexInvestment() = default;
+    ComplexInvestment(const ComplexInvestment& other) = default;
+    ~ComplexInvestment() = default;
     bool operator==(const ComplexInvestment& other) const {
         return ((m_investment == other.m_investment) &&
                 (m_transaction == other.m_transaction) &&
-                (m_id == other.m_id));
+                (m_id == other.m_id) &&
+                (m_sequencer == other.m_sequencer) &&
+                (m_currency_conversion_rate == other.m_currency_conversion_rate));
+    }
+    bool operator!=(const ComplexInvestment& other) const {
+        return !(*this == other);
     }
     Investment getInvestment() const { return m_investment; }
     Transaction getTransaction() const { return m_transaction; }
     std::string getId() const { return m_id; }
+    uint32_t getSequencer() const { return m_sequencer; }
+    double_t getCurrencyConversionRate() const { return m_currency_conversion_rate; }
     void setInvestment(const Investment& investment) { m_investment = investment; }
     void setTransaction(const Transaction& transaction) { m_transaction = transaction; }
     void setId(const std::string& id) { m_id = id; }
+    void setSequencer(const uint32_t sequencer) { m_sequencer = sequencer; }
+    void setCurrencyConversionRate(const double_t currency_conversion_rate) { m_currency_conversion_rate = currency_conversion_rate; }
 };
 
 #endif /* INVESTMENT_HPP_ */

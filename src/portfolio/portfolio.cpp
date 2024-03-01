@@ -127,7 +127,8 @@ bool portfolio::PortfolioManager::removePortfolio(const std::string& portfolio_n
     return retVal;
 }
 
-ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(const Investment& investment, const double_t fees) {
+ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(const Investment& investment,
+                                                                             const double_t fees) {
     ComplexInvestment complex_investment;
     complex_investment.setInvestment(investment);
     Transaction transaction;
@@ -137,6 +138,38 @@ ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(con
     complex_investment.setTransaction(transaction);
     complex_investment.setId(std::to_string(generateHashForString(investment.getName() + investment.getTicker() + std::to_string(investment.getPurchasePrice()) + getUniqueTimeId())));
     return complex_investment;
+}
+
+ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(
+                    const Investment& investment,
+                    const Date& date,
+                    const double_t fees,
+                    const Transaction::Currency currency,
+                    const uint32_t sequencer,
+                    const double_t currency_conv_rate,
+                    const double_t currency_conv_fees) {
+    ComplexInvestment complex_investment;
+    complex_investment.setInvestment(investment);
+    Transaction transaction;
+    transaction.m_date = date;
+    transaction.m_currency = currency;
+    transaction.m_fees = fees;
+    transaction.m_conversion_fees = currency_conv_fees;
+    complex_investment.setTransaction(transaction);
+    complex_investment.setId(std::to_string(generateHashForString(investment.getName() +
+                                                                  investment.getTicker() +
+                                                                  getUniqueTimeId())));
+    complex_investment.setSequencer(sequencer);
+    complex_investment.setCurrencyConversionRate(currency_conv_rate);
+    return complex_investment;
+}
+
+void portfolio::TransactionalPortfolio::updateSequence() {
+    uint32_t i = 0;
+    for (auto& investment : m_investments) {
+        investment.setSequencer(i);
+        ++i;
+    }
 }
 
 bool portfolio::TransactionalPortfolio::addInvestments(const std::vector<ComplexInvestment>& investments) {

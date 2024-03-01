@@ -10,6 +10,8 @@
 #include <variant>
 #include <sstream>
 #include <cstdint>
+#include <ctime>
+#include <chrono>
 
 inline void convertStrToLowerCase(std::string& str) {
     for (auto& c : str) {
@@ -18,19 +20,19 @@ inline void convertStrToLowerCase(std::string& str) {
 }
 
 struct Date {
-    uint8_t m_second;
-    uint8_t m_minute;
-    uint8_t m_hour;
-    uint8_t m_day;
-    uint8_t m_month;
+    uint16_t m_second;
+    uint16_t m_minute;
+    uint16_t m_hour;
+    uint16_t m_day;
+    uint16_t m_month;
     uint16_t m_year;
     Date() : m_second(1), m_minute(1), m_hour(0), m_day(1), m_month(1), m_year(1970) {}
-    Date(const uint8_t second, const uint8_t minute, const uint8_t hour,
-         const uint8_t day, const uint8_t month, const uint16_t year)
+    Date(const uint16_t second, const uint16_t minute, const uint16_t hour,
+         const uint16_t day, const uint16_t month, const uint16_t year)
       : m_second(second), m_minute(minute), m_hour(hour),
         m_day(day), m_month(month), m_year(year) {}
-    Date(const uint8_t second, const uint8_t minute, const uint8_t hour,
-         uint8_t day, const std::string& month, const uint16_t year)
+    Date(const uint16_t second, const uint16_t minute, const uint16_t hour,
+         uint16_t day, const std::string& month, const uint16_t year)
       : m_second(second), m_minute(minute), m_hour(hour),
         m_day(day), m_year(year) {
         std::string month_in = month;
@@ -61,6 +63,17 @@ struct Date {
     }
     bool operator!=(const Date& other) const {
         return !(*this == other);
+    }
+    void now() {
+        auto now = std::chrono::system_clock::now();
+        auto timePoint = std::chrono::system_clock::to_time_t(now);
+        struct std::tm *timeInfo = std::localtime(&timePoint);
+        m_second = static_cast<uint16_t>(timeInfo->tm_sec);
+        m_minute = static_cast<uint16_t>(timeInfo->tm_min);
+        m_hour = static_cast<uint16_t>(timeInfo->tm_hour);
+        m_day = static_cast<uint16_t>(timeInfo->tm_mday);
+        m_month = static_cast<uint16_t>(timeInfo->tm_mon + 1);
+        m_year = static_cast<uint16_t>(timeInfo->tm_year + 1900);
     }
 };
 
