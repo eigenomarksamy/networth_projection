@@ -132,17 +132,17 @@ ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(con
     ComplexInvestment complex_investment;
     complex_investment.setInvestment(investment);
     Transaction transaction;
-    Date date = getDateTime();
-    transaction.m_date = date;
+    DateTime date = DateTime::getDateTimeNow();
+    transaction.m_datetime = date;
     transaction.m_fees = fees;
     complex_investment.setTransaction(transaction);
-    complex_investment.setId(std::to_string(generateHashForString(investment.getName() + investment.getTicker() + std::to_string(investment.getPurchasePrice()) + getUniqueTimeId())));
+    complex_investment.setId(std::to_string(generateHashForString(investment.getName() + investment.getTicker() + std::to_string(investment.getPurchasePrice()) + DateTime::getUniqueTimeId())));
     return complex_investment;
 }
 
 ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(
                     const Investment& investment,
-                    const Date& date,
+                    const DateTime& date,
                     const double_t fees,
                     const Transaction::Currency currency,
                     const uint32_t sequencer,
@@ -151,14 +151,14 @@ ComplexInvestment portfolio::TransactionalPortfolio::createComplexInvestment(
     ComplexInvestment complex_investment;
     complex_investment.setInvestment(investment);
     Transaction transaction;
-    transaction.m_date = date;
+    transaction.m_datetime = date;
     transaction.m_currency = currency;
     transaction.m_fees = fees;
     transaction.m_conversion_fees = currency_conv_fees;
     complex_investment.setTransaction(transaction);
     complex_investment.setId(std::to_string(generateHashForString(investment.getName() +
                                                                   investment.getTicker() +
-                                                                  getUniqueTimeId())));
+                                                                  DateTime::getUniqueTimeId())));
     complex_investment.setSequencer(sequencer);
     complex_investment.setCurrencyConversionRate(currency_conv_rate);
     return complex_investment;
@@ -276,6 +276,26 @@ double_t portfolio::TransactionalPortfolio::calculateTotalGain() const {
         retVal -= investment.getTransaction().m_fees;
     }
     return retVal;
+}
+
+std::vector<ComplexInvestment> portfolio::TransactionalPortfolio::getFilteredDateInvestments(const DateTime& datetime) const {
+    std::vector<ComplexInvestment> retVec;
+    for (const auto& investment : m_investments) {
+        if (investment.getTransaction().m_datetime == datetime) {
+            retVec.push_back(investment);
+        }
+    }
+    return retVec;
+}
+
+std::vector<ComplexInvestment> portfolio::TransactionalPortfolio::getFilteredSymbolInvestments(const std::string& ticker) const {
+    std::vector<ComplexInvestment> retVec;
+    for (const auto& investment : m_investments) {
+        if (investment.getInvestment().getTicker() == ticker) {
+            retVec.push_back(investment);
+        }
+    }
+    return retVec;
 }
 
 void portfolio::TransactionalPortfolioManager::addPortfolio(TransactionalPortfolio& portfolio) {

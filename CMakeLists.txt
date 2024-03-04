@@ -22,6 +22,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC})
 target_link_libraries(${CMAKE_PROJECT_NAME}
     PRIVATE
     utils
+    datetime
     adapter
     db_manager
     interfaces

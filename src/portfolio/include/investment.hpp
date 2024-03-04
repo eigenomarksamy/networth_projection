@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string>
 #include "utils.hpp"
+#include "datetime.hpp"
 
 class Investment {
 private:
@@ -47,12 +48,12 @@ public:
 
 struct Transaction {
     enum class Currency {USD, EUR};
-    Date m_date;
+    DateTime m_datetime;
     double_t m_fees;
     double_t m_conversion_fees;
     Currency m_currency;
     bool operator==(const Transaction& other) const {
-        return ((m_date == other.m_date) &&
+        return ((m_datetime == other.m_datetime) &&
                 (m_fees == other.m_fees) &&
                 (m_conversion_fees == other.m_conversion_fees) &&
                 (m_currency == other.m_currency));

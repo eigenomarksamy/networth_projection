@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "datetime.hpp"
 #include "cmd_common.hpp"
 #include "file_generator.hpp"
 #include "portfolio.hpp"
@@ -26,15 +27,38 @@ void portfolio::displayPortfolio(const Portfolio& obj) {
     }
 }
 
+static void displayComplexInvestment(const ComplexInvestment& investment) {
+    auto date_str = std::to_string(investment.getTransaction().m_datetime.getTime().m_hour) + ":"
+                    + std::to_string(investment.getTransaction().m_datetime.getTime().m_minute) + ":"
+                    + std::to_string(investment.getTransaction().m_datetime.getTime().m_second) + " - "
+                    + std::to_string(investment.getTransaction().m_datetime.getDate().m_day) + "/"
+                    + std::to_string(investment.getTransaction().m_datetime.getDate().m_month) + "/"
+                    + std::to_string(investment.getTransaction().m_datetime.getDate().m_year);
+    auto currency_str = (investment.getTransaction().m_currency == Transaction::Currency::EUR) ? "EUR" : "USD";
+    std::cout << "ID: " << investment.getId()
+                << ", Sequence: " << investment.getSequencer()
+                << ", Date (hh:mm:ss - dd/mm/yyyy): " << date_str
+                << ", Name: " << investment.getInvestment().getName()
+                << ", Ticker: " << investment.getInvestment().getTicker()
+                << ", Quantity: " << investment.getInvestment().getQuantity()
+                << ", Purchase price: " << investment.getInvestment().getPurchasePrice()
+                << ", Current price: " << investment.getInvestment().getCurrentPrice()
+                << ", Currency: " << currency_str
+                << ", Fees: " << investment.getTransaction().m_fees
+                << ", Currency Conversion Fees: " << investment.getTransaction().m_conversion_fees
+                << ", Currency Conversion Rate: " << investment.getCurrencyConversionRate()
+                << std::endl;
+}
+
 void portfolio::displayPortfolio(const TransactionalPortfolio& obj) {
     std::cout << "Portfolio: " << obj.m_name << std::endl;
     for (const auto& investment : obj.m_investments) {
-        auto date_str = std::to_string(investment.getTransaction().m_date.m_hour) + ":"
-                        + std::to_string(investment.getTransaction().m_date.m_minute) + ":"
-                        + std::to_string(investment.getTransaction().m_date.m_second) + " - "
-                        + std::to_string(investment.getTransaction().m_date.m_day) + "/"
-                        + std::to_string(investment.getTransaction().m_date.m_month) + "/"
-                        + std::to_string(investment.getTransaction().m_date.m_year);
+        auto date_str = std::to_string(investment.getTransaction().m_datetime.getTime().m_hour) + ":"
+                        + std::to_string(investment.getTransaction().m_datetime.getTime().m_minute) + ":"
+                        + std::to_string(investment.getTransaction().m_datetime.getTime().m_second) + " - "
+                        + std::to_string(investment.getTransaction().m_datetime.getDate().m_day) + "/"
+                        + std::to_string(investment.getTransaction().m_datetime.getDate().m_month) + "/"
+                        + std::to_string(investment.getTransaction().m_datetime.getDate().m_year);
         auto currency_str = (investment.getTransaction().m_currency == Transaction::Currency::EUR) ? "EUR" : "USD";
         std::cout << "ID: " << investment.getId()
                   << ", Sequence: " << investment.getSequencer()
@@ -317,8 +341,8 @@ void portfolio::executeTransactionalPortfolioManagement(TransactionalPortfolio& 
                 if (!validateInputType(fees)) {
                     continue;
                 }
-                Date date;
-                date.now();
+                DateTime date;
+                date.setToNow();
                 // std::cout << "Date (leave blank to use now):\n";
                 // getGenericInputParam(date.m_hour, std::string("hour"));
                 // getGenericInputParam(date.m_day, std::string("day"));
@@ -372,9 +396,46 @@ void portfolio::executeTransactionalPortfolioManagement(TransactionalPortfolio& 
                 break;
             }
             case 12: {
+                std::string id;
+                std::cout << "Enter the ticker of the symbol to be displayed: ";
+                std::cin >> id;
+                auto investments = portfolio.getFilteredSymbolInvestments(id);
+                for (const auto& investment : investments) {
+                    displayComplexInvestment(investment);
+                }
                 break;
             }
             case 13: {
+                // std::string day, month, year;
+                // std::string raw_date;
+                // std::cout << "Enter the date to be displayed (dd/mm/yyyy): ";
+                // std::cin >> raw_date;
+                // std::vector<std::string> split;
+                // splitStr(raw_date, '/', split);
+                // Date date (0, 0, 0, 0, 0, 0);
+                // TransactionalPortfolio::DateFilterAttributes attribute;
+                // if (split.size() == 3) {
+                //     attribute = TransactionalPortfolio::DateFilterAttributes::Day;
+                //     date.m_day = std::stoi(split[0]);
+                //     date.m_month = std::stoi(split[1]);
+                //     date.m_year = std::stoi(split[2]);
+                // }
+                // if (split.size() == 2) {
+                //     attribute = TransactionalPortfolio::DateFilterAttributes::Month;
+                //     date.m_month = std::stoi(split[0]);
+                //     date.m_year = std::stoi(split[1]);
+                // }
+                // if (split.size() == 1) {
+                //     attribute = TransactionalPortfolio::DateFilterAttributes::Year;
+                //     date.m_year = std::stoi(split[0]);
+                // }
+                // // if (!date.validate()) {
+                // //     continue;
+                // // }
+                // auto investments = portfolio.getFilteredDateInvestments(date, attribute);
+                // for (const auto& investment : investments) {
+                //     displayComplexInvestment(investment);
+                // }
                 break;
             }
             case 21: {
@@ -418,27 +479,6 @@ void portfolio::executeTransactionalPortfolioManagement(TransactionalPortfolio& 
                 break;
             }
         }
-    }
-    auto investments = portfolio.getInvestments();
-    for (const auto& investment : investments) {
-        auto curr = (investment.getTransaction().m_currency == Transaction::Currency::USD) ? "USD" : "EUR";
-        std::cout << investment.getCurrencyConversionRate() << " "
-                  << investment.getId() << " "
-                  << investment.getSequencer() << " "
-                  << investment.getTransaction().m_conversion_fees << " "
-                  << curr << " "
-                  << investment.getTransaction().m_date.m_day << " "
-                  << investment.getTransaction().m_date.m_hour << " "
-                  << investment.getTransaction().m_date.m_minute << " "
-                  << investment.getTransaction().m_date.m_month << " "
-                  << investment.getTransaction().m_date.m_second << " "
-                  << investment.getTransaction().m_date.m_year << " "
-                  << investment.getTransaction().m_fees << " "
-                  << investment.getInvestment().getCurrentPrice() << " "
-                  << investment.getInvestment().getName() << " "
-                  << investment.getInvestment().getPurchasePrice() << " "
-                  << investment.getInvestment().getQuantity() << " "
-                  << investment.getInvestment().getTicker() << std::endl;
     }
 }
 

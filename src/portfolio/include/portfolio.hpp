@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "datetime.hpp"
 #include "investment.hpp"
 #include "portfolio_logger.hpp"
 #include "portfolio_db.hpp"
@@ -160,6 +161,7 @@ class TransactionalPortfolio {
 
 public:
     enum class InvestmentParameters { Quantity, PurchasePrice, CurrentPrice };
+    enum class DateFilterAttributes { Day, Month, Year };
     TransactionalPortfolio() = default;
     TransactionalPortfolio(const std::string& name) : m_name(name) {}
     bool operator==(const TransactionalPortfolio& other) const {
@@ -173,7 +175,7 @@ public:
     static ComplexInvestment createComplexInvestment(const Investment& investment,
                                                      const double_t fees);
     static ComplexInvestment createComplexInvestment(const Investment& investment,
-                                                     const Date& date,
+                                                     const DateTime& date,
                                                      const double_t fees,
                                                      const Transaction::Currency currency,
                                                      const uint32_t sequencer,
@@ -191,6 +193,8 @@ public:
     void setPrefCurrency(const Transaction::Currency pref_currency) { m_pref_currency = pref_currency; }
     Transaction::Currency getPrefCurrency() const { return m_pref_currency; }
     std::vector<ComplexInvestment> getInvestments() const { return m_investments; }
+    std::vector<ComplexInvestment> getFilteredDateInvestments(const DateTime& datetime) const;
+    std::vector<ComplexInvestment> getFilteredSymbolInvestments(const std::string& ticker) const;
 
     friend void displayPortfolio(const TransactionalPortfolio& obj);
 };
