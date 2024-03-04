@@ -12,12 +12,12 @@ private:
     std::string m_ticker;
     double_t m_purchase_price;
     double_t m_current_price;
-    uint32_t m_quantity;
+    double_t m_quantity;
 
 public:
     Investment() = default;
     Investment(const std::string& name, const std::string& ticker,
-               double_t purchasePrice, double_t currentPrice, uint32_t quantity)
+               double_t purchasePrice, double_t currentPrice, double_t quantity)
                : m_name(name), m_ticker(ticker),
                  m_purchase_price(purchasePrice),
                  m_current_price(currentPrice),
@@ -41,8 +41,8 @@ public:
     void setPurchasePrice(const double_t purchasePrice) { m_purchase_price = purchasePrice; }
     double_t getCurrentPrice() const { return this->m_current_price; }
     void setCurrentPrice(const double_t currentPrice) { m_current_price = currentPrice; }
-    uint32_t getQuantity() const { return this->m_quantity; }
-    void setQuantity(const uint32_t quantity) { m_quantity = quantity; }
+    double_t getQuantity() const { return this->m_quantity; }
+    void setQuantity(const double_t quantity) { m_quantity = quantity; }
 };
 
 

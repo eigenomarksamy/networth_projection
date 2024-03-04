@@ -244,7 +244,7 @@ bool portfolio::TransactionalPortfolio::updateInvestments(const std::map<std::st
                                                    check_it->getInvestment().getTicker(),
                                                    check_it->getInvestment().getPurchasePrice(),
                                                    check_it->getInvestment().getCurrentPrice(),
-                                                   static_cast<uint32_t>(value)));
+                                                   value));
             }
             else {
                 retVal = false;
@@ -278,11 +278,51 @@ double_t portfolio::TransactionalPortfolio::calculateTotalGain() const {
     return retVal;
 }
 
+double_t portfolio::TransactionalPortfolio::calculateTotalPurchases(const std::vector<ComplexInvestment>& investments) const {
+    double_t retVal = 0.0;
+    for (const auto& investment : investments) {
+        retVal += (investment.getInvestment().getQuantity() * investment.getInvestment().getPurchasePrice());
+    }
+    return retVal;
+}
+
+double_t portfolio::TransactionalPortfolio::calculateTotalValue(const std::vector<ComplexInvestment>& investments) const {
+    double_t retVal = 0.0;
+    for (const auto& investment : investments) {
+        retVal += (investment.getInvestment().getQuantity() * investment.getInvestment().getCurrentPrice());
+    }
+    return retVal;
+}
+
+double_t portfolio::TransactionalPortfolio::calculateTotalGain(const std::vector<ComplexInvestment>& investments) const {
+    double_t retVal = calculateTotalValue() - calculateTotalPurchases();
+    for (const auto& investment : investments) {
+        retVal -= investment.getTransaction().m_fees;
+    }
+    return retVal;
+}
+
 std::vector<ComplexInvestment> portfolio::TransactionalPortfolio::getFilteredDateInvestments(const DateTime& datetime) const {
     std::vector<ComplexInvestment> retVec;
     for (const auto& investment : m_investments) {
         if (investment.getTransaction().m_datetime == datetime) {
             retVec.push_back(investment);
+        }
+        else {
+            if (datetime.getMode() == DateTime::DateTimePrecision::Year
+                && investment.getTransaction().m_datetime.getDate().m_year == datetime.getDate().m_year) {
+                retVec.push_back(investment);
+            }
+            else if (datetime.getMode() == DateTime::DateTimePrecision::Month
+                     && (investment.getTransaction().m_datetime.getDate().m_month == datetime.getDate().m_month
+                         && investment.getTransaction().m_datetime.getDate().m_year == datetime.getDate().m_year)) {
+                    retVec.push_back(investment);
+            }
+            else if (investment.getTransaction().m_datetime.getDate().m_day == datetime.getDate().m_day
+                     && investment.getTransaction().m_datetime.getDate().m_month == datetime.getDate().m_month
+                     && investment.getTransaction().m_datetime.getDate().m_year == datetime.getDate().m_year) {
+                    retVec.push_back(investment);
+            }
         }
     }
     return retVec;

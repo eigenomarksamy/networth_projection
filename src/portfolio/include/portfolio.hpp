@@ -161,7 +161,6 @@ class TransactionalPortfolio {
 
 public:
     enum class InvestmentParameters { Quantity, PurchasePrice, CurrentPrice };
-    enum class DateFilterAttributes { Day, Month, Year };
     TransactionalPortfolio() = default;
     TransactionalPortfolio(const std::string& name) : m_name(name) {}
     bool operator==(const TransactionalPortfolio& other) const {
@@ -188,6 +187,9 @@ public:
     double_t calculateTotalPurchases() const;
     double_t calculateTotalValue() const;
     double_t calculateTotalGain() const;
+    double_t calculateTotalPurchases(const std::vector<ComplexInvestment>& investments) const;
+    double_t calculateTotalValue(const std::vector<ComplexInvestment>& investments) const;
+    double_t calculateTotalGain(const std::vector<ComplexInvestment>& investments) const;
     void setName(const std::string& name) { m_name = name; }
     std::string getName() const { return m_name; }
     void setPrefCurrency(const Transaction::Currency pref_currency) { m_pref_currency = pref_currency; }

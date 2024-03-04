@@ -53,26 +53,7 @@ static void displayComplexInvestment(const ComplexInvestment& investment) {
 void portfolio::displayPortfolio(const TransactionalPortfolio& obj) {
     std::cout << "Portfolio: " << obj.m_name << std::endl;
     for (const auto& investment : obj.m_investments) {
-        auto date_str = std::to_string(investment.getTransaction().m_datetime.getTime().m_hour) + ":"
-                        + std::to_string(investment.getTransaction().m_datetime.getTime().m_minute) + ":"
-                        + std::to_string(investment.getTransaction().m_datetime.getTime().m_second) + " - "
-                        + std::to_string(investment.getTransaction().m_datetime.getDate().m_day) + "/"
-                        + std::to_string(investment.getTransaction().m_datetime.getDate().m_month) + "/"
-                        + std::to_string(investment.getTransaction().m_datetime.getDate().m_year);
-        auto currency_str = (investment.getTransaction().m_currency == Transaction::Currency::EUR) ? "EUR" : "USD";
-        std::cout << "ID: " << investment.getId()
-                  << ", Sequence: " << investment.getSequencer()
-                  << ", Date (hh:mm:ss - dd/mm/yyyy): " << date_str
-                  << ", Name: " << investment.getInvestment().getName()
-                  << ", Ticker: " << investment.getInvestment().getTicker()
-                  << ", Quantity: " << investment.getInvestment().getQuantity()
-                  << ", Purchase price: " << investment.getInvestment().getPurchasePrice()
-                  << ", Current price: " << investment.getInvestment().getCurrentPrice()
-                  << ", Currency: " << currency_str
-                  << ", Fees: " << investment.getTransaction().m_fees
-                  << ", Currency Conversion Fees: " << investment.getTransaction().m_conversion_fees
-                  << ", Currency Conversion Rate: " << investment.getCurrencyConversionRate()
-                  << std::endl;
+        displayComplexInvestment(investment);
     }
 }
 
@@ -406,72 +387,209 @@ void portfolio::executeTransactionalPortfolioManagement(TransactionalPortfolio& 
                 break;
             }
             case 13: {
-                // std::string day, month, year;
-                // std::string raw_date;
-                // std::cout << "Enter the date to be displayed (dd/mm/yyyy): ";
-                // std::cin >> raw_date;
-                // std::vector<std::string> split;
-                // splitStr(raw_date, '/', split);
-                // Date date (0, 0, 0, 0, 0, 0);
-                // TransactionalPortfolio::DateFilterAttributes attribute;
-                // if (split.size() == 3) {
-                //     attribute = TransactionalPortfolio::DateFilterAttributes::Day;
-                //     date.m_day = std::stoi(split[0]);
-                //     date.m_month = std::stoi(split[1]);
-                //     date.m_year = std::stoi(split[2]);
-                // }
-                // if (split.size() == 2) {
-                //     attribute = TransactionalPortfolio::DateFilterAttributes::Month;
-                //     date.m_month = std::stoi(split[0]);
-                //     date.m_year = std::stoi(split[1]);
-                // }
-                // if (split.size() == 1) {
-                //     attribute = TransactionalPortfolio::DateFilterAttributes::Year;
-                //     date.m_year = std::stoi(split[0]);
-                // }
-                // // if (!date.validate()) {
-                // //     continue;
-                // // }
-                // auto investments = portfolio.getFilteredDateInvestments(date, attribute);
-                // for (const auto& investment : investments) {
-                //     displayComplexInvestment(investment);
-                // }
+                std::string day, month, year;
+                std::string raw_date;
+                std::cout << "Enter the date to be displayed (dd/mm/yyyy): ";
+                std::cin >> raw_date;
+                std::vector<std::string> split;
+                splitStr(raw_date, '/', split);
+                DateTime datetime;
+                if (split.size() == 3) {
+                    datetime.setDate(Date(std::stoi(split[2]), std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Day);
+                }
+                if (split.size() == 2) {
+                    datetime.setDate(Date(std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Month);
+                }
+                if (split.size() == 1) {
+                    datetime.setDate(Date(std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Year);
+                }
+                if (!datetime.validate()) {
+                    continue;
+                }
+                auto investments = portfolio.getFilteredDateInvestments(datetime);
+                for (const auto& investment : investments) {
+                    displayComplexInvestment(investment);
+                }
                 break;
             }
             case 21: {
+                std::cout << "Portfolio's total value is " << portfolio.calculateTotalValue() << std::endl;
                 break;
             }
             case 22: {
+                std::cout << "Portfolio's total gain is " << portfolio.calculateTotalGain() << std::endl;
                 break;
             }
             case 23: {
+                std::cout << "Portfolio's total spending is " << portfolio.calculateTotalPurchases() << std::endl;
                 break;
             }
             case 24: {
+                std::string id;
+                std::cout << "Enter the ticker of the symbol to be displayed: ";
+                std::cin >> id;
+                auto investments = portfolio.getFilteredSymbolInvestments(id);
+                std::cout << "Portfolio's total value is " << portfolio.calculateTotalValue(investments) << std::endl;
                 break;
             }
             case 25: {
+                std::string id;
+                std::cout << "Enter the ticker of the symbol to be displayed: ";
+                std::cin >> id;
+                auto investments = portfolio.getFilteredSymbolInvestments(id);
+                std::cout << "Portfolio's total value is " << portfolio.calculateTotalGain(investments) << std::endl;
                 break;
             }
             case 26: {
+                std::string id;
+                std::cout << "Enter the ticker of the symbol to be displayed: ";
+                std::cin >> id;
+                auto investments = portfolio.getFilteredSymbolInvestments(id);
+                std::cout << "Portfolio's total value is " << portfolio.calculateTotalPurchases(investments) << std::endl;
                 break;
             }
             case 27: {
+                std::string day, month, year;
+                std::string raw_date;
+                std::cout << "Enter the date to be displayed (dd/mm/yyyy): ";
+                std::cin >> raw_date;
+                std::vector<std::string> split;
+                splitStr(raw_date, '/', split);
+                DateTime datetime;
+                if (split.size() == 3) {
+                    datetime.setDate(Date(std::stoi(split[2]), std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Day);
+                }
+                if (split.size() == 2) {
+                    datetime.setDate(Date(std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Month);
+                }
+                if (split.size() == 1) {
+                    datetime.setDate(Date(std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Year);
+                }
+                if (!datetime.validate()) {
+                    continue;
+                }
+                auto investments = portfolio.getFilteredDateInvestments(datetime);
+                std::cout << "Portfolio's total value is " << portfolio.calculateTotalValue(investments) << std::endl;
                 break;
             }
             case 28: {
+                std::string day, month, year;
+                std::string raw_date;
+                std::cout << "Enter the date to be displayed (dd/mm/yyyy): ";
+                std::cin >> raw_date;
+                std::vector<std::string> split;
+                splitStr(raw_date, '/', split);
+                DateTime datetime;
+                if (split.size() == 3) {
+                    datetime.setDate(Date(std::stoi(split[2]), std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Day);
+                }
+                if (split.size() == 2) {
+                    datetime.setDate(Date(std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Month);
+                }
+                if (split.size() == 1) {
+                    datetime.setDate(Date(std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Year);
+                }
+                if (!datetime.validate()) {
+                    continue;
+                }
+                auto investments = portfolio.getFilteredDateInvestments(datetime);
+                std::cout << "Portfolio's total value is " << portfolio.calculateTotalGain(investments) << std::endl;
                 break;
             }
             case 29: {
+                std::string day, month, year;
+                std::string raw_date;
+                std::cout << "Enter the date to be displayed (dd/mm/yyyy): ";
+                std::cin >> raw_date;
+                std::vector<std::string> split;
+                splitStr(raw_date, '/', split);
+                DateTime datetime;
+                if (split.size() == 3) {
+                    datetime.setDate(Date(std::stoi(split[2]), std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Day);
+                }
+                if (split.size() == 2) {
+                    datetime.setDate(Date(std::stoi(split[1]), std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Month);
+                }
+                if (split.size() == 1) {
+                    datetime.setDate(Date(std::stoi(split[0])));
+                    datetime.setMode(DateTime::DateTimePrecision::Year);
+                }
+                if (!datetime.validate()) {
+                    continue;
+                }
+                auto investments = portfolio.getFilteredDateInvestments(datetime);
+                std::cout << "Portfolio's total value is " << portfolio.calculateTotalPurchases(investments) << std::endl;
                 break;
             }
             case 31: {
+                double_t newValue;
+                std::string id;
+                std::cout << "Enter the id of the investment to be updated: ";
+                std::cin >> id;
+                std::cout << "Enter the new value: ";
+                if (!validateInputType(newValue)) {
+                    continue;
+                }
+                std::cout << "Validation Complete!\n";
+                std::map<std::string, std::pair<double_t, TransactionalPortfolio::InvestmentParameters>> updateMap;
+                updateMap[id] = std::make_pair(newValue, TransactionalPortfolio::InvestmentParameters::PurchasePrice);
+                if (portfolio.updateInvestments(updateMap)) {
+                    std::cout << "Investment updated successfully.\n";
+                }
+                else {
+                    std::cout << "Failure\n";
+                }
                 break;
             }
             case 32: {
+                double_t newValue;
+                std::string id;
+                std::cout << "Enter the id of the investment to be updated: ";
+                std::cin >> id;
+                std::cout << "Enter the new value: ";
+                if (!validateInputType(newValue)) {
+                    continue;
+                }
+                std::cout << "Validation Complete!\n";
+                std::map<std::string, std::pair<double_t, TransactionalPortfolio::InvestmentParameters>> updateMap;
+                updateMap[id] = std::make_pair(newValue, TransactionalPortfolio::InvestmentParameters::CurrentPrice);
+                if (portfolio.updateInvestments(updateMap)) {
+                    std::cout << "Investment updated successfully.\n";
+                }
+                else {
+                    std::cout << "Failure\n";
+                }
                 break;
             }
             case 33: {
+                double_t newValue;
+                std::string id;
+                std::cout << "Enter the id of the investment to be updated: ";
+                std::cin >> id;
+                std::cout << "Enter the new value: ";
+                if (!validateInputType(newValue)) {
+                    continue;
+                }
+                std::cout << "Validation Complete!\n";
+                std::map<std::string, std::pair<double_t, TransactionalPortfolio::InvestmentParameters>> updateMap;
+                updateMap[id] = std::make_pair(newValue, TransactionalPortfolio::InvestmentParameters::Quantity);
+                if (portfolio.updateInvestments(updateMap)) {
+                    std::cout << "Investment updated successfully.\n";
+                }
+                else {
+                    std::cout << "Failure\n";
+                }
                 break;
             }
             default: {
