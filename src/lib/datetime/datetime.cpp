@@ -206,6 +206,73 @@ std::string DateTime::getUniqueTimeId() {
     return DateTime::getLocalDateTime("%d%m%Y%H%M%S");
 }
 
+std::string DateTime::convertDateToString(const Date& date) {
+    std::string date_str;
+    date_str = std::to_string(date.m_year);
+    if (date.m_mode == Date::DatePrecision::Month) {
+        if (date.m_month < 10) {
+            date_str = "0" + std::to_string(date.m_month) + date_str;
+        }
+        else {
+            date_str = std::to_string(date.m_month) + date_str;
+        }
+    }
+    else if (date.m_mode == Date::DatePrecision::Day) {
+        if (date.m_month < 10) {
+            date_str = "0" + std::to_string(date.m_month) + date_str;
+        }
+        else {
+            date_str = std::to_string(date.m_month) + date_str;
+        }
+        if (date.m_day < 10) {
+            date_str = "0" + std::to_string(date.m_day) + date_str;
+        }
+        else {
+            date_str = std::to_string(date.m_day) + date_str;
+        }
+    }
+    return date_str;
+}
+
+std::string DateTime::convertTimeToString(const Time& time) {
+    std::string time_str;
+    time_str = std::to_string(time.m_hour);
+    if (time.m_mode == Time::TimePrecision::Minute) {
+        if (time.m_minute < 10) {
+            time_str = "0" + std::to_string(time.m_minute) + time_str;
+        }
+        else {
+            time_str = std::to_string(time.m_minute) + time_str;
+        }
+    }
+    else if (time.m_mode == Time::TimePrecision::Second) {
+        if (time.m_minute < 10) {
+            time_str = "0" + std::to_string(time.m_minute) + time_str;
+        }
+        else {
+            time_str = std::to_string(time.m_minute) + time_str;
+        }
+        if (time.m_second < 10) {
+            time_str = "0" + std::to_string(time.m_second) + time_str;
+        }
+        else {
+            time_str = std::to_string(time.m_second) + time_str;
+        }
+    }
+    return time_str;
+}
+
+std::string DateTime::convertDateTimeToString(const DateTime& datetime) {
+    std::string datetime_str = "";
+    if (datetime.m_mode == DateTimePrecision::Hour
+        || datetime.m_mode == DateTimePrecision::Minute
+        || datetime.m_mode == DateTimePrecision::Second) {
+        datetime_str += convertTimeToString(datetime.m_time);
+    }
+    datetime_str += convertDateToString(datetime.m_date);
+    return datetime_str;
+}
+
 DateTime DateTime::getDateTimeNow() {
     DateTime datetime;
     auto now = std::chrono::system_clock::now();
@@ -260,6 +327,10 @@ DateTime DateTime::getDateTimeNow(const DateTimePrecision mode) {
         datetime.setMode(mode);
     }
     return datetime;
+}
+
+std::string DateTime::getDateTimeString() const {
+    return convertDateTimeToString(*this);
 }
 
 void DateTime::setToNow() {
