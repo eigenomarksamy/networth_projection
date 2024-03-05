@@ -114,6 +114,16 @@ inline std::size_t generateHashForString(const std::string& str) {
 
 uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target);
 
+template <typename T>
+uint16_t findIdx(const std::vector<T>& v, const T& target) {
+    uint16_t idx = -1;
+    auto it = find(v.begin(), v.end(), target);
+    if (it != v.end()) {
+        idx = it - v.begin();
+    }
+    return idx;
+}
+
 void splitStr(const std::string& str, const char separator,
               std::vector<std::string>& strings);
 
