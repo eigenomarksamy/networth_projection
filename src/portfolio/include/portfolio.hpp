@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "datetime.hpp"
 #include "investment.hpp"
 #include "portfolio_logger.hpp"
 #include "portfolio_db.hpp"
@@ -43,8 +44,8 @@ public:
         return true;
     }
     bool removeInvestment(const std::string& ticker);
-    bool updatedInvestmentValue(const std::string& ticker, double_t newValue);
-    bool updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant);
+    bool updatedInvestmentValue(const std::string& ticker, const double_t newValue);
+    bool updateInvestmentQuantity(const std::string& ticker, const double_t newQuant);
     double_t calculateTotalValue() const;
     double_t calculateTotalGain() const;
     void clearInvestments();
@@ -150,6 +151,98 @@ private:
         }
     }
 
+};
+
+class TransactionalPortfolio {
+
+    std::string m_name;
+    std::vector<ComplexInvestment> m_investments;
+    Transaction::Currency m_pref_currency;
+
+public:
+    enum class InvestmentParameters { Quantity, PurchasePrice, CurrentPrice };
+    TransactionalPortfolio() = default;
+    TransactionalPortfolio(const std::string& name) : m_name(name) {}
+    bool operator==(const TransactionalPortfolio& other) const {
+        return ((m_name == other.m_name) &&
+                (m_investments == other.m_investments) &&
+                (m_pref_currency == other.m_pref_currency));
+    }
+    bool operator!=(const TransactionalPortfolio& other) const {
+        return !(*this == other);
+    }
+    static ComplexInvestment createComplexInvestment(const Investment& investment,
+                                                     const double_t fees);
+    static ComplexInvestment createComplexInvestment(const Investment& investment,
+                                                     const DateTime& date,
+                                                     const double_t fees,
+                                                     const Transaction::Currency currency,
+                                                     const uint32_t sequencer,
+                                                     const double_t currency_conv_rate,
+                                                     const double_t currency_conv_fees);
+    void updateSequence();
+    bool addInvestments(const std::vector<ComplexInvestment>& investments);
+    bool removeInvestments(const std::vector<std::string>& investmentIds);
+    bool updateInvestments(const std::map<std::string, std::pair<double_t, InvestmentParameters>>& mapOfUpdate);
+    double_t calculateTotalPurchases() const;
+    double_t calculateTotalValue() const;
+    double_t calculateTotalGain() const;
+    double_t calculateTotalPurchases(const std::vector<ComplexInvestment>& investments) const;
+    double_t calculateTotalValue(const std::vector<ComplexInvestment>& investments) const;
+    double_t calculateTotalGain(const std::vector<ComplexInvestment>& investments) const;
+    void setName(const std::string& name) { m_name = name; }
+    std::string getName() const { return m_name; }
+    void setPrefCurrency(const Transaction::Currency pref_currency) { m_pref_currency = pref_currency; }
+    Transaction::Currency getPrefCurrency() const { return m_pref_currency; }
+    std::vector<ComplexInvestment> getInvestments() const { return m_investments; }
+    std::vector<ComplexInvestment> getFilteredDateInvestments(const DateTime& datetime) const;
+    std::vector<ComplexInvestment> getFilteredSymbolInvestments(const std::string& ticker) const;
+
+    friend void displayPortfolio(const TransactionalPortfolio& obj);
+};
+
+void displayPortfolio(const TransactionalPortfolio& obj);
+
+class TransactionalPortfolioManager {
+
+    std::vector<std::unique_ptr<TransactionalPortfolio>> m_portfolios;
+
+public:
+    TransactionalPortfolioManager() = default;
+    TransactionalPortfolioManager(const TransactionalPortfolioManager& other) {
+        for (const auto& portfolio : other.m_portfolios) {
+            m_portfolios.push_back(std::make_unique<TransactionalPortfolio>(*portfolio));
+        }
+    }
+    bool operator==(const TransactionalPortfolioManager& other) const {
+        bool retVal = m_portfolios.size() == other.m_portfolios.size();
+        if (retVal) {
+            retVal = equal(begin(m_portfolios), end(m_portfolios),
+                           begin(other.m_portfolios), end(other.m_portfolios),
+                           [](const std::unique_ptr<portfolio::TransactionalPortfolio>& lhs,
+                              const std::unique_ptr<portfolio::TransactionalPortfolio>& rhs) {
+                                return *lhs == *rhs;
+                            });
+        }
+        return retVal;
+    }
+    bool operator!=(const TransactionalPortfolioManager& other) const {
+        return !(*this == other);
+    }
+
+    void addPortfolio(TransactionalPortfolio& portfolio);
+
+    bool addPortfolio(const std::string& portfolio_name);
+
+    bool removePortfolio(const std::string& portfolio_name);
+
+    uint16_t getNumPortfolios() const {
+        return static_cast<uint16_t>(m_portfolios.size());
+    }
+
+    TransactionalPortfolio& getPortfolio(uint16_t portfolio_idx) const {
+        return *(m_portfolios[portfolio_idx]);
+    }
 };
 
 } // namespace portfolio

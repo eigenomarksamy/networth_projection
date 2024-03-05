@@ -31,6 +31,11 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
 static void executePortfolioMgr(const std::string& confFile) {
     portfolio::PortfolioMgrCfg portfolioInput;
     if (!portfolio::setUpPortfolioCfg(portfolioInput, confFile)) return;
+    if (portfolioInput.is_complex_investment) {
+        portfolio::TransactionalPortfolio portfolio;
+        portfolio::executeTransactionalPortfolioManagement(portfolio);
+        return;
+    }
     auto dbStrategy = std::make_shared<db_manager::SQLiteStrategy>();
     portfolio::PortfolioManager portfolio_manager;
     bool valid = false;

@@ -10,6 +10,8 @@
 #include <variant>
 #include <sstream>
 #include <cstdint>
+#include <ctime>
+#include <chrono>
 
 template<typename T>
 float_t getPercent(T percent) {
@@ -95,15 +97,15 @@ T convertToNumeric(const std::string& str, const T& defaultValue) {
     return result;
 }
 
+inline void convertStrToLowerCase(std::string& str) {
+    for (auto& c : str) {
+        c = tolower(c);
+    }
+}
+
 bool convertStrToBool(const std::string& str);
 
 bool convertStrToBool(const std::string& str, const bool defaultValue);
-
-std::string getLocalDateTime(const char format[]);
-
-std::string getLocalDateTime();
-
-std::string getUniqueTimeId();
 
 inline std::size_t generateHashForString(const std::string& str) {
     std::hash<std::string> hasher;

@@ -3,6 +3,8 @@
 
 #include <math.h>
 #include <string>
+#include "utils.hpp"
+#include "datetime.hpp"
 
 class Investment {
 private:
@@ -10,12 +12,12 @@ private:
     std::string m_ticker;
     double_t m_purchase_price;
     double_t m_current_price;
-    uint32_t m_quantity;
+    double_t m_quantity;
 
 public:
     Investment() = default;
     Investment(const std::string& name, const std::string& ticker,
-               double_t purchasePrice, double_t currentPrice, uint32_t quantity)
+               double_t purchasePrice, double_t currentPrice, double_t quantity)
                : m_name(name), m_ticker(ticker),
                  m_purchase_price(purchasePrice),
                  m_current_price(currentPrice),
@@ -39,9 +41,61 @@ public:
     void setPurchasePrice(const double_t purchasePrice) { m_purchase_price = purchasePrice; }
     double_t getCurrentPrice() const { return this->m_current_price; }
     void setCurrentPrice(const double_t currentPrice) { m_current_price = currentPrice; }
-    uint32_t getQuantity() const { return this->m_quantity; }
-    void setQuantity(const uint32_t quantity) { m_quantity = quantity; }
+    double_t getQuantity() const { return this->m_quantity; }
+    void setQuantity(const double_t quantity) { m_quantity = quantity; }
 };
 
+
+struct Transaction {
+    enum class Currency {USD, EUR};
+    DateTime m_datetime;
+    double_t m_fees;
+    double_t m_conversion_fees;
+    Currency m_currency;
+    bool operator==(const Transaction& other) const {
+        return ((m_datetime == other.m_datetime) &&
+                (m_fees == other.m_fees) &&
+                (m_conversion_fees == other.m_conversion_fees) &&
+                (m_currency == other.m_currency));
+    }
+    bool operator!=(const Transaction& other) const {
+        return !(*this == other);
+    }
+};
+
+class ComplexInvestment {
+
+private:
+    Investment m_investment;
+    Transaction m_transaction;
+    std::string m_id;
+    uint32_t m_sequencer;
+    double_t m_currency_conversion_rate;
+
+public:
+    ComplexInvestment() = default;
+    ComplexInvestment(const ComplexInvestment& other) = default;
+    ~ComplexInvestment() = default;
+    bool operator==(const ComplexInvestment& other) const {
+        return ((m_investment == other.m_investment) &&
+                (m_transaction == other.m_transaction) &&
+                (m_id == other.m_id) &&
+                (m_sequencer == other.m_sequencer) &&
+                (m_currency_conversion_rate == other.m_currency_conversion_rate));
+    }
+    bool operator!=(const ComplexInvestment& other) const {
+        return !(*this == other);
+    }
+    Investment getInvestment() const { return m_investment; }
+    Transaction getTransaction() const { return m_transaction; }
+    std::string getId() const { return m_id; }
+    uint32_t getSequencer() const { return m_sequencer; }
+    double_t getCurrencyConversionRate() const { return m_currency_conversion_rate; }
+    void setInvestment(const Investment& investment) { m_investment = investment; }
+    void setTransaction(const Transaction& transaction) { m_transaction = transaction; }
+    void setId(const std::string& id) { m_id = id; }
+    void setSequencer(const uint32_t sequencer) { m_sequencer = sequencer; }
+    void setCurrencyConversionRate(const double_t currency_conversion_rate) { m_currency_conversion_rate = currency_conversion_rate; }
+};
 
 #endif /* INVESTMENT_HPP_ */

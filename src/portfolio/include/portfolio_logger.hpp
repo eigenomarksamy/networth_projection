@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "utils.hpp"
+#include "datetime.hpp"
 #include "logger.hpp"
 
 namespace portfolio {
@@ -13,7 +14,7 @@ class PortfolioLogger {
 public:
 
     PortfolioLogger() {
-        m_logger = std::make_unique<Logger>("gen/logs/log_prtfmgr_" + getUniqueTimeId() + ".log");
+        m_logger = std::make_unique<Logger>("gen/logs/log_prtfmgr_" + DateTime::getUniqueTimeId() + ".log");
         m_seq = 0u;
     }
 
@@ -22,7 +23,7 @@ public:
     }
 
     void log(const std::string& message) {
-        m_logger->Log(getUniqueTimeId() + "_" + std::to_string(m_seq) + ": " + message + ".");
+        m_logger->Log(DateTime::getUniqueTimeId() + "_" + std::to_string(m_seq) + ": " + message + ".");
         ++m_seq;
     }
 

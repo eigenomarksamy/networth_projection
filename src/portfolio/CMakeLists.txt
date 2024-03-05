@@ -14,6 +14,7 @@ target_link_libraries(
     portfoliomanager
     PRIVATE
     utils
+    datetime
     cmdio
     fileio
     commonio

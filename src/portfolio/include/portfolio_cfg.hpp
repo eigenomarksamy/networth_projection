@@ -14,6 +14,7 @@ struct PortfolioMgrCfg {
     bool load_all_portfolios = true;
     bool auto_save = true;
     bool auto_log = true;
+    bool is_complex_investment = false;
     std::string portfolio_src = "db";
     std::string gen_dir = "gen/portfolios/";
     std::string db_dir = "db/test/portfolios/";
@@ -37,6 +38,7 @@ struct PortfolioMgrYmlVals {
     std::shared_ptr<config_elm_t> source;
     std::shared_ptr<config_elm_t> table_name;
     std::shared_ptr<config_elm_t> low_latency_db_threshold;
+    std::shared_ptr<config_elm_t> is_complex_investment;
 };
 
 bool resolveCfg(const std::string& confPath, PortfolioMgrYmlDirs& dirs);

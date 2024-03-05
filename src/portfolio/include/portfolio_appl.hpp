@@ -6,9 +6,11 @@
 
 namespace portfolio {
 
-void executePortfolioManagement(portfolio::Portfolio& portfolio);
+void executePortfolioManagement(Portfolio& portfolio);
 
-void executeMultiPortfolioManagement(portfolio::PortfolioManager& portfolio_mngr);
+void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr);
+
+void executeTransactionalPortfolioManagement(TransactionalPortfolio& portfolio);
 
 PortfolioCfgInputSource setPortfolioInputSource();
 
