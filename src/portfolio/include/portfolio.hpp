@@ -44,8 +44,8 @@ public:
         return true;
     }
     bool removeInvestment(const std::string& ticker);
-    bool updatedInvestmentValue(const std::string& ticker, double_t newValue);
-    bool updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant);
+    bool updatedInvestmentValue(const std::string& ticker, const double_t newValue);
+    bool updateInvestmentQuantity(const std::string& ticker, const double_t newQuant);
     double_t calculateTotalValue() const;
     double_t calculateTotalGain() const;
     void clearInvestments();
