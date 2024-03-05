@@ -14,7 +14,7 @@ bool portfolio::DatabaseInterfaceImplementation::createTable() {
     columnDefinitions.push_back(db_manager::columnDefinition_t{"name", "TEXT NOT NULL"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"ticker", "TEXT PRIMARY KEY"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"purchase_price", "REAL NOT NULL"});
-    columnDefinitions.push_back(db_manager::columnDefinition_t{"quantity", "INTEGER NOT NULL"});
+    columnDefinitions.push_back(db_manager::columnDefinition_t{"quantity", "REAL NOT NULL"});
     columnDefinitions.push_back(db_manager::columnDefinition_t{"current_price", "REAL NOT NULL DEFAULT 0.0"});
     return m_dbOrm.createTable(m_dbPath, m_tableName, columnDefinitions);
 }
@@ -30,7 +30,7 @@ bool portfolio::DatabaseInterfaceImplementation::saveInvestment(const Investment
     return false;
 }
 
-bool portfolio::DatabaseInterfaceImplementation::updateInvestmentQuantity(const std::string& ticker, const uint32_t quantity) {
+bool portfolio::DatabaseInterfaceImplementation::updateInvestmentQuantity(const std::string& ticker, const double_t quantity) {
     if (m_dbOrm.update(m_dbPath, m_tableName, "'" + ticker + "'", "ticker", "quantity", std::to_string(quantity)))
         return true;
     return false;
@@ -64,7 +64,7 @@ bool portfolio::DatabaseInterfaceImplementation::getInvestment(const std::string
             retFlag &= m_dbOrm.get(m_dbPath, m_tableName, "ticker", "'" + ticker + "'", column, retVal);
         }
         if ("quantity" == column && retFlag) {
-            auto retValI = std::stoi(retVal);
+            auto retValI = std::stod(retVal);
             investment.setQuantity(retValI);
         }
         else if ("purchase_price" == column && retFlag) {

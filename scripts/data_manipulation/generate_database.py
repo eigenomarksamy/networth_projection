@@ -29,16 +29,16 @@ def generate_files(names: list[str]) -> list[str]:
     return file_names
 
 def generate_sample_data() -> tuple:
-    company_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
+    company_name = (''.join(random.choices(string.ascii_lowercase, k=10)))
     company_ticker = (''.join(random.choices(string.ascii_uppercase, k=4)))
-    quantity = random.randint(1, 500)
+    quantity = random.uniform(0.1, 100.0)
     purchase_price = random.uniform(0.5, 1000.0)
-    current_price = purchase_price * random.uniform(0.0001, 450.0)
+    current_price = purchase_price * random.uniform(0.01, 450.0)
     return (company_name, company_ticker, quantity, purchase_price, current_price)
 
 def generate_dbs(dbs: list[str]) -> None:
     columns = {"name": "TEXT NOT NULL", "ticker": "TEXT PRIMARY KEY",
-               "quantity": "INTEGER NOT NULL",
+               "quantity": "REAL NOT NULL",
                "purchase_price": "REAL NOT NULL",
                "current_price": "REAL NOT NULL"}
     table_name = "investments"

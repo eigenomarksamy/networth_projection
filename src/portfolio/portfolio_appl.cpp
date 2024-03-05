@@ -20,9 +20,9 @@ void portfolio::displayPortfolio(const Portfolio& obj) {
     for (const auto& investment : obj.m_investments) {
         std::cout << "Name: " << investment.getName() << ", Ticker: "
                   << investment.getTicker() << ", Quantity: "
-                  << investment.getQuantity() << ", Purchase price: "
-                  << investment.getPurchasePrice() << ", Current price: "
-                  << investment.getCurrentPrice()
+                  << std::to_string(investment.getQuantity()) << ", Purchase price: "
+                  << std::to_string(investment.getPurchasePrice()) << ", Current price: "
+                  << std::to_string(investment.getCurrentPrice())
                   << std::endl;
     }
 }
@@ -40,13 +40,13 @@ static void displayComplexInvestment(const ComplexInvestment& investment) {
                 << ", Date (hh:mm:ss - dd/mm/yyyy): " << date_str
                 << ", Name: " << investment.getInvestment().getName()
                 << ", Ticker: " << investment.getInvestment().getTicker()
-                << ", Quantity: " << investment.getInvestment().getQuantity()
-                << ", Purchase price: " << investment.getInvestment().getPurchasePrice()
-                << ", Current price: " << investment.getInvestment().getCurrentPrice()
+                << ", Quantity: " << std::to_string(investment.getInvestment().getQuantity())
+                << ", Purchase price: " << std::to_string(investment.getInvestment().getPurchasePrice())
+                << ", Current price: " << std::to_string(investment.getInvestment().getCurrentPrice())
                 << ", Currency: " << currency_str
-                << ", Fees: " << investment.getTransaction().m_fees
-                << ", Currency Conversion Fees: " << investment.getTransaction().m_conversion_fees
-                << ", Currency Conversion Rate: " << investment.getCurrencyConversionRate()
+                << ", Fees: " << std::to_string(investment.getTransaction().m_fees)
+                << ", Currency Conversion Fees: " << std::to_string(investment.getTransaction().m_conversion_fees)
+                << ", Currency Conversion Rate: " << std::to_string(investment.getCurrencyConversionRate())
                 << std::endl;
 }
 
@@ -98,8 +98,7 @@ void portfolio::executePortfolioManagement(Portfolio& portfolio) {
         switch (choice) {
             case 1: {
                 std::string name, ticker;
-                double_t purchasePrice;
-                uint32_t quantity;
+                double_t purchasePrice, quantity;
                 std::cout << "Enter investment details:\n";
                 std::cout << "Name: ";
                 std::cin >> name;
@@ -176,7 +175,7 @@ void portfolio::executePortfolioManagement(Portfolio& portfolio) {
             }
             case 7: {
                 std::string ticker;
-                uint32_t newQuantity;
+                double_t newQuantity;
                 std::cout << "Enter the ticker of the investment to be updated: ";
                 std::cin >> ticker;
                 std::cout << "Enter the new quantity: ";
@@ -306,12 +305,11 @@ void portfolio::executeTransactionalPortfolioManagement(TransactionalPortfolio& 
                 std::cin >> name;
                 std::cout << "Ticker: ";
                 std::cin >> ticker;
-                double_t purchasePrice;
+                double_t purchasePrice, quantity;
                 std::cout << "Purchase price: ";
                 if (!validateInputType(purchasePrice)) {
                     continue;
                 }
-                uint32_t quantity;
                 std::cout << "Quantity: ";
                 if (!validateInputType(quantity)) {
                     continue;

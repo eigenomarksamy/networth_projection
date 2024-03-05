@@ -62,7 +62,7 @@ double_t portfolio::Portfolio::calculateTotalGain() const {
     return totalGain;
 }
 
-bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, double_t newValue) {
+bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, const double_t newValue) {
     bool retVal = false;
     for (auto& investment : m_investments) {
         if (investment.getTicker() == ticker) {
@@ -75,7 +75,7 @@ bool portfolio::Portfolio::updatedInvestmentValue(const std::string& ticker, dou
     return retVal;
 }
 
-bool portfolio::Portfolio::updateInvestmentQuantity(const std::string& ticker, uint32_t newQuant) {
+bool portfolio::Portfolio::updateInvestmentQuantity(const std::string& ticker, const double_t newQuant) {
     bool retVal = false;
     for (auto& investment : m_investments) {
         if (investment.getTicker() == ticker) {
