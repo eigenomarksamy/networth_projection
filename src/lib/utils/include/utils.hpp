@@ -112,6 +112,23 @@ inline std::size_t generateHashForString(const std::string& str) {
     return hasher(str);
 }
 
+inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+inline void trim(std::string &s) {
+    rtrim(s);
+    ltrim(s);
+}
+
 uint64_t findClosest(const std::vector<uint64_t>& v, const uint64_t target);
 
 void splitStr(const std::string& str, const char separator,

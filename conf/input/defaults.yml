@@ -4,5 +4,5 @@ portfolio-manager:
   auto-save: true
   auto-log: false
   auto-load: true
-  complex-investment: true
+  complex-investment: false
   low-latency-db-threshold: 25

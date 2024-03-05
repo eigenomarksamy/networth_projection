@@ -20,6 +20,14 @@
 #include "logger.hpp"
 #include "strategy_db.hpp"
 
+enum APPLICATION_IDX {
+    PORTFOLIO_MANAGER = 0,
+    MORTGAGE_CALCULATOR,
+    NETWORTH_PROJECTOR,
+    LENGTH
+};
+
+static std::array<bool, APPLICATION_IDX::LENGTH> resolveCfgAppSelector(const std::string& cfgFile);
 static void executePortfolioMgr(const std::string& confFile);
 static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& networth_projector_path_input,
@@ -27,6 +35,12 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
                               const std::string& mortgage_calculator_path_input,
                               const InputDataNetworthProjector& confInputNetw,
                               const InputDataMortgageCalculator& confInputMrtg);
+static void executeStaticAppl(const std::string& mortgage_calculator_path_output,
+                              const std::string& mortgage_calculator_path_input,
+                              const InputDataMortgageCalculator& confInputMrtg);
+static void executeStaticAppl(const std::string& networth_projector_path_output,
+                              const std::string& networth_projector_path_input,
+                              const InputDataNetworthProjector& confInputNetw);
 
 static void executePortfolioMgr(const std::string& confFile) {
     portfolio::PortfolioMgrCfg portfolioInput;
@@ -101,36 +115,107 @@ static void executeStaticAppl(const std::string& networth_projector_path_output,
     }
 }
 
+static void executeStaticAppl(const std::string& mortgage_calculator_path_output,
+                              const std::string& mortgage_calculator_path_input,
+                              const InputDataMortgageCalculator& confInputMrtg) {
+
+}
+
+static void executeStaticAppl(const std::string& networth_projector_path_output,
+                              const std::string& networth_projector_path_input,
+                              const InputDataNetworthProjector& confInputNetw) {
+    
+}
+
+std::array<bool, APPLICATION_IDX::LENGTH> resolveCfgAppSelector(const std::string& cfgFile) {
+    std::array<bool, APPLICATION_IDX::LENGTH> retArr = {false};
+    YmlCfg app_cfg(cfgFile);
+    auto element = YmlCfg::createConfigElm("application-to-run");
+    app_cfg.addConfigElement(element);
+    if (app_cfg.readCfg(false, false)) {
+        auto raw_str = element->value;
+        std::vector<std::string> multi_string;
+        splitStr(raw_str, ',', multi_string);
+        for (auto& ms : multi_string) {
+            trim(ms);
+            convertStrToLowerCase(ms);
+            if (ms == "portfolio_manager")
+                retArr[APPLICATION_IDX::PORTFOLIO_MANAGER] = true;
+            else if (ms == "networth_projector")
+                retArr[APPLICATION_IDX::NETWORTH_PROJECTOR] = true;
+            else if (ms == "mortgage_calculator")
+                retArr[APPLICATION_IDX::MORTGAGE_CALCULATOR] = true;
+        }
+    }
+    return retArr;
+}
+
 int main() {
     std::string dir_conf_file = "conf/directories.yml";
-    std::string networth_conf_file = "conf/input/networth.yml";
-    std::string mortgage_conf_file = "conf/input/mortgage.yml";
     DirectoriesValues dirs;
-    NetworthValues nw_cfg_values;
-    MortgageValues mortg_cfg_values;
-    InputDataNetworthProjector input_data_nw_from_yml;
-    InputDataMortgageCalculator input_data_mortg_from_yml;
     bool dirCfgRet = false;
     if (resolveCfg(dir_conf_file, dirs)) {
         dirCfgRet = true;
     }
-    bool netwCfgRet = false;
-    if (resolveCfg(networth_conf_file, nw_cfg_values)) {
-        convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
-        netwCfgRet = true;
+    auto selected = resolveCfgAppSelector("conf/input/application_selector.yml");
+    if (selected[APPLICATION_IDX::MORTGAGE_CALCULATOR]) {
+        std::string mortgage_conf_file = "conf/input/mortgage.yml";
+        MortgageValues mortg_cfg_values;
+        InputDataMortgageCalculator input_data_mortg_from_yml;
+        bool mortgCfgRet = false;
+        if (resolveCfg(mortgage_conf_file, mortg_cfg_values)) {
+            convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
+            mortgCfgRet = true;
+        }
+        if (mortgCfgRet) {
+            executeStaticAppl(dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+                              input_data_mortg_from_yml);
+        }
     }
-    bool mortgCfgRet = false;
-    if (resolveCfg(mortgage_conf_file, mortg_cfg_values)) {
-        convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
-        mortgCfgRet = true;
+    if (selected[APPLICATION_IDX::NETWORTH_PROJECTOR]) {
+        std::string networth_conf_file = "conf/input/networth.yml";
+        NetworthValues nw_cfg_values;
+        InputDataNetworthProjector input_data_nw_from_yml;
+        bool netwCfgRet = false;
+        if (resolveCfg(networth_conf_file, nw_cfg_values)) {
+            convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
+            netwCfgRet = true;
+        }
+        if (netwCfgRet) {
+            executeStaticAppl(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+                              input_data_nw_from_yml);
+        }
     }
-    if (doesUserWantStaticProgram()) {
-        executeStaticAppl(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
-                          dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
-                          input_data_nw_from_yml, input_data_mortg_from_yml);
-    }
-    if (getUserYesNo("portfolio manager mode")) {
+    if (selected[APPLICATION_IDX::PORTFOLIO_MANAGER]) {
         executePortfolioMgr(dir_conf_file);
+    }
+    if (!selected[APPLICATION_IDX::PORTFOLIO_MANAGER]
+        && !selected[APPLICATION_IDX::MORTGAGE_CALCULATOR]
+        && !selected[APPLICATION_IDX::NETWORTH_PROJECTOR]) {
+        std::string mortgage_conf_file = "conf/input/mortgage.yml";
+        std::string networth_conf_file = "conf/input/networth.yml";
+        MortgageValues mortg_cfg_values;
+        NetworthValues nw_cfg_values;
+        InputDataMortgageCalculator input_data_mortg_from_yml;
+        InputDataNetworthProjector input_data_nw_from_yml;
+        bool mortgCfgRet = false;
+        bool netwCfgRet = false;
+        if (resolveCfg(mortgage_conf_file, mortg_cfg_values)) {
+            convertMortgageYmlData(input_data_mortg_from_yml, mortg_cfg_values);
+            mortgCfgRet = true;
+        }
+        if (resolveCfg(networth_conf_file, nw_cfg_values)) {
+            convertNetworthYmlData(input_data_nw_from_yml, nw_cfg_values);
+            netwCfgRet = true;
+        }
+        if (doesUserWantStaticProgram() && netwCfgRet && mortgCfgRet) {
+            executeStaticAppl(dirs.netwo_calc_out->value, dirs.netwo_calc_in->value,
+                              dirs.mortg_calc_out->value, dirs.mortg_calc_in->value,
+                              input_data_nw_from_yml, input_data_mortg_from_yml);
+        }
+        if (getUserYesNo("portfolio manager mode")) {
+            executePortfolioMgr(dir_conf_file);
+        }
     }
     return 0;
 }
