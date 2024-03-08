@@ -68,6 +68,8 @@ public:
     Date getDate() const { return m_date; }
     Time getTime() const { return m_time; }
     std::string getDateTimeString() const;
+    void setDateTimeFromString(const std::string& datetime_str, const char format[]);
+    void setDateTimeFromString(const std::string& datetime_str);
     void setMode(const DateTimePrecision mode) { m_mode = mode; }
     DateTimePrecision getMode() const { return m_mode; }
     void setToNow();

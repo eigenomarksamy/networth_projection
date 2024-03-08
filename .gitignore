@@ -5,3 +5,4 @@ bin/*
 node/node_modules/*
 db/ignore/*
 db/test/*
+scripts/tmp/*

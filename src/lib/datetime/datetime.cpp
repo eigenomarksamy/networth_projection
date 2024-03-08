@@ -1,6 +1,7 @@
 #include <ctime>
 #include <chrono>
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 #include "datetime.hpp"
 
@@ -331,6 +332,21 @@ DateTime DateTime::getDateTimeNow(const DateTimePrecision mode) {
 
 std::string DateTime::getDateTimeString() const {
     return convertDateTimeToString(*this);
+}
+
+void DateTime::setDateTimeFromString(const std::string& datetime_str, const char format[]) {
+    if (datetime_str.length() < 14) return;
+    std::istringstream ss(datetime_str);
+    std::string second, minute, hour, day, month, year;
+    ss >> std::setw(2) >> second >> std::setw(2) >> minute >> std::setw(2) >> hour;
+    ss >> std::setw(2) >> day >> std::setw(2) >> month >> std::setw(4) >> year;
+    setTime(Time(std::stoi(second), std::stoi(minute), std::stoi(hour)));
+    setDate(Date(std::stoi(day), std::stoi(month), std::stoi(year)));
+    setMode(DateTimePrecision::Second);
+}
+
+void DateTime::setDateTimeFromString(const std::string& datetime_str) {
+    setDateTimeFromString(datetime_str, "ssmmhhddMMyyyy");
 }
 
 void DateTime::setToNow() {
