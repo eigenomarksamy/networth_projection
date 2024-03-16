@@ -32,8 +32,7 @@ static void executePortfolioMgr(const std::string& confFile) {
     portfolio::PortfolioMgrCfg portfolioInput;
     if (!portfolio::setUpPortfolioCfg(portfolioInput, confFile)) return;
     if (portfolioInput.is_complex_investment) {
-        portfolio::TransactionalPortfolio portfolio;
-        portfolio::executeTransactionalPortfolioManagement(portfolio);
+        portfolio::runComplexPortfolioManagement(portfolioInput);
         return;
     }
     auto dbStrategy = std::make_shared<db_manager::SQLiteStrategy>();

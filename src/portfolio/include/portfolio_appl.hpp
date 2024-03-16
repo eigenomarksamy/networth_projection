@@ -22,6 +22,8 @@ void setUpPortfolioConfigurationFile(PortfolioMgrCfg& conf, const std::string& d
 
 bool setUpPortfolioCfg(PortfolioMgrCfg& conf, const std::string& dirFile);
 
+void runComplexPortfolioManagement(const PortfolioMgrCfg& portfolioCfg);
+
 } // namespace portfolio
 
 #endif /* PORTFOLIO_APPL_HPP_ */

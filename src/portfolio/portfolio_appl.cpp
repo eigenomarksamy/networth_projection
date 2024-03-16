@@ -8,6 +8,7 @@
 #include "portfolio_appl.hpp"
 #include "portfolio_logger.hpp"
 #include "portfolio_db.hpp"
+#include "portfolio_file.hpp"
 
 namespace portfolio {
 
@@ -756,4 +757,29 @@ bool portfolio::setUpPortfolioCfg(PortfolioMgrCfg& conf, const std::string& dirF
         return false;
     }
     return true;
+}
+
+void portfolio::runComplexPortfolioManagement(const PortfolioMgrCfg& portfolioCfg) {
+    if (!portfolioCfg.is_complex_investment ||
+        portfolioCfg.portfolio_src != "db") return;
+    auto dbStrategy = std::make_shared<db_manager::SQLiteStrategy>();
+    TransactionalPortfolioManager portfolioMgr;
+    bool loadRetStatus, saveRetStatus;
+    if (portfolioCfg.load_all_portfolios) {
+        loadRetStatus = loadTransactionalPortfoliosDb(portfolioMgr, portfolioCfg.db_dir, dbStrategy);
+    }
+    else {
+        auto portfoliosToLoad = portfolioCfg.portfolio_list;
+        for (auto& portfolioToLoad : portfoliosToLoad) {
+            portfolioToLoad += ".db";
+        }
+        loadRetStatus = loadTransactionalPortfoliosDb(portfolioMgr, portfolioCfg.db_dir,
+                                                        portfoliosToLoad, dbStrategy);
+    }
+    auto loadedPortfolioMgr = portfolioMgr;
+    executeMultiTransactionalPortfolioManagement(portfolioMgr);
+    saveRetStatus = saveTransactionalPortfoliosDb(loadedPortfolioMgr, portfolioMgr,
+                                                  portfolioCfg.db_dir,
+                                                  portfolioCfg.auto_save,
+                                                  dbStrategy);
 }
