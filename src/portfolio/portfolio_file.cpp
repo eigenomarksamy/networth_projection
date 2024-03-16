@@ -396,3 +396,55 @@ bool portfolio::getPortfolioFromDb(portfolio::PortfolioManager& portfolioMgr,
     }
     return status;
 }
+
+bool portfolio::loadTransactionalPortfolioDb(TransactionalPortfolio& portfolio,
+                                             const std::string& fileName,
+                                             const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    bool retVal;
+    auto dbInterface = DatabaseComplexInvestments(dbStrategy, fileName);
+    std::vector<ComplexInvestment> cInvestments;
+    retVal = dbInterface.listInvestment(cInvestments);
+    if (retVal && !cInvestments.empty()) {
+        portfolio.clearInvestments();
+        portfolio.addInvestments(cInvestments);
+    }
+    return retVal;
+}
+
+bool portfolio::loadTransactionalPortfolioDb(TransactionalPortfolio& portfolio,
+                                             const std::string& name,
+                                             const std::string& directory,
+                                             const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    if (loadTransactionalPortfolioDb(portfolio, directory + name, dbStrategy)) {
+        auto pos = name.find(".");
+        auto act_name = name.substr(0, pos);
+        portfolio.setName(act_name);
+        return true;
+    }
+    return false;
+}
+
+bool portfolio::loadTransactionalPortfoliosDb(TransactionalPortfolioManager& portfolioMgr,
+                                              const std::string& directory,
+                                              const std::vector<std::string>& portfoliosToLoad,
+                                  const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    bool retStatus = true;
+    for (const auto& portfolioToLoad : portfoliosToLoad) {
+        TransactionalPortfolio tPortfolio;
+        dbStrategy->clearResults();
+        if (loadTransactionalPortfolioDb(tPortfolio, portfolioToLoad, directory, dbStrategy)) {
+            portfolioMgr.addPortfolio(tPortfolio);
+            retStatus &= true;
+        }
+        else {
+            retStatus = false;
+        }
+    }
+    return retStatus;
+}
+
+bool portfolio::loadTransactionalPortfoliosDb(TransactionalPortfolioManager& portfolioMgr,
+                                              const std::string& directory,
+                                  const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy) {
+    return loadTransactionalPortfoliosDb(portfolioMgr, directory, getFileNames(directory), dbStrategy);
+}

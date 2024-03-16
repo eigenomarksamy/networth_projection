@@ -338,6 +338,14 @@ std::vector<ComplexInvestment> portfolio::TransactionalPortfolio::getFilteredSym
     return retVec;
 }
 
+void portfolio::TransactionalPortfolio::clearInvestments() {
+    std::vector<std::string> ids;
+    for (const auto& investment : m_investments) {
+        ids.push_back(investment.getId());
+    }
+    (void) removeInvestments(ids);
+}
+
 void portfolio::TransactionalPortfolioManager::addPortfolio(TransactionalPortfolio& portfolio) {
     m_portfolios.push_back(std::make_unique<TransactionalPortfolio>(portfolio));
 }

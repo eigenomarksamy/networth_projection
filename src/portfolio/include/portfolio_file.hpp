@@ -85,6 +85,24 @@ bool getPortfolioFromDb(portfolio::PortfolioManager& portfolio,
                         const std::string& tableName,
                         const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
 
+bool loadTransactionalPortfolioDb(TransactionalPortfolio& portfolio,
+                                  const std::string& fileName,
+                                  const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
+
+bool loadTransactionalPortfolioDb(TransactionalPortfolio& portfolio,
+                                  const std::string& name,
+                                  const std::string& directory,
+                                  const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
+
+bool loadTransactionalPortfoliosDb(TransactionalPortfolioManager& portfolioMgr,
+                                   const std::string& targetDirectory,
+                                   const std::vector<std::string>& portfoliosToLoad,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
+
+bool loadTransactionalPortfoliosDb(TransactionalPortfolioManager& portfolioMgr,
+                                   const std::string& directory,
+                                   const std::shared_ptr<db_manager::DatabaseStrategy>& dbStrategy);
+
 } // namespace portfolio
 
 #endif /* PORTFOLIO_FILE_HPP_ */

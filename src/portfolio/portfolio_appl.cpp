@@ -13,6 +13,8 @@ namespace portfolio {
 
 static int16_t selectPortfolio(const portfolio::PortfolioManager& portfolio_manager);
 
+static int16_t selectPortfolio(const portfolio::TransactionalPortfolioManager& portfolio_manager);
+
 } // namespace portfolio
 
 void portfolio::displayPortfolio(const Portfolio& obj) {
@@ -58,6 +60,26 @@ void portfolio::displayPortfolio(const TransactionalPortfolio& obj) {
 }
 
 static int16_t portfolio::selectPortfolio(const portfolio::PortfolioManager& portfolio_manager) {
+    uint16_t choice = 0;
+    std::cout << "There are " << portfolio_manager.getNumPortfolios() << " portfolios" << std::endl;
+    if (portfolio_manager.getNumPortfolios() > 0) {
+        std::cout << "Please select portfolio from this list:\n";
+        for (auto i = 0; i < portfolio_manager.getNumPortfolios(); ++i) {
+            std::cout << "Portfolio ID: " << i + 1
+                    << ", Name: " << portfolio_manager.getPortfolio(i).getName()
+                    << std::endl;
+        }
+        do {
+            std::cout << "Enter your choice (1-"
+                    << portfolio_manager.getNumPortfolios()
+                    << "): ";
+        }
+        while (!validateInputRange(choice, (uint16_t)0, portfolio_manager.getNumPortfolios()));
+    }
+    return choice - 1;
+}
+
+static int16_t portfolio::selectPortfolio(const portfolio::TransactionalPortfolioManager& portfolio_manager) {
     uint16_t choice = 0;
     std::cout << "There are " << portfolio_manager.getNumPortfolios() << " portfolios" << std::endl;
     if (portfolio_manager.getNumPortfolios() > 0) {
@@ -588,6 +610,68 @@ void portfolio::executeTransactionalPortfolioManagement(TransactionalPortfolio& 
                 else {
                     std::cout << "Failure\n";
                 }
+                break;
+            }
+            default: {
+                std::cout << "Invalid choice. Please try again.\n";
+                break;
+            }
+        }
+    }
+}
+
+void portfolio::executeMultiTransactionalPortfolioManagement(TransactionalPortfolioManager& portfolioMgr) {
+    int32_t choice = 0;
+    while (choice != 4) {
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "         MENU              " << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "1. Create Portfolio" << std::endl;
+        std::cout << "2. Delete Portfolio" << std::endl;
+        std::cout << "3. Select Portfolio" << std::endl;
+        std::cout << "4. Exit" << std::endl;
+        std::cout << "Enter your choice (1-4): ";
+        if (!validateInputType(choice)) {
+            continue;
+        }
+        switch (choice) {
+            case 1: {
+                std::string name;
+                std::cout << "Enter new portfolio name: ";
+                std::cin >> name;
+                if (portfolioMgr.addPortfolio(name)) {
+                    std::cout << "Portfolio created successfully.\n";
+                }
+                else {
+                    std::cout << "Portfolio found with the same name.\n";
+                }
+                break;
+            }
+            case 2: {
+                std::string name;
+                std::cout << "Enter portfolio name: ";
+                std::cin >> name;
+                if (portfolioMgr.removePortfolio(name)) {
+                    std::cout << "Portfolio deleted successfully.\n";
+                }
+                else {
+                    std::cout << "Portfolio couldn't be found with the name.\n";
+                }
+                break;
+            }
+            case 3: {
+                auto portfolio_idx = selectPortfolio(portfolioMgr);
+                if (portfolio_idx >= 0) {
+                    portfolio::TransactionalPortfolio& portfolio = portfolioMgr.getPortfolio(portfolio_idx);
+                    executeTransactionalPortfolioManagement(portfolio);
+                }
+                else {
+                    std::cout << "No portfolios to select from.\n";
+                }
+                break;
+            }
+            case 4: {
+                std::cout << "Exiting..\n";
                 break;
             }
             default: {

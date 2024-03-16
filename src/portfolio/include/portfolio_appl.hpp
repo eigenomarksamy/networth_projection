@@ -12,6 +12,8 @@ void executeMultiPortfolioManagement(PortfolioManager& portfolio_mngr);
 
 void executeTransactionalPortfolioManagement(TransactionalPortfolio& portfolio);
 
+void executeMultiTransactionalPortfolioManagement(TransactionalPortfolioManager& portfolioMgr);
+
 PortfolioCfgInputSource setPortfolioInputSource();
 
 void setUpPortfolioManually(PortfolioMgrCfg& conf);
