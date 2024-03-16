@@ -61,6 +61,13 @@ struct Transaction {
     bool operator!=(const Transaction& other) const {
         return !(*this == other);
     }
+    std::string currency_to_str() const {
+        return (m_currency == Currency::USD) ? "USD" : "EUR";
+    }
+    void str_to_currency(std::string& str) {
+        convertStrToLowerCase(str);
+        m_currency = (str == "usd") ? Currency::USD : Currency::EUR;
+    }
 };
 
 class ComplexInvestment {

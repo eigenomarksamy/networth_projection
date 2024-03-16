@@ -197,6 +197,7 @@ public:
     std::vector<ComplexInvestment> getInvestments() const { return m_investments; }
     std::vector<ComplexInvestment> getFilteredDateInvestments(const DateTime& datetime) const;
     std::vector<ComplexInvestment> getFilteredSymbolInvestments(const std::string& ticker) const;
+    void clearInvestments();
 
     friend void displayPortfolio(const TransactionalPortfolio& obj);
 };

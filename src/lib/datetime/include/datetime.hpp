@@ -58,12 +58,18 @@ public:
     static std::string getLocalDateTime(const char format[]);
     static std::string getLocalDateTime();
     static std::string getUniqueTimeId();
+    static std::string convertDateToString(const Date& date);
+    static std::string convertTimeToString(const Time& time);
+    static std::string convertDateTimeToString(const DateTime& datetime);
     static DateTime getDateTimeNow();
     static DateTime getDateTimeNow(const DateTimePrecision mode);
     void setDate(const Date& date) { m_date = date; }
     void setTime(const Time& time) { m_time = time; }
     Date getDate() const { return m_date; }
     Time getTime() const { return m_time; }
+    std::string getDateTimeString() const;
+    void setDateTimeFromString(const std::string& datetime_str, const char format[]);
+    void setDateTimeFromString(const std::string& datetime_str);
     void setMode(const DateTimePrecision mode) { m_mode = mode; }
     DateTimePrecision getMode() const { return m_mode; }
     void setToNow();

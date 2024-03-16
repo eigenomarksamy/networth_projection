@@ -24,6 +24,13 @@ struct DbData {
     std::string dbData;
 };
 
+struct TableDetails {
+    std::string tableName;
+    std::string primaryKeyName;
+    db_manager::columns_t columns;
+    std::vector<db_manager::columnDefinition_t> columnDefinitions;
+};
+
 class DatabaseStrategy {
 public:
 
