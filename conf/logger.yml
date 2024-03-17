@@ -1,0 +1,5 @@
+directory: gen/logs/
+prefix: NO
+level: INFO
+zip: false
+clear: false
