@@ -235,9 +235,10 @@ bool db_manager::DatabaseORM::list(const std::string& db,
 bool db_manager::DatabaseORM::list(const std::string& db,
                                    const std::string& table,
                                    std::vector<std::unordered_map<std::string, std::string>>& outputMap) const {
-    std::string query(table);
-    DatabaseStrategy::QueryResult_t qResult;
-    auto ret = operate(db, query, &qResult);
+    std::string query = getListQuery(table);
+    auto qResult = new DatabaseStrategy::QueryResult_t;
+    m_strategy->clearResults();
+    auto ret = operate(db, query, qResult);
     if (!ret) {
         std::cerr << "Error: List"
                   << "\n\tDB: " << db
@@ -246,7 +247,7 @@ bool db_manager::DatabaseORM::list(const std::string& db,
                   << std::endl;
     }
     else {
-        ret = extractResults(qResult, outputMap);
+        ret = extractResults(*qResult, outputMap);
         if (!ret) {
             std::cerr << "For list, no results found!\n";
         }

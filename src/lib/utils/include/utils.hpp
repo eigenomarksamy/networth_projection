@@ -61,6 +61,18 @@ std::ostream& operator<<(std::ostream& out, const std::map<K, V>& m) {
     return out;
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
+    out << "[";
+    for (int i = 0; i < v.size(); ++i) { 
+        out << v[i]; 
+        if (i != v.size() - 1) 
+            out << ", "; 
+    }
+    out << "]\n";
+    return out;
+}
+
 template <typename T>
 T convertToNumeric(const std::string& str) {
     if (str.empty()) {

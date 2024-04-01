@@ -199,7 +199,7 @@ bool portfolio::DatabaseComplexInvestments::saveComplexInvestment(const ComplexI
                                  std::to_string(cInvestment.getInvestment().getQuantity())};
     bool retVal = m_dbInterface->saveData(m_investmentsTable, values);
     values.clear();
-    values = {"'" + cInvestment.getId() + "'"
+    values = {"'" + cInvestment.getId() + "'",
               "'" + cInvestment.getTransaction().m_datetime.getDateTimeString() + "'",
               std::to_string(cInvestment.getTransaction().m_fees),
               "'" + cInvestment.getTransaction().currency_to_str() + "'",
@@ -255,17 +255,17 @@ bool portfolio::DatabaseComplexInvestments::getInvestment(const std::string& id,
 }
 
 bool portfolio::DatabaseComplexInvestments::listInvestment(std::vector<ComplexInvestment>& cInvestments) {
-    std::vector<std::unordered_map<std::string, std::string>> retData;
+    std::vector<std::unordered_map<std::string, std::string>> retDataInvestments, retDataTransactions;
     std::unordered_map<std::string, Investment> investments;
-    auto retVal = m_dbInterface->listData(m_investmentsTable, retData);
-    if (retVal) {
-        retVal = extractInvestmentsFromData(investments, retData);
-    }
-    retData.clear();
     std::unordered_map<std::string, std::pair<Transaction, double_t>> transactions;
-    retVal &= m_dbInterface->listData(m_transactionsTable, retData);
+    bool retVal;
+    retVal = m_dbInterface->listData(m_investmentsTable, retDataInvestments);
     if (retVal) {
-        retVal = extractTransactionsFromData(transactions, retData);
+        retVal = extractInvestmentsFromData(investments, retDataInvestments);
+    }
+    retVal &= m_dbInterface->listData(m_transactionsTable, retDataTransactions);
+    if (retVal) {
+        retVal = extractTransactionsFromData(transactions, retDataTransactions);
     }
     if (retVal) retVal = (investments.size() == transactions.size());
     if (retVal) {
@@ -415,7 +415,7 @@ bool portfolio::DatabaseComplexInvestments::extractInvestmentsFromData(
         if (mapSetForId && mapSetForName
             && mapSetForPrice && mapSetForQuantity
             && mapSetForTicker) {
-            investments.at(id) = Investment(name, ticker, std::stod(price), std::stod(price), std::stod(quantity));
+            investments[id] = Investment(name, ticker, std::stod(price), std::stod(price), std::stod(quantity));
             retVal = true;
         }
     }
@@ -468,7 +468,7 @@ bool portfolio::DatabaseComplexInvestments::extractTransactionsFromData(
             transaction.m_fees = std::stod(fees);
             transaction.str_to_currency(currency);
             transaction.m_datetime.setDateTimeFromString(date);
-            transactions.at(id) = std::make_pair(transaction, std::stod(ccr));
+            transactions[id] = std::make_pair(transaction, std::stod(ccr));
             retVal = true;
         }
     }
