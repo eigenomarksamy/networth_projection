@@ -3,3 +3,4 @@ prefix: NO
 level: INFO
 zip: false
 clear: false
+version: 1
