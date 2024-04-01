@@ -9,11 +9,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate database files in a directory.")
     parser.add_argument("directory", help="Path to the directory.")
     parser.add_argument("-n", "--num-dbs", dest='number_dbs', type=int, default=10, help="Factor for the update.")
+    parser.add_argument("--clear", dest='clear_existing', action='store_true', help="Delete existing DBs.")
     return parser.parse_args()
 
 def generate_db_names(directory: os.PathLike, num_dbs: int) -> list[str]:
-    if not directory.endswith('/'):
-        directory += '/'
     random_names = []
     for _ in range(num_dbs):
         random_names.append(''.join(random.choices(string.ascii_lowercase, k=5)))
@@ -27,6 +26,34 @@ def generate_files(names: list[str]) -> list[str]:
         file.close()
     return file_names
 
+def generate_datetimestamp() -> str:
+
+    def stringify(value: int) -> str:
+        if value < 10:
+            return "0" + str(value)
+        return str(value)
+
+    def get_random_day() -> str:
+        months_with_extra = [1, 3, 5, 7, 8, 10, 12]
+        day_upper = 30
+        if month == 2:
+            day_upper = 28
+            if year % 4 == 0:
+                day_upper = 29
+        elif month in months_with_extra:
+            day_upper = 31
+        return stringify(random.randint(1, day_upper))
+
+    sec_str = stringify(random.randint(0, 59))
+    min_str = stringify(random.randint(0, 59))
+    hour_str = stringify(random.randint(0, 23))
+    month = random.randint(1, 12)
+    month_str = stringify(month)
+    year = random.randint(2020, 2024)
+    year_str = str(year)
+    day_str = get_random_day()
+    return sec_str + min_str + hour_str + day_str + month_str + year_str
+
 def generate_complex_inv_id() -> str:
     complex_inv_id = ""
     for _ in range(19):
@@ -34,9 +61,7 @@ def generate_complex_inv_id() -> str:
     return complex_inv_id
 
 def generate_sample_data_transactions_table() -> tuple:
-    date = ""
-    for _ in range(14):
-        date += str(random.randint(0, 9))
+    date = generate_datetimestamp()
     fees = random.uniform(0.001, 9.99)
     ccf = random.uniform(0.001, 2.99)
     ccr = random.uniform(0.0, 1.99)
@@ -109,9 +134,16 @@ def generate_dbs(dbs: list[str]) -> None:
         conn.close()
 
 def main(args: argparse.Namespace) -> int:
-    if not os.path.exists(args.directory):
-        os.makedirs(args.directory)
-    db_names = generate_db_names(args.directory, args.number_dbs)
+    directory = args.directory
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    if not directory.endswith('/'):
+        directory += '/'
+    if args.clear_existing:
+        files_in_dir = os.listdir(directory)
+        for f in files_in_dir:
+            os.remove(directory + f)
+    db_names = generate_db_names(directory, args.number_dbs)
     full_file_names = generate_files(db_names)
     generate_dbs(full_file_names)
     return 0
