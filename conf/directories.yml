@@ -7,7 +7,7 @@ generation:
     input: gen/mortgage_in.txt
 portfolio-manager:
   generation: gen/
-  database: gen/db_big/
+  database: db/test/portfolios1/
   logs: gen/logs/
   text: gen/portfolios/
   configuration: conf/input/defaults.yml
